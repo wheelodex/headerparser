@@ -37,3 +37,6 @@
         - handling of "From " lines (and/or other non-header headers like the
           first line of an HTTP request or response?)
         - handling of header lettercases?
+
+- Add some sort of handling for "From " lines
+- Support comments? (cf. robots.txt)
