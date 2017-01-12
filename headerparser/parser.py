@@ -6,7 +6,7 @@ from   six         import string_types
 is_str = attr.validators.instance_of(string_types)
 
 @attr.s
-class RFC822Parser(object):
+class HeaderParser(object):
     normalizer = attr.ib(default=methodcaller('lower'))
     headerdefs = attr.ib(init=False, default=attr.Factory(dict))
 
