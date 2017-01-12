@@ -1,0 +1,3 @@
+- Potentially relevant mapping classes:
+    - <https://pypi.python.org/pypi/multidict>
+    - <https://github.com/kennethreitz/requests/blob/5524472cc76ea00d64181505f1fbb7f93f11cc2b/requests/structures.py#L15>
