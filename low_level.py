@@ -1,22 +1,7 @@
-# name: lex822 ???
-
-# Input:
-#  - A text string or text filehandle
-#  - bad_header_starts_body=False
-#  - header_sep_regex=r':\s+' (r':'?)
-### folded_indent_regex ?
-
-# Output: A generator of (header_name, header_value) pairs, with the body being
-# represented as a "header" with a name of `None`
-
-# Also make bytes variant(s)
-
-### Add some sort of handling for "From " lines
-
-### Add a variant that takes an iterator of lines and only consumes the header
-### lines and the terminating blank line, leaving the body in the iterator
-
 def lex822(s):
+    # Returns a generator of (header_name, header_value) pairs in which the
+    # body is represented as a "header" with a name of `None`
+    ### TODO: Add a variant that takes a filehandle
     name = None
     value = ''
     lineiter = iter(ascii_splitlines(s, True))

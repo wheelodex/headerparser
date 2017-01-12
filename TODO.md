@@ -12,6 +12,7 @@
 
 - Somehow support the types in `email.headerregistry`
 
+- Add a `bytes` variant of the lexer
 - Add a separate "`RFC822BytesParser`" class that decodes headers (or just
   names? neither?) and leaves the body as bytes
     - Give the `parse*` methods `encoding` parameters?
@@ -63,3 +64,7 @@
        - empty header name (options: error, header with empty name, look for
          next colon, or start of body)
        - all-whitespace line (considered obsolete by RFC 5322)
+
+- Add a lexer function (and parser method) that takes an iterator of lines and
+  only consumes the header lines and the terminating blank line, leaving the
+  body in the iterator
