@@ -1,7 +1,7 @@
     HeaderParser(normalizer=None, **kwargs)
 
 - `normalizer` — header name normalization callable (default: str.lower)
-- `**kwargs` are passed to low-level lexer.
+- `**kwargs` are passed to low-level scanner
 - `body=bool` ???
 
 
