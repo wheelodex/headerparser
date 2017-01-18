@@ -77,5 +77,8 @@
 - Give `NormalizedDict` a useful `__repr__`
 - Give `NormalizedDict` a `copy` method?
 
+- Write more tests
+- Write a README
+- Write docstrings
 - Upload to GitHub
 - Integrate with Travis

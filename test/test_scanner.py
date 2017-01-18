@@ -25,5 +25,5 @@ Baz: blue
 Foo: quux
 Bar: glarch
 Baz: cleesh
-''') == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'),
-         (None, 'Foo: quux\nBar: glarch\nBaz: cleesh\n')]
+''')) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'),
+          (None, 'Foo: quux\nBar: glarch\nBaz: cleesh\n')]

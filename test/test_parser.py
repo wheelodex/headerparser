@@ -1,4 +1,4 @@
-from headerparser import HeaderParser, NormalizedDict
+from headerparser import HeaderParser
 
 def test_simple():
     parser = HeaderParser()

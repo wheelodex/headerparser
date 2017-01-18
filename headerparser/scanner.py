@@ -8,9 +8,10 @@ def scan_string(s):
     value = ''
     lineiter = iter(ascii_splitlines(s, True))
     for line in lineiter:
+        line = line.rstrip('\r\n')
         if line.startswith((' ', '\t')):
             if name is not None:
-                value += line
+                value += '\n' + line
             else:
                 raise ValueError ###
         elif ':' in line:
@@ -19,13 +20,10 @@ def scan_string(s):
             name, _, value = line.partition(':')
             name = name.rstrip(' \t')  ### ???
             value = value.lstrip(' \t')
-        elif line.rstrip('\r\n') == '':
+        elif line == '':
             break
         else:
             raise ValueError ###
-    else:
-        if name is not None:
-            yield (name, value)
     if name is not None:
         yield (name, value)
     yield (None, ''.join(lineiter))

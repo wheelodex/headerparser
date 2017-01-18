@@ -1,7 +1,6 @@
-from   collections import namedtuple
-from   operator    import methodcaller
+from   operator import methodcaller
 import attr
-from   six         import string_types
+from   six      import string_types
 
 is_str = attr.validators.instance_of(string_types)
 
@@ -20,9 +19,9 @@ class HeaderParser(object):
         except KeyError:
             pass
         for n in normed:
-            if n in headerdefs:
+            if n in self.headerdefs:
                 raise ValueError ###
-            headerdefs[n] = hd
+            self.headerdefs[n] = hd
 
 
 @attr.s
