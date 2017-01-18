@@ -1,4 +1,6 @@
-def lex822(s):
+from .util import ascii_splitlines
+
+def scan_string(s):
     # Returns a generator of (header_name, header_value) pairs in which the
     # body is represented as a "header" with a name of `None`
     ### TODO: Add a variant that takes a filehandle
@@ -27,16 +29,3 @@ def lex822(s):
     if name is not None:
         yield (name, value)
     yield (None, ''.join(lineiter))
-
-def ascii_splitlines(s, keepends=False):
-    lines = []
-    lastend = 0
-    for m in re.finditer(r'\r\n?|\n', s):
-        if keepends:
-            lines.append(s[lastend:m.end()])
-        else:
-            lines.append(s[lastend:m.start()])
-        lastend = m.end()
-    if lastend < len(s):
-        lines.append(s[lastend:])
-    return lines

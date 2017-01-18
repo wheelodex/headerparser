@@ -12,7 +12,7 @@
 
 - Somehow support the types in `email.headerregistry`
 
-- Add a `bytes` variant of the lexer
+- Add a `bytes` variant of the scanner
 - Add a separate "`RFC822BytesParser`" class that decodes headers (or just
   names? neither?) and leaves the body as bytes
     - Give the `parse*` methods `encoding` parameters?
@@ -42,7 +42,7 @@
 - Add some sort of handling for "From " lines
 - Support comments? (cf. robots.txt)
 
-- Give the lexer options for:
+- Give the scanner options for:
    - allowed characters in header names (standard: printable ASCII characters
      other than colon and whitespace)
        - whether to allow non-ASCII characters in header names
@@ -64,9 +64,9 @@
          next colon, or start of body)
        - all-whitespace line (considered obsolete by RFC 5322)
 
-- Add a lexer function (and parser method) that takes an iterator of lines and
-  only consumes the header lines and the terminating blank line, leaving the
-  body in the iterator
+- Add a scanner function (and parser method) that takes an iterator of lines
+  and only consumes the header lines and the terminating blank line, leaving
+  the body in the iterator
 
 - Add an option to the parser for requiring that headers occur in the order
   that they are defined?  (The PEP parsing code would appreciate this.)
