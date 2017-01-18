@@ -57,7 +57,6 @@
    - stripping whitespace (definable?) after the name-value delimiter?
    - stripping leading whitespace from folded lines? (standard: no)
    - handling "From " lines and the like
-   - Treating "---" lines as stanza delimiters?
    - Error handling:
        - header lines without a colon or indentation (options: error, header
          with empty value, or start of body)
@@ -74,3 +73,6 @@
 
 - `HeaderParser`: Add `object_hook` and `object_pairs_hook` options? (But how
   would the body be handled then?)
+
+- Give `NormalizedDict` a useful `__repr__`
+- Give `NormalizedDict` a `copy` method?
