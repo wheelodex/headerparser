@@ -2,18 +2,15 @@
 
 - `normalizer` — header name normalization callable (default: str.lower)
 - `**kwargs` are passed to low-level lexer.
-
 - `body=bool` ???
-- `body_dest='__body__'` ???
-- `object_hook` and `object_pairs_hook` ???
 
 
     HeaderParser.add_header(name, *altnames, **kwargs)
 
 - `type=callable`
 - `multiple=bool`
-- `dest=str`
-- `mode in ('first', 'last', 'error')`
+- `dest=str` — Prohibited when additional headers are allowed
+- `mode in ('first', 'last', 'error')` (default: `error`)
 - `required=bool`
 - `choices=seq`
 - `default=...` — defaults to `None` if `multiple=False`, `[]` otherwise
@@ -39,13 +36,8 @@ Has all of the arguments of `add_header` except:
     HeaderParser.parse(filehandle)  # `parsefile`? `parse_file`?
     HeaderParser.parsestring(s)
 
-Possible return types:
-
-- a `(header_dict, body)` pair
-- a dict with a `body` attribute
-- ???
-
-Should the dict be a proper `dict` or "normalizing"?
+Return type: a mapping object with a `body` attribute that normalizes keys on
+lookup
 
 
     HeaderParser.parse_stanzas(filehandle)

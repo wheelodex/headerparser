@@ -68,3 +68,9 @@
 - Add a lexer function (and parser method) that takes an iterator of lines and
   only consumes the header lines and the terminating blank line, leaving the
   body in the iterator
+
+- Add an option to the parser for requiring that headers occur in the order
+  that they are defined?  (The PEP parsing code would appreciate this.)
+
+- `HeaderParser`: Add `object_hook` and `object_pairs_hook` options? (But how
+  would the body be handled then?)
