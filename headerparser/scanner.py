@@ -1,4 +1,5 @@
-from .util import ascii_splitlines
+from .errors import MalformedHeaderError, UnexpectedFoldingError
+from .util   import ascii_splitlines
 
 # The functions return a generator of (header_name, header_value) pairs in
 # which the body is represented as a "header" with a name of `None`
@@ -10,7 +11,6 @@ from .util import ascii_splitlines
 # rather than EOF
 
 def scan_string(s):
-    ### TODO: Add a variant that takes a filehandle
     lineiter = iter(ascii_splitlines(s, True))
     return _scan_lines(lineiter)
 
@@ -27,7 +27,7 @@ def _scan_lines(lineiter):
             if name is not None:
                 value += '\n' + line
             else:
-                raise ValueError ###
+                raise UnexpectedFoldingError  ### TODO
         elif ':' in line:
             if name is not None:
                 yield (name, value)
@@ -37,7 +37,7 @@ def _scan_lines(lineiter):
         elif line == '':
             break
         else:
-            raise ValueError ###
+            raise MalformedHeaderError  ### TODO
     else:
         eof = True
     if name is not None:

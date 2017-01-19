@@ -57,6 +57,8 @@
    - stripping whitespace (definable?) after the name-value delimiter?
    - stripping leading whitespace from folded lines? (standard: no)
    - handling "From " lines and the like
+   - skipping empty lines at the beginning of the input (instead of treating
+     them as ending an empty header stanza)
    - Error handling:
        - header lines without a colon or indentation (options: error, header
          with empty value, or start of body)
@@ -82,3 +84,5 @@
 - Write docstrings
 - Upload to GitHub
 - Integrate with Travis
+
+- Fill in the exception classes

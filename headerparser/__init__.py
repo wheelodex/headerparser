@@ -1,3 +1,13 @@
+from .errors   import (
+                        Error,
+                            ParserError,
+                                MissingHeaderError,
+                                UnknownHeaderError,
+                                DuplicateHeaderError,
+                            ScannerError,
+                                MalformedHeaderError,
+                                UnexpectedFoldingError,
+                      )
 from .normdict import NormalizedDict
 from .parser   import HeaderParser
 from .scanner  import scan_file, scan_string
@@ -9,8 +19,16 @@ __license__      = 'MIT'
 __url__          = 'https://github.com/jwodder/headerparser'
 
 __all__ = [
+    'DuplicateHeaderError',
+    'Error',
     'HeaderParser',
+    'MalformedHeaderError',
+    'MissingHeaderError',
     'NormalizedDict',
+    'ParserError',
+    'ScannerError',
+    'UnexpectedFoldingError',
+    'UnknownHeaderError',
     'scan_file',
     'scan_string',
 ]

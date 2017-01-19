@@ -1,5 +1,5 @@
 import pytest
-from   headerparser import HeaderParser, HeaderMissingError
+from   headerparser import HeaderParser, MissingHeaderError
 
 def test_simple():
     parser = HeaderParser()
@@ -86,7 +86,7 @@ def test_missing_required():
     parser.add_header('Foo')
     parser.add_header('Bar')
     parser.add_header('Baz', required=True)
-    with pytest.raises(HeaderMissingError):
+    with pytest.raises(MissingHeaderError):
         parser.parse_string('Foo: red\nBar: green\n')
 
 def test_missing_required_default():
@@ -94,7 +94,7 @@ def test_missing_required_default():
     parser.add_header('Foo')
     parser.add_header('Bar')
     parser.add_header('Baz', required=True, default='still required')
-    with pytest.raises(HeaderMissingError):
+    with pytest.raises(MissingHeaderError):
         parser.parse_string('Foo: red\nBar: green\n')
 
 def test_missing_default():
