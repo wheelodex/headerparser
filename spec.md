@@ -3,6 +3,9 @@
 - `normalizer` — header name normalization callable (default: str.lower)
 - `body=bool` — whether `parse_file` and `parse_string` are allowed to find a
   body after the headers
+    - `True`: body is required
+    - `False`: body is prohibited
+    - `None`: body is optional
 - `**kwargs` are passed to low-level scanner
 
 
@@ -11,16 +14,11 @@
 - `type=callable`
 - `multiple=bool`
 - `dest=str` — Prohibited when additional headers are allowed
-- `mode in ('first', 'last', 'error')` (default: `error`)
 - `required=bool`
-- `choices=seq`
-- `default=...` — defaults to `None` if `multiple=False`, `[]` otherwise
+- `choices=seq` — applied after `type`
+- `default=...` — Prohibited when `required=True`?
 - `unfold=bool` — If true, newlines are removed from the value before passing
   it to the `type` callable (if any)
-- `i18n=bool` — whether to decode i18n(?) encodings before passing to `type`
-
-- `action=callable` ?
-- `validator=callable` ?
 
 
     HeaderParser.add_additional(allow=True, **kwargs)

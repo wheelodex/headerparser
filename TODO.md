@@ -1,21 +1,40 @@
-- Add built-in support for multi-stanza documents in which different stanzas
-  follow different schemata? (e.g., one of the Debian source control file
-  formats)
+- Write a README
+- Write docstrings
+- Upload to GitHub
+- Integrate with Travis
+- Determine the minimum versions of `attrs` and `six` needed
+- Fill in keywords, classifiers, etc. in `setup.py`
 
-- Include utility callables for header types:
-    - `BOOL` - supports yes/no, 1/0, and true/false (all case-insensitive)
-    - RFC822 dates, addresses, etc.
-    - Content-Type-style "parameterized" headers
-        - Include an `object_pairs_hook` for the parameters
-    - internationalized strings
-    - converting lines with just '.' to blank lines
+- Write more tests
+    - Test `NormalizedDict`
+    - Header definition options:
+        - `"type"`
+        - `"choices"`
+        - `"unfold"`
+        - `"dest"`
+        - multiple names for the same header
+    - different header name normalizers (identity, hyphens=underscores,
+      titlecase?, etc.)
+    - `add_additional`
+    - `body=False`
+    - scanning/parsing multiple stanzas
+    - Trying to define the same header and/or `dest` more than once
+        - Defining the same header more than once
+        - Defining the same `dest` more than once
+        - Defining a header and a `dest` with the same name before normalization
+        - Defining a header and a `dest` with the same name after normalization
 
-- Somehow support the types in `email.headerregistry`
+- Give `NormalizedDict` a useful `__repr__`
+- Give `NormalizedDict` a `copy` method?
+- Fill in the exception classes
 
-- Add a `bytes` variant of the scanner
-- Add a separate "`RFC822BytesParser`" class that decodes headers (or just
-  names? neither?) and leaves the body as bytes
-    - Give the `parse*` methods `encoding` parameters?
+
+Features
+========
+- Add some sort of handling for "From " lines
+- Add a scanner function (and parser methods) that takes an iterator of lines
+  and only consumes the header lines and the terminating blank line, leaving
+  the body in the iterator
 
 - Write an entry point for converting RFC822-style files/headers to JSON
     - name: `mail2json`?
@@ -39,50 +58,65 @@
           first line of an HTTP request or response?)
         - handling of header lettercases?
 
-- Add some sort of handling for "From " lines
-- Support comments? (cf. robots.txt)
+Scanning
+--------
+- Add a `bytes` variant of the scanner
 
 - Give the scanner options for:
-   - allowed characters in header names (standard: printable ASCII characters
-     other than colon and whitespace)
-       - whether to allow non-ASCII characters in header names
-   - definition of "whitespace" for purposes of unfolding (standard: 0x20 and
-     TAB)
-   - line separator/terminator (default: CR, LF, and CRLF; standard: only CRLF)
-       - handling of lone CR and LF when CRLF is used as the line separator
-         (standard: obsolete)
-   - header name-value delimiter (standard/default: just a colon)
-       - Doesn't this make the "allowed characters in header names" option
-         unnecessary?
-   - stripping whitespace (definable?) after the name-value delimiter?
-   - stripping leading whitespace from folded lines? (standard: no)
-   - handling "From " lines and the like
-   - skipping empty lines at the beginning of the input (instead of treating
-     them as ending an empty header stanza)
-   - Error handling:
-       - header lines without a colon or indentation (options: error, header
-         with empty value, or start of body)
-       - empty header name (options: error, header with empty name, look for
-         next colon, or start of body)
-       - all-whitespace line (considered obsolete by RFC 5322)
+    - allowed characters in header names (standard: printable ASCII characters
+      other than colon and whitespace)
+        - whether to allow non-ASCII characters in header names
+    - definition of "whitespace" for purposes of unfolding (standard: 0x20 and
+      TAB)
+    - line separator/terminator (default: CR, LF, and CRLF; standard: only
+      CRLF)
+        - handling of lone CR and LF when CRLF is used as the line separator
+          (standard: obsolete)
+    - header name-value delimiter (standard/default: just a colon)
+        - Doesn't this make the "allowed characters in header names" option
+          unnecessary?
+    - stripping whitespace (definable?) after the name-value delimiter?
+    - stripping leading whitespace from folded lines? (standard: no)
+    - handling "From " lines and the like
+    - skipping empty lines at the beginning of the input (instead of treating
+      them as ending an empty header stanza)
+    - comments? (cf. robots.txt)
+    - Error handling:
+        - header lines without a colon or indentation (options: error, header
+          with empty value, or start of body)
+        - empty header name (options: error, header with empty name, look for
+          next colon, or start of body)
+        - all-whitespace line (considered obsolete by RFC 5322)
 
-- Add a scanner function (and parser method) that takes an iterator of lines
-  and only consumes the header lines and the terminating blank line, leaving
-  the body in the iterator
+Parsing
+-------
+- Add a separate "`HeaderBytesParser`" class that decodes headers (or just
+  names? neither?) and leaves the body as bytes
+    - Give its `parse*` methods `encoding` parameters?
+
+- Add built-in support for multi-stanza documents in which different stanzas
+  follow different schemata? (e.g., one of the Debian source control file
+  formats)
+
+- Include utility callables for header types:
+    - `BOOL` - supports yes/no, 1/0, and true/false (all case-insensitive)
+    - RFC822 dates, addresses, etc.
+    - Content-Type-style "parameterized" headers
+        - Include an `object_pairs_hook` for the parameters
+    - internationalized strings
+    - converting lines with just '.' to blank lines
+    - Somehow support the types in `email.headerregistry`
 
 - Add an option to the parser for requiring that headers occur in the order
   that they are defined?  (The PEP parsing code would appreciate this.)
 
-- `HeaderParser`: Add `object_hook` and `object_pairs_hook` options? (But how
-  would the body be handled then?)
+- Add `object_hook` and `object_pairs_hook` options? (But how would the body be
+  handled then?)
 
-- Give `NormalizedDict` a useful `__repr__`
-- Give `NormalizedDict` a `copy` method?
-
-- Write more tests
-- Write a README
-- Write docstrings
-- Upload to GitHub
-- Integrate with Travis
-
-- Fill in the exception classes
+- New `add_header` and `add_additional` options to add:
+    - `action=callable`
+    - `mode in ('first', 'last', 'error')` (default: `error`) — defines how to
+      handle multiple occurrences of the same header when that header isn't
+      `multiple=True`
+    - `i18n=bool` — turns on decoding of internationalized mail headers before
+      passing to `type` (Do this via a custom type instead?)
