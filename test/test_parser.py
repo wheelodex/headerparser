@@ -1,4 +1,5 @@
-from headerparser import HeaderParser
+import pytest
+from   headerparser import HeaderParser, HeaderMissingError
 
 def test_simple():
     parser = HeaderParser()
@@ -70,3 +71,46 @@ Baz: cleesh
 ''')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body == 'Foo: quux\nBar: glarch\nBaz: cleesh\n'
+
+def test_missing():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_header('Baz')
+    msg = parser.parse_string('Foo: red\nBar: green\n')
+    assert dict(msg) == {'Foo': 'red', 'Bar': 'green'}
+    assert msg.body == ''
+
+def test_missing_required():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_header('Baz', required=True)
+    with pytest.raises(HeaderMissingError):
+        parser.parse_string('Foo: red\nBar: green\n')
+
+def test_missing_required_default():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_header('Baz', required=True, default='still required')
+    with pytest.raises(HeaderMissingError):
+        parser.parse_string('Foo: red\nBar: green\n')
+
+def test_missing_default():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_header('Baz', default=42)
+    msg = parser.parse_string('Foo: red\nBar: green\n')
+    assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 42}
+    assert msg.body == ''
+
+def test_missing_None_default():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_header('Baz', default=None)
+    msg = parser.parse_string('Foo: red\nBar: green\n')
+    assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': None}
+    assert msg.body == ''

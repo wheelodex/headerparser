@@ -2,7 +2,7 @@ from headerparser import scan_string
 
 def test_simple():
     assert list(scan_string('Foo: red\nBar: green\nBaz: blue\n')) == \
-        [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'), (None, '')]
+        [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
 
 def test_empty_body():
     assert list(scan_string('Foo: red\nBar: green\nBaz: blue\n\n')) == \
@@ -27,3 +27,33 @@ Bar: glarch
 Baz: cleesh
 ''')) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'),
           (None, 'Foo: quux\nBar: glarch\nBaz: cleesh\n')]
+
+def test_circumcolon_whitespace():
+    assert list(scan_string('''\
+Key1: Value1
+Key2 :Value2
+Key3 : Value3
+Key4:Value4
+''')) == [('Key1', 'Value1'), ('Key2', 'Value2'), ('Key3', 'Value3'),
+          ('Key4', 'Value4')]
+
+def test_folding():
+    assert list(scan_string('''\
+Key1: Value1
+  Folded
+    More folds
+Key2: Value2
+    Folded
+  Fewer folds
+Key3: Value3
+  Key4: Not a real header
+Key4: 
+\tTab after empty line
+  
+  After an "empty" folded line
+''')) == [
+    ('Key1', 'Value1\n  Folded\n    More folds'),
+    ('Key2', 'Value2\n    Folded\n  Fewer folds'),
+    ('Key3', 'Value3\n  Key4: Not a real header'),
+    ('Key4', '\n\tTab after empty line\n  \n  After an "empty" folded line'),
+]
