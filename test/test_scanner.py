@@ -57,3 +57,9 @@ Key4:
     ('Key3', 'Value3\n  Key4: Not a real header'),
     ('Key4', '\n\tTab after empty line\n  \n  After an "empty" folded line'),
 ]
+
+
+### no trailing newline
+### CR
+### CRLF
+### mixing line endings
