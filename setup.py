@@ -3,8 +3,6 @@ from   os.path    import dirname, join
 import re
 from   setuptools import setup, find_packages
 
-PACKAGE = '$PACKAGE'
-
 with open(join(dirname(__file__), 'headerparser', '__init__.py')) as fp:
     for line in fp:
         m = re.search(r'^\s*__version__\s*=\s*([\'"])([^\'"]+)\1\s*$', line)
@@ -30,8 +28,8 @@ setup(
     license='MIT',
     author='John Thorvald Wodder II',
     author_email='headerparser@varonathe.org',
-    ###keywords='',
-    ###description='',
+    keywords='e-mail email mail rfc822 headers rfc2822 rfc5322 parser',
+    description='argparse for mail-style headers',
     long_description=long_desc,
     url='https://github.com/jwodder/headerparser',
 
@@ -61,8 +59,11 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
 
         'License :: OSI Approved :: MIT License',
-
-        ###
+        'Intended Audience :: Developers',
+        'Topic :: Communications :: Email',
+        'Topic :: Communications :: Usenet News',
+        'Topic :: Internet :: WWW/HTTP',
+        'Topic :: Text Processing',
     ],
 
     entry_points={

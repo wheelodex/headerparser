@@ -1,9 +1,8 @@
 - Write a README
 - Write docstrings
-- Upload to GitHub
+- Upload to GitHub (*after* all tests start passing!)
 - Integrate with Travis
 - Determine the minimum versions of `attrs` and `six` needed
-- Fill in keywords, classifiers, etc. in `setup.py`
 
 - Write more tests
     - Test `NormalizedDict`
@@ -27,6 +26,8 @@
 - Give `NormalizedDict` a useful `__repr__`
 - Give `NormalizedDict` a `copy` method?
 - Fill in the exception classes
+- Support pickling of `HeaderParser` objects?  (`NIL` currently interferes with
+  that)
 
 
 Features
