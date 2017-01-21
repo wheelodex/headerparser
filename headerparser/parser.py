@@ -41,7 +41,7 @@ class HeaderParser(object):
             try:
                 hd = self.headerdefs[self.normalizer(k)]
             except KeyError:
-                raise UnknownHeaderError  #####
+                raise UnknownHeaderError(k)
             data[hd.dest] = v
         return data
 

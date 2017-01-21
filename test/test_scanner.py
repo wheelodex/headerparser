@@ -58,8 +58,15 @@ Key4:
     ('Key4', '\n\tTab after empty line\n  \n  After an "empty" folded line'),
 ]
 
+def test_no_final_newline():
+    assert list(scan_string('Foo: red\nBar: green\nBaz: blue')) == \
+        [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
 
-### no trailing newline
+def test_leading_newline():
+    assert list(scan_string('\nFoo: red\nBar: green\nBaz: blue\n')) == \
+        [(None, 'Foo: red\nBar: green\nBaz: blue\n')]
+
+
 ### CR
 ### CRLF
 ### mixing line endings

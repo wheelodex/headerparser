@@ -105,16 +105,18 @@ def test_missing_required():
     parser.add_header('Foo')
     parser.add_header('Bar')
     parser.add_header('Baz', required=True)
-    with pytest.raises(headerparser.MissingHeaderError):
+    with pytest.raises(headerparser.MissingHeaderError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\n')
+    assert excinfo.value.header == 'Baz'
 
 def test_missing_required_default():
     parser = HeaderParser()
     parser.add_header('Foo')
     parser.add_header('Bar')
     parser.add_header('Baz', required=True, default='still required')
-    with pytest.raises(headerparser.MissingHeaderError):
+    with pytest.raises(headerparser.MissingHeaderError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\n')
+    assert excinfo.value.header == 'Baz'
 
 def test_present_default():
     parser = HeaderParser()
@@ -171,8 +173,9 @@ def test_bad_multiple():
     parser = HeaderParser()
     parser.add_header('Foo', multiple=True)
     parser.add_header('Bar')
-    with pytest.raises(headerparser.DuplicateHeaderError):
+    with pytest.raises(headerparser.DuplicateHeaderError) as excinfo:
         parser.parse_string('Foo: red\nFOO: magenta\nBar: green\nBar: lime\n')
+    assert excinfo.value.header == 'Bar'
 
 def test_default_multiple():
     parser = HeaderParser()
@@ -218,13 +221,15 @@ def test_missing_required_multiple():
     parser = HeaderParser()
     parser.add_header('Foo', multiple=True, required=True)
     parser.add_header('Bar')
-    with pytest.raises(headerparser.MissingHeaderError):
+    with pytest.raises(headerparser.MissingHeaderError) as excinfo:
         parser.parse_string('Bar: green\n')
+    assert excinfo.value.header == 'Foo'
 
 def test_unknown():
     parser = HeaderParser()
     parser.add_header('Foo')
     parser.add_header('Bar')
     parser.add_header('Baz')
-    with pytest.raises(headerparser.UnknownHeaderError):
+    with pytest.raises(headerparser.UnknownHeaderError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nQuux: blue\n')
+    assert excinfo.value.header == 'Quux'

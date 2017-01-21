@@ -5,13 +5,16 @@ class ParserError(Error, ValueError):
     pass
 
 class MissingHeaderError(ParserError):
-    pass
+    def __init__(self, header):
+        self.header = header
 
 class UnknownHeaderError(ParserError):
-    pass
+    def __init__(self, header):
+        self.header = header
 
 class DuplicateHeaderError(ParserError):
-    pass
+    def __init__(self, header):
+        self.header = header
 
 ### Add a class for failed "choices" constraints
 ### Add a class for a missing body
