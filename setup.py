@@ -40,7 +40,11 @@ setup(
         'six',
     ],
 
-    tests_require=['pytest>=2.8,<3', 'pytest-cov>=2.0,<3'],
+    tests_require=[
+        'pytest>=2.8,<3',
+        'pytest-cov>=2.0,<3',
+        'pytest-flakes>=1.0,<2',
+    ],
 
     classifiers=[
         'Development Status :: 3 - Alpha',
