@@ -1,7 +1,8 @@
 - Write a README
 - Write docstrings
+- Set up a Readthedocs site
 - Upload to GitHub (*after* all tests start passing!)
-- Integrate with Travis
+- Integrate with Travis and Coveralls
 - Determine the minimum versions of `attrs` and `six` needed
 
 - Write more tests
@@ -116,8 +117,13 @@ Parsing
 
 - New `add_header` and `add_additional` options to add:
     - `action=callable`
+        - The callable should take three arguments: the `NormalizedDict` so
+          far, the header name, and the value
     - `mode in ('first', 'last', 'error')` (default: `error`) — defines how to
       handle multiple occurrences of the same header when that header isn't
       `multiple=True`
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
+
+- Give `add_additional` an option for controlling whether to normalize
+  additional header names before adding them to the dict?

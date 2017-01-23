@@ -1,7 +1,8 @@
 from   operator  import methodcaller
 import attr
-from   six       import string_types
-from   .errors   import UnknownHeaderError
+from   six       import itervalues, string_types
+from   .errors   import DuplicateHeaderError, MissingHeaderError, \
+                            UnknownHeaderError
 from   .normdict import NormalizedDict
 from   .scanner  import scan_file, scan_string
 from   .util     import unfold
@@ -38,11 +39,18 @@ class HeaderParser(object):
             if k is None:
                 assert data.body is None
                 data.body = v
-            try:
-                hd = self.headerdefs[self.normalizer(k)]
-            except KeyError:
-                raise UnknownHeaderError(k)
-            data[hd.dest] = v
+            else:
+                try:
+                    hd = self.headerdefs[self.normalizer(k)]
+                except KeyError:
+                    raise UnknownHeaderError(k)
+                hd.process_value(data, v)
+        for hd in itervalues(self.headerdefs):
+            if hd.dest not in data:
+                if hd.required:
+                    raise MissingHeaderError(hd.name)
+                elif hd.default is not NIL:
+                    data[hd.dest] = hd.default
         return data
 
     def parse_file(self, fp):
@@ -63,10 +71,15 @@ class HeaderDef(object):
     unfold   = attr.ib(convert=bool, default=False)
     #choices  = attr.ib(convert=list, default=None, validator=bool)
 
-    def process_value(self, value):
+    def process_value(self, data, value):
         if self.unfold:
             value = unfold(value)
         if self.type is not None:
             value = self.type(value)
         ### choices
-        return value
+        if self.multiple:
+            data.setdefault(self.dest, []).append(value)
+        elif self.dest in data:
+            raise DuplicateHeaderError(self.name)
+        else:
+            data[self.dest] = value

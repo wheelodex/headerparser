@@ -51,11 +51,14 @@ Key4:
 \tTab after empty line
   
   After an "empty" folded line
+Key5:
+ After a line without even a space!
 ''')) == [
     ('Key1', 'Value1\n  Folded\n    More folds'),
     ('Key2', 'Value2\n    Folded\n  Fewer folds'),
     ('Key3', 'Value3\n  Key4: Not a real header'),
     ('Key4', '\n\tTab after empty line\n  \n  After an "empty" folded line'),
+    ('Key5', '\n After a line without even a space!'),
 ]
 
 def test_no_final_newline():
@@ -65,7 +68,6 @@ def test_no_final_newline():
 def test_leading_newline():
     assert list(scan_string('\nFoo: red\nBar: green\nBaz: blue\n')) == \
         [(None, 'Foo: red\nBar: green\nBaz: blue\n')]
-
 
 ### CR
 ### CRLF
