@@ -6,10 +6,11 @@ class NormalizedDict(collections.MutableMapping):
     def __init__(self, data=None, normalizer=methodcaller('lower'), body=None):
         ### Should this do anything special when `data` is a NormalizedDict?
         self._data = {}
-        if data is not None:
-            self.update(data)
         self.normalizer = normalizer
         self.body = body
+        if data is not None:
+            # Don't call `update` until after `normalizer` is set.
+            self.update(data)
 
     def __getitem__(self, key):
         return self._data[self.normalizer(key)][1]
