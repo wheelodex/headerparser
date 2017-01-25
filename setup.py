@@ -36,7 +36,6 @@ setup(
     setup_requires=['pytest-runner>=2.0,<3'],
 
     install_requires=[
-        'attrs',
         'six',
     ],
 

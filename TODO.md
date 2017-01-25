@@ -1,7 +1,7 @@
 - Write a README
 - Write docstrings
 - Set up a Readthedocs site
-- Determine the minimum versions of `attrs` and `six` needed
+- Determine the minimum versions of `six` needed
 
 - Write more tests
     - Test `NormalizedDict`
@@ -25,8 +25,6 @@
 - Give `NormalizedDict` a useful `__repr__`
 - Give `NormalizedDict` a `copy` method?
 - Fill in the exception classes
-- Support pickling of `HeaderParser` objects?  (`NIL` currently interferes with
-  that)
 
 
 Features

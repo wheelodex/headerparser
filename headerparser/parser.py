@@ -1,13 +1,10 @@
 from   operator  import methodcaller
-import attr
 from   six       import itervalues, string_types
 from   .errors   import DuplicateHeaderError, MissingHeaderError, \
                             UnknownHeaderError
 from   .normdict import NormalizedDict
 from   .scanner  import scan_file, scan_string
 from   .util     import unfold
-
-NIL = object()
 
 class HeaderParser(object):
     def __init__(self, normalizer=methodcaller('lower'), body=True):
@@ -49,7 +46,7 @@ class HeaderParser(object):
             if hd.dest not in data:
                 if hd.required:
                     raise MissingHeaderError(hd.name)
-                elif hd.default is not NIL:
+                elif hasattr(hd, 'default'):
                     data[hd.dest] = hd.default
         return data
 
@@ -60,16 +57,24 @@ class HeaderParser(object):
         return self._parse_stream(scan_string(fp))
 
 
-@attr.s
 class HeaderDef(object):
-    name     = attr.ib(validator=attr.validators.instance_of(string_types))
-    dest     = attr.ib(validator=attr.validators.instance_of(string_types))
-    default  = attr.ib(default=NIL)
-    type     = attr.ib(default=None)
-    multiple = attr.ib(convert=bool, default=False)
-    required = attr.ib(convert=bool, default=False)
-    unfold   = attr.ib(convert=bool, default=False)
-    #choices  = attr.ib(convert=list, default=None, validator=bool)
+    def __init__(self, name, dest, type=None, multiple=False, required=False,
+                 unfold=False, **kwargs):
+        if not isinstance(name, string_types):
+            raise TypeError('header names must be strings')
+        self.name = name
+        self.dest = dest
+        self.type = type
+        self.multiple = bool(multiple)
+        self.required = bool(required)
+        self.unfold = bool(unfold)
+        if 'default' in kwargs:
+            self.default = kwargs.pop('default')
+        if kwargs:
+            raise TypeError('invalid keyword argument: '
+                            + repr(next(iter(kwargs))))
+
+    ###choices  = attr.ib(convert=list, default=None, validator=bool)
 
     def process_value(self, data, value):
         if self.unfold:
