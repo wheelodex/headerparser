@@ -1,7 +1,6 @@
 - Write a README
 - Write docstrings
 - Set up a Readthedocs site
-- Determine the minimum versions of `six` needed
 
 - Write more tests
     - Test `NormalizedDict`
