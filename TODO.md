@@ -1,8 +1,6 @@
 - Write a README
 - Write docstrings
 - Set up a Readthedocs site
-- Upload to GitHub (*after* all tests start passing!)
-- Integrate with Travis and Coveralls
 - Determine the minimum versions of `attrs` and `six` needed
 
 - Write more tests
