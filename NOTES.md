@@ -1,9 +1,3 @@
-- Potentially relevant mapping classes:
-    - <https://pypi.python.org/pypi/multidict>
-    - <https://github.com/kennethreitz/requests/blob/5524472cc76ea00d64181505f1fbb7f93f11cc2b/requests/structures.py#L15>
-
----
-
 Relevant extracts from <https://tools.ietf.org/html/rfc5322>:
 
 §2.1:
@@ -27,3 +21,24 @@ Relevant extracts from <https://tools.ietf.org/html/rfc5322>:
     CR and LF except when used in "folding" and "unfolding", as described in
     section 2.2.3.  All field bodies MUST conform to the syntax described in
     sections 3 and 4 of this specification.
+
+--------------------------------------------------------------------------------
+
+Additional relevant RFCs:
+
+- On internationalization:
+    - <https://tools.ietf.org/html/rfc2047> — MIME Part Three: Message Header
+      Extensions for Non-ASCII Text
+    - <https://tools.ietf.org/html/rfc2231> — MIME Parameter Value and Encoded
+      Word Extensions: Character Sets, Languages, and Continuations
+    - <https://tools.ietf.org/html/rfc6532> — Internationalized Email Headers
+
+- On header fields with "parameterized" syntax:
+    - <https://tools.ietf.org/html/rfc2045>, §5.1 — Syntax of the Content-Type
+      Header Field
+    - <https://tools.ietf.org/html/rfc5988>, §5 — The Link Header Field
+    - <https://tools.ietf.org/html/rfc7239>, §4 — Forwarded HTTP Header Field
+    - <https://tools.ietf.org/html/rfc2183> — The Content-Disposition Header
+      Field
+
+See also: <http://www.iana.org/assignments/message-headers/message-headers.xml>

@@ -72,3 +72,4 @@ def test_normalized_dict():
 ### eq with different bodies
 ### eq against a normal dict
 ### different normalizers (identity, hyphens=underscores, titlecase?, etc.)
+### copy

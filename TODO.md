@@ -22,13 +22,20 @@
         - Defining a header and a `dest` with the same name after normalization
 
 - Give `NormalizedDict` a useful `__repr__`
-- Give `NormalizedDict` a `copy` method?
 - Fill in the exception classes
 
 
 Features
 ========
 - Add some sort of handling for "From " lines
+    - Give `NormalizedDict` a `from_line` attribute
+    - Give the scanner a `from_line_regex` parameter; if the first line of a
+      stanza matches the regex, it is assumed to be a "From" line, and the
+      scanner yields `(line, None)`
+    - Give the parser an option for requiring a "From" line
+    - Export premade regexes for matching Unix mail "From " lines, HTTP
+      request lines, and HTTP response status lines
+
 - Add a scanner function (and parser methods) that takes an iterator of lines
   and only consumes the header lines and the terminating blank line, leaving
   the body in the iterator
@@ -87,7 +94,7 @@ Scanning
 
 Parsing
 -------
-- Add a separate "`HeaderBytesParser`" class that decodes headers (or just
+- Add a separate "`BytesHeaderParser`" class that decodes headers (or just
   names? neither?) and leaves the body as bytes
     - Give its `parse*` methods `encoding` parameters?
 
@@ -99,7 +106,7 @@ Parsing
     - `BOOL` - supports yes/no, 1/0, and true/false (all case-insensitive)
     - RFC822 dates, addresses, etc.
     - Content-Type-style "parameterized" headers
-        - Include an `object_pairs_hook` for the parameters
+        - Include an `object_pairs_hook` for the parameters?
     - internationalized strings
     - converting lines with just '.' to blank lines
     - Somehow support the types in `email.headerregistry`
@@ -119,6 +126,7 @@ Parsing
       `multiple=True`
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
+    - `rm_comments` — Remove RFC 822 comments from header values?
 
 - Give `add_additional` an option for controlling whether to normalize
   additional header names before adding them to the dict?

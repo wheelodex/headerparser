@@ -52,3 +52,6 @@ class NormalizedDict(collections.MutableMapping):
 
     def normalized_dict(self):
         return dict((key, value) for key, (_, value) in iteritems(self._data))
+
+    def copy(self):
+        return self.__class__(self._data.copy(), self.normalizer, self.body)
