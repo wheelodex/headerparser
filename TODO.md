@@ -1,6 +1,7 @@
 - Write a README
 - Write docstrings
 - Set up a Readthedocs site
+- Fill in the exception classes
 
 - Write more tests
     - Test `NormalizedDict`
@@ -20,9 +21,6 @@
         - Defining the same `dest` more than once
         - Defining a header and a `dest` with the same name before normalization
         - Defining a header and a `dest` with the same name after normalization
-
-- Give `NormalizedDict` a useful `__repr__`
-- Fill in the exception classes
 
 
 Features
