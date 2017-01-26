@@ -1,7 +1,7 @@
 from   operator  import methodcaller
 from   six       import itervalues, string_types
 from   .errors   import DuplicateHeaderError, MissingHeaderError, \
-                            UnknownHeaderError
+                            RedefinitionError, UnknownHeaderError
 from   .normdict import NormalizedDict
 from   .scanner  import scan_file, scan_string
 from   .util     import unfold
@@ -19,10 +19,11 @@ class HeaderParser(object):
         hd = HeaderDef(name=name, **kwargs)
         normed = set(map(self.normalizer, (name,) + altnames))
         # Error before modifying anything:
-        if any(n in normed for n in self.headerdefs):
-            raise ValueError ###
+        redefs = [n for n in self.headerdefs if n in normed]
+        if redefs:
+            raise RedefinitionError(header=redefs[0])
         if hd.dest in self.dests:
-            raise ValueError ###
+            raise RedefinitionError(dest=hd.dest)
         for n in normed:
             self.headerdefs[n] = hd
         self.dests.add(hd.dest)

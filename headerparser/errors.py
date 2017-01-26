@@ -29,3 +29,9 @@ class MalformedHeaderError(ScannerError):
 
 class UnexpectedFoldingError(ScannerError):
     pass
+
+
+class RedefinitionError(Error, ValueError):
+    def __init__(self, header=None, dest=None):
+        self.header = header
+        self.dest = dest
