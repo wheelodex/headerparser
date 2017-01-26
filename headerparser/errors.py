@@ -16,6 +16,11 @@ class DuplicateHeaderError(ParserError):
     def __init__(self, header):
         self.header = header
 
+class HeaderTypeError(ParserError):
+    def __init__(self, typename, value):
+        self.typename = typename
+        self.value = value
+
 ### Add a class for failed "choices" constraints
 ### Add a class for a missing body
 ### Add a class for an unexpected body
@@ -29,7 +34,6 @@ class MalformedHeaderError(ScannerError):
 
 class UnexpectedFoldingError(ScannerError):
     pass
-
 
 class RedefinitionError(Error, ValueError):
     def __init__(self, header=None, dest=None):

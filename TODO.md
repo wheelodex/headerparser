@@ -6,11 +6,13 @@
 - Write more tests
     - Test `NormalizedDict`
     - Header definition options:
-        - `"type"`
-        - `"choices"`
-        - `"unfold"`
-        - `"dest"`
+        - `type`
+        - `choices`
+        - `type` + `choices`
+        - `unfold`
+        - `dest`
         - multiple names for the same header
+        - `required=True` + a header value set (via `type`) to `None`
     - different header name normalizers (identity, hyphens=underscores,
       titlecase?, etc.)
     - `add_additional`
@@ -101,7 +103,6 @@ Parsing
   formats)
 
 - Include utility callables for header types:
-    - `BOOL` - supports yes/no, 1/0, and true/false (all case-insensitive)
     - RFC822 dates, addresses, etc.
     - Content-Type-style "parameterized" headers
         - Include an `object_pairs_hook` for the parameters?
