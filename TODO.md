@@ -2,11 +2,15 @@
 - Write docstrings
 - Set up a Readthedocs site
 - Fill in the exception classes
+    - Add an exception class for a missing body
+    - Add an exception class for an unexpected body
+    - Try to include the header name in `HeaderTypeError`s
 
 - Write more tests
     - Test `NormalizedDict`
     - Header definition options:
         - `type`
+            - builtin type as `type`
         - `choices`
         - `type` + `choices`
         - `unfold`

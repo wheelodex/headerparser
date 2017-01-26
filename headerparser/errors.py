@@ -21,10 +21,10 @@ class HeaderTypeError(ParserError):
         self.typename = typename
         self.value = value
 
-### Add a class for failed "choices" constraints
-### Add a class for a missing body
-### Add a class for an unexpected body
-### Add a class for "type" failures?
+class InvalidChoiceError(ParserError):
+    def __init__(self, header, value):
+        self.header = header
+        self.value = value
 
 class ScannerError(Error, ValueError):
     pass
