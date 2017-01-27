@@ -11,8 +11,6 @@
     - Header definition options:
         - `type`
             - builtin type as `type`
-        - `choices`
-        - `type` + `choices`
         - `unfold`
         - `dest`
         - multiple names for the same header
@@ -113,6 +111,9 @@ Parsing
     - internationalized strings
     - converting lines with just '.' to blank lines
     - Somehow support the types in `email.headerregistry`
+    - Provide a `Normalizer` class with options for casing, trimming
+      whitespace, squashing whitespace, converting hyphens and underscores to
+      the same character, squashing hyphens & underscores, etc.
 
 - Add an option to the parser for requiring that headers occur in the order
   that they are defined?  (The PEP parsing code would appreciate this.)

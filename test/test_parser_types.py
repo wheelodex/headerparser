@@ -59,3 +59,11 @@ def test_bool_and_not_bool():
     msg = parser.parse_string('Boolean: yes\nString: no\n')
     assert dict(msg) == {'Boolean': True, 'String': 'no'}
     assert msg.body is None
+
+def test_bool_choices_bad_type():
+    parser = HeaderParser()
+    parser.add_header('Boolean', type=BOOL, choices=(False, 'foo'))
+    with pytest.raises(HeaderTypeError) as excinfo:
+        parser.parse_string('BOOLEAN: foo\n')
+    assert excinfo.value.typename == 'BOOL'
+    assert excinfo.value.value == 'foo'
