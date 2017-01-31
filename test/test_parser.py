@@ -234,5 +234,24 @@ def test_unknown():
         parser.parse_string('Foo: red\nBar: green\nQuux: blue\n')
     assert excinfo.value.header == 'Quux'
 
-### Trailing whitespace in a value
-### empty input
+def test_empty_input():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_header('Baz')
+    msg = parser.parse_string('')
+    assert dict(msg) == {}
+    assert msg.body is None
+
+def test_trailing_whitespace():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_header('Baz')
+    msg = parser.parse_string('Foo: red  \nBar: green\n (ish) \nBaz: blue\n   ')
+    assert dict(msg) == {
+        'Foo': 'red  ',
+        'Bar': 'green\n (ish) ',
+        'Baz': 'blue\n   ',
+    }
+    assert msg.body is None
