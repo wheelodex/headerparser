@@ -66,10 +66,34 @@ def test_normalized_dict():
     assert isinstance(nd2, dict)
     assert nd2 == {"foo": "BAR"}
 
+def test_eq_dict():
+    nd = NormalizedDict({"Foo": "BAR"})
+    assert nd == {"Foo": "BAR"}
+    assert {"Foo": "BAR"} == nd
+    assert nd == {"FOO": "BAR"}
+    assert {"FOO": "BAR"} == nd
+    assert nd == {"foo": "BAR"}
+    assert {"foo": "BAR"} == nd
+    assert nd != {"Foo": "bar"}
+    assert {"Foo": "bar"} != nd
+
+def test_body_neq_dict():
+    nd = NormalizedDict({"Foo": "BAR"}, body='')
+    assert nd != {"Foo": "BAR"}
+    assert {"Foo": "BAR"} != nd
+
+def test_eq_body():
+    nd = NormalizedDict({"Foo": "bar"}, body='')
+    nd2 = NormalizedDict({"fOO": "bar"}, body='')
+    assert nd == nd2
+
+def test_neq_body():
+    nd = NormalizedDict({"Foo": "bar"}, body='yes')
+    nd2 = NormalizedDict({"fOO": "bar"}, body='no')
+    assert nd != nd2
+
 
 ### delitem
 ### eq with different normalizers
-### eq with different bodies
-### eq against a normal dict
 ### different normalizers (identity, hyphens=underscores, titlecase?, etc.)
 ### copy
