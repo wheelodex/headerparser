@@ -21,11 +21,11 @@ class HeaderParser(object):
         redefs = [n for n in self.headerdefs if n in normed]
         if redefs:
             raise errors.RedefinitionError(header=redefs[0])
-        if hd.dest in self.dests:
+        if self.normalizer(hd.dest) in self.dests:
             raise errors.RedefinitionError(dest=hd.dest)
         for n in normed:
             self.headerdefs[n] = hd
-        self.dests.add(hd.dest)
+        self.dests.add(self.normalizer(hd.dest))
         if hd.required:
             self.required.append(hd)
 
@@ -53,8 +53,8 @@ class HeaderParser(object):
     def parse_file(self, fp):
         return self._parse_stream(scan_file(fp))
 
-    def parse_string(self, fp):
-        return self._parse_stream(scan_string(fp))
+    def parse_string(self, s):
+        return self._parse_stream(scan_string(s))
 
 
 class HeaderDef(object):

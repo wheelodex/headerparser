@@ -27,7 +27,7 @@ Has all of the arguments of `add_header` except:
 
 - `name`
 - `*altnames`
-- `dest` (?)
+- `dest`
 - `required`
 - `default`
 

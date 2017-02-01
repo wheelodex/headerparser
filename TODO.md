@@ -14,17 +14,13 @@
         - `unfold`
         - `dest`
         - multiple names for the same header
+            - Defining the same header more than once
         - `required=True` + a header value set (via `type`) to `None`
     - different header name normalizers (identity, hyphens=underscores,
       titlecase?, etc.)
     - `add_additional`
     - `body=False`
     - scanning/parsing multiple stanzas
-    - Trying to define the same header and/or `dest` more than once
-        - Defining the same header more than once
-        - Defining the same `dest` more than once
-        - Defining a header and a `dest` with the same name before normalization
-        - Defining a header and a `dest` with the same name after normalization
 
 
 Features

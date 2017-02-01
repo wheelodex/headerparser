@@ -255,3 +255,5 @@ def test_trailing_whitespace():
         'Baz': 'blue\n   ',
     }
     assert msg.body is None
+
+### multiple required headers, all missing (Check that the error is for one of them but don't care about which one)
