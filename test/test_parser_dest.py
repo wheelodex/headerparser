@@ -94,3 +94,5 @@ def test_dest_multiple():
     msg = parser.parse_string('Foo: red\nFoo: green\nFoo: blue')
     assert dict(msg) == {'list': ['red', 'green', 'blue']}
     assert msg.body is None
+
+### dest in input -> UnknownHeaderError

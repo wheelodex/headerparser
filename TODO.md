@@ -12,9 +12,6 @@
         - `type`
             - builtin type as `type`
         - `unfold`
-        - `dest`
-        - multiple names for the same header
-            - Defining the same header more than once
         - `required=True` + a header value set (via `type`) to `None`
     - different header name normalizers (identity, hyphens=underscores,
       titlecase?, etc.)
@@ -127,6 +124,8 @@ Parsing
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
     - `rm_comments` — Remove RFC 822 comments from header values?
+    - a stronger version of `unfold` that also squashes whitespace around the
+      line break into a single space?
 
 - Give `add_additional` an option for controlling whether to normalize
   additional header names before adding them to the dict?

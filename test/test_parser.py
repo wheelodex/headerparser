@@ -256,4 +256,12 @@ def test_trailing_whitespace():
     }
     assert msg.body is None
 
+def test_redefinition():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    with pytest.raises(headerparser.RedefinitionError) as excinfo:
+        parser.add_header('FOO')
+    assert excinfo.value.header == 'foo'
+    assert excinfo.value.dest is None
+
 ### multiple required headers, all missing (Check that the error is for one of them but don't care about which one)
