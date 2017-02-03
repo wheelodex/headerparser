@@ -74,6 +74,8 @@ class HeaderDef(object):
                 raise ValueError('empty list supplied for choices')
         self.choices = choices
         if 'default' in kwargs:
+            if self.required:
+                raise ValueError('required and default are mutually exclusive')
             self.default = kwargs.pop('default')
         if kwargs:
             raise TypeError('invalid keyword argument: '

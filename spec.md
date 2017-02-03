@@ -16,7 +16,7 @@
 - `dest=str` — Prohibited when additional headers are allowed
 - `required=bool`
 - `choices=seq` — applied after `type`
-- `default=...` — Prohibited when `required=True`?
+- `default=...` — Prohibited when `required=True`
 - `unfold=bool` — If true, newlines are removed from the value before passing
   it to the `type` callable (if any)
 

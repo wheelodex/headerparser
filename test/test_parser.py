@@ -93,27 +93,15 @@ def test_required():
 
 def test_required_default():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz', required=True, default='This will never be used.')
-    msg = parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
-    assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
-    assert msg.body is None
+    with pytest.raises(ValueError) as excinfo:
+        parser.add_header('Foo', required=True, default='Why?')
+    assert 'required and default are mutually exclusive' in str(excinfo.value)
 
 def test_missing_required():
     parser = HeaderParser()
     parser.add_header('Foo')
     parser.add_header('Bar')
     parser.add_header('Baz', required=True)
-    with pytest.raises(headerparser.MissingHeaderError) as excinfo:
-        parser.parse_string('Foo: red\nBar: green\n')
-    assert excinfo.value.header == 'Baz'
-
-def test_missing_required_default():
-    parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz', required=True, default='still required')
     with pytest.raises(headerparser.MissingHeaderError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\n')
     assert excinfo.value.header == 'Baz'
