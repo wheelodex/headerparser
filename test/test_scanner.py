@@ -69,6 +69,30 @@ def test_leading_newline():
     assert list(scan_string('\nFoo: red\nBar: green\nBaz: blue\n')) == \
         [(None, 'Foo: red\nBar: green\nBaz: blue\n')]
 
-### CR
-### CRLF
-### mixing line endings
+def test_cr_terminated():
+    assert list(scan_string('Foo: red\rBar: green\rBaz: blue\r')) == \
+        [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
+
+def test_crlf_terminated():
+    assert list(scan_string('Foo: red\r\nBar: green\r\nBaz: blue\r\n')) == \
+        [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
+
+def test_mixed_terminators():
+    assert list(scan_string('Foo: red\nBar: green\rBaz: blue\r\n')) == \
+        [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
+
+def test_mixed_folded():
+    assert list(scan_string(
+        'Foo: line\n'
+        '  feed\n'
+        'Bar: carriage\r'
+        '  return\r'
+        'Baz: CR\r\n'
+        '  LF\r\n'
+    )) == [
+        ('Foo', 'line\n  feed'),
+        ('Bar', 'carriage\n  return'),
+        ('Baz', 'CR\n  LF'),
+    ]
+
+### multiple occurrences of the same header?

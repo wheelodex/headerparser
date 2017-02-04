@@ -95,4 +95,9 @@ def test_dest_multiple():
     assert dict(msg) == {'list': ['red', 'green', 'blue']}
     assert msg.body is None
 
-### dest in input -> UnknownHeaderError
+def test_dest_as_unknown_header():
+    parser = HeaderParser()
+    parser.add_header('Foo', dest='Bar')
+    with pytest.raises(headerparser.UnknownHeaderError) as excinfo:
+        parser.parse_string('Bar: not a header')
+    assert excinfo.value.header == 'Bar'

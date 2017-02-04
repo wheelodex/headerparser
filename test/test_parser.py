@@ -252,4 +252,11 @@ def test_redefinition():
     assert excinfo.value.header == 'foo'
     assert excinfo.value.dest is None
 
-### multiple required headers, all missing (Check that the error is for one of them but don't care about which one)
+def test_many_missing_required():
+    parser = HeaderParser()
+    parser.add_header('Foo', required=True)
+    parser.add_header('Bar', required=True)
+    parser.add_header('Baz', required=True)
+    with pytest.raises(headerparser.MissingHeaderError) as excinfo:
+        parser.parse_string('')
+    assert excinfo.value.header in ('Foo', 'Bar', 'Baz')
