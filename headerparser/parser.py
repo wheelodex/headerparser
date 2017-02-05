@@ -85,8 +85,6 @@ class HeaderDef(object):
         if self.unfold:
             value = unfold(value)
         if self.type is not None:
-            ### TODO: Wrap this in a try: block that reraises errors as
-            ### HeaderTypeErrors?
             value = self.type(value)
         if self.choices is not None and value not in self.choices:
             raise errors.InvalidChoiceError(self.name, value)

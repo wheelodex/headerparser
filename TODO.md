@@ -5,6 +5,12 @@
     - Add an exception class for a missing body
     - Add an exception class for an unexpected body
     - Try to include the header name in `HeaderTypeError`s
+- Should string `default` values be passed through `type` etc. like in
+  argparse?
+- If the `type` callable raises an error of any type other than
+  `HeaderTypeError`, catch it and re-raise it wrapped in a `HeaderTypeError`
+  that includes the header name
+- Replace `RedefinitionError` with a plain `ValueError`?
 
 - Write more tests
     - Test `NormalizedDict`
@@ -35,6 +41,12 @@ Features
   and only consumes the header lines and the terminating blank line, leaving
   the body in the iterator
 
+- Support binary input
+    - Add a `bytes` variant of the scanner
+    - Add a separate "`BytesHeaderParser`" class that decodes headers (or just
+      names? neither?) and leaves the body as bytes
+        - Give its `parse*` methods `encoding` parameters?
+
 - Write an entry point for converting RFC822-style files/headers to JSON
     - name: `mail2json`?
     - include options for:
@@ -59,27 +71,20 @@ Features
 
 Scanning
 --------
-- Add a `bytes` variant of the scanner
-
 - Give the scanner options for:
-    - allowed characters in header names (standard: printable ASCII characters
-      other than colon and whitespace)
-        - whether to allow non-ASCII characters in header names
+    - header name-value delimiter (standard/default: just a colon)
     - definition of "whitespace" for purposes of unfolding (standard: 0x20 and
       TAB)
     - line separator/terminator (default: CR, LF, and CRLF; standard: only
       CRLF)
         - handling of lone CR and LF when CRLF is used as the line separator
           (standard: obsolete)
-    - header name-value delimiter (standard/default: just a colon)
-        - Doesn't this make the "allowed characters in header names" option
-          unnecessary?
-    - stripping whitespace (definable?) after the name-value delimiter?
     - stripping leading whitespace from folded lines? (standard: no)
     - handling "From " lines and the like
     - skipping empty lines at the beginning of the input (instead of treating
       them as ending an empty header stanza)
     - comments? (cf. robots.txt)
+    - internationalization of header names?
     - Error handling:
         - header lines without a colon or indentation (options: error, header
           with empty value, or start of body)
@@ -89,10 +94,6 @@ Scanning
 
 Parsing
 -------
-- Add a separate "`BytesHeaderParser`" class that decodes headers (or just
-  names? neither?) and leaves the body as bytes
-    - Give its `parse*` methods `encoding` parameters?
-
 - Add built-in support for multi-stanza documents in which different stanzas
   follow different schemata? (e.g., one of the Debian source control file
   formats)
@@ -118,9 +119,8 @@ Parsing
     - `action=callable`
         - The callable should take three arguments: the `NormalizedDict` so
           far, the header name, and the value
-    - `mode in ('first', 'last', 'error')` (default: `error`) — defines how to
-      handle multiple occurrences of the same header when that header isn't
-      `multiple=True`
+        - When `action` is defined, `dest` and `multiple` (and `default`?)
+          cannot be
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
     - `rm_comments` — Remove RFC 822 comments from header values?

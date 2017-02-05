@@ -26,6 +26,8 @@ Relevant extracts from <https://tools.ietf.org/html/rfc5322>:
 
 Additional relevant RFCs:
 
+- <https://tools.ietf.org/html/rfc5536> — Netnews Article Format
+
 - On internationalization:
     - <https://tools.ietf.org/html/rfc2047> — MIME Part Three: Message Header
       Extensions for Non-ASCII Text
