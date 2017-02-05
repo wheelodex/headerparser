@@ -1,4 +1,6 @@
-from headerparser import scan_string
+import pytest
+import headerparser
+from   headerparser import scan_string
 
 def test_simple():
     assert list(scan_string('Foo: red\nBar: green\nBaz: blue\n')) == \
@@ -81,7 +83,7 @@ def test_mixed_terminators():
     assert list(scan_string('Foo: red\nBar: green\rBaz: blue\r\n')) == \
         [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
 
-def test_mixed_folded():
+def test_mixed_folding():
     assert list(scan_string(
         'Foo: line\n'
         '  feed\n'
@@ -94,5 +96,15 @@ def test_mixed_folded():
         ('Bar', 'carriage\n  return'),
         ('Baz', 'CR\n  LF'),
     ]
+
+def test_malformed_header():
+    with pytest.raises(headerparser.MalformedHeaderError) as excinfo:
+        list(scan_string('Foo: red\nBar green\nBaz: blue\n'))
+    assert excinfo.value.line == 'Bar green'
+
+def test_unexpected_folding():
+    with pytest.raises(headerparser.UnexpectedFoldingError) as excinfo:
+        list(scan_string(' Foo: red\nBar green\nBaz: blue\n'))
+    assert excinfo.value.line == ' Foo: red'
 
 ### multiple occurrences of the same header?

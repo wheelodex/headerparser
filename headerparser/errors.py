@@ -30,10 +30,12 @@ class ScannerError(Error, ValueError):
     pass
 
 class MalformedHeaderError(ScannerError):
-    pass
+    def __init__(self, line):
+        self.line = line
 
 class UnexpectedFoldingError(ScannerError):
-    pass
+    def __init__(self, line):
+        self.line = line
 
 class RedefinitionError(Error, ValueError):
     def __init__(self, header=None, dest=None):

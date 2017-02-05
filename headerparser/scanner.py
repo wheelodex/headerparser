@@ -11,13 +11,15 @@ from .util   import ascii_splitlines
 # rather than EOF
 
 def scan_string(s):
-    lineiter = iter(ascii_splitlines(s, True))
-    return _scan_lines(lineiter)
+    return _scan_lines(ascii_splitlines(s, True))
 
 def scan_file(fp):
+    ### TODO: Handle files not opened in universal newlines mode?
     return _scan_lines(fp)
 
-def _scan_lines(lineiter):
+def _scan_lines(iterable):
+    ### Make this public?
+    lineiter = iter(iterable)
     name  = None
     value = ''
     eof   = False
@@ -27,7 +29,7 @@ def _scan_lines(lineiter):
             if name is not None:
                 value += '\n' + line
             else:
-                raise UnexpectedFoldingError  ### TODO
+                raise UnexpectedFoldingError(line)
         elif ':' in line:
             if name is not None:
                 yield (name, value)
@@ -37,7 +39,7 @@ def _scan_lines(lineiter):
         elif line == '':
             break
         else:
-            raise MalformedHeaderError  ### TODO
+            raise MalformedHeaderError(line)
     else:
         eof = True
     if name is not None:
