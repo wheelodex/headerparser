@@ -17,9 +17,10 @@ class DuplicateHeaderError(ParserError):
         self.header = header
 
 class HeaderTypeError(ParserError):
-    def __init__(self, typename, value):
-        self.typename = typename
+    def __init__(self, header, value, exc_value):
+        self.header = header
         self.value = value
+        self.exc_value = exc_value
 
 class InvalidChoiceError(ParserError):
     def __init__(self, header, value):

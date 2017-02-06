@@ -4,19 +4,14 @@
 - Fill in the exception classes
     - Add an exception class for a missing body
     - Add an exception class for an unexpected body
-    - Try to include the header name in `HeaderTypeError`s
 - Should string `default` values be passed through `type` etc. like in
   argparse?
-- If the `type` callable raises an error of any type other than
-  `HeaderTypeError`, catch it and re-raise it wrapped in a `HeaderTypeError`
-  that includes the header name
 - Replace `RedefinitionError` with a plain `ValueError`?
+- Rethink how the original exception data is attached to `HeaderTypeError`s
 
 - Write more tests
     - Test `NormalizedDict`
     - Header definition options:
-        - `type`
-            - builtin type as `type`
         - `unfold`
         - `required=True` + a header value set (via `type`) to `None`
     - different header name normalizers (identity, hyphens=underscores,
@@ -108,6 +103,8 @@ Parsing
     - Provide a `Normalizer` class with options for casing, trimming
       whitespace, squashing whitespace, converting hyphens and underscores to
       the same character, squashing hyphens & underscores, etc.
+    - unfolding if & only if the first line of the value contains any
+      non-whitespace? (cf. most multiline fields in Debian control files)
 
 - Add an option to the parser for requiring that headers occur in the order
   that they are defined?  (The PEP parsing code would appreciate this.)

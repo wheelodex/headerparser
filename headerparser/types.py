@@ -1,5 +1,3 @@
-from .errors import HeaderTypeError
-
 TRUTHY = set(['yes', 'y', 'on',  'true',  '1'])
 FALSEY = set(['no',  'n', 'off', 'false', '0'])
 
@@ -12,4 +10,4 @@ def BOOL(s):
     elif b in FALSEY:
         return False
     else:
-        raise HeaderTypeError('BOOL', s)
+        raise ValueError('invalid boolean: ' + repr(s))
