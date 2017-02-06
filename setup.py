@@ -33,9 +33,7 @@ setup(
     long_description=long_desc,
     url='https://github.com/jwodder/headerparser',
 
-    setup_requires=['pytest-runner~=2.0'],
     install_requires=['six~=1.1'],
-    tests_require=['pytest~=3.0', 'pytest-cov~=2.0', 'pytest-flakes~=1.0'],
 
     classifiers=[
         'Development Status :: 3 - Alpha',
