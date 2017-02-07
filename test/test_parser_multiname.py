@@ -35,10 +35,9 @@ def test_multiname_bad_multiple():
 def test_multiname_conflict():
     parser = HeaderParser()
     parser.add_header('Foo', 'Bar', multiple=True)
-    with pytest.raises(headerparser.RedefinitionError) as excinfo:
+    with pytest.raises(ValueError) as excinfo:
         parser.add_header('Baz', 'BAR')
-    assert excinfo.value.header == 'bar'
-    assert excinfo.value.dest is None
+    assert 'header defined more than once' in str(excinfo.value)
 
 def test_multiname_dest():
     parser = HeaderParser()

@@ -14,26 +14,30 @@ def test_dest():
 def test_dest_conflict():
     parser = HeaderParser()
     parser.add_header('Foo', dest='quux')
-    with pytest.raises(headerparser.RedefinitionError) as excinfo:
+    with pytest.raises(ValueError) as excinfo:
         parser.add_header('Bar', dest='QUUX')
-    assert excinfo.value.header is None
-    assert excinfo.value.dest == 'QUUX'
+    assert 'destination defined more than once' in str(excinfo.value)
 
 def test_header_vs_eq_dest():
     parser = HeaderParser()
     parser.add_header('Foo')
-    with pytest.raises(headerparser.RedefinitionError) as excinfo:
+    with pytest.raises(ValueError) as excinfo:
         parser.add_header('Bar', dest='Foo')
-    assert excinfo.value.header is None
-    assert excinfo.value.dest == 'Foo'
+    assert 'destination defined more than once' in str(excinfo.value)
 
 def test_header_vs_like_dest():
     parser = HeaderParser()
     parser.add_header('Foo')
-    with pytest.raises(headerparser.RedefinitionError) as excinfo:
+    with pytest.raises(ValueError) as excinfo:
         parser.add_header('Bar', dest='foo')
-    assert excinfo.value.header is None
-    assert excinfo.value.dest == 'foo'
+    assert 'destination defined more than once' in str(excinfo.value)
+
+def test_dest_vs_eq_header():
+    parser = HeaderParser()
+    parser.add_header('Bar', dest='Foo')
+    with pytest.raises(ValueError) as excinfo:
+        parser.add_header('Foo')
+    assert 'destination defined more than once' in str(excinfo.value)
 
 def test_header_eq_dest():
     parser = HeaderParser()

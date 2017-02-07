@@ -20,9 +20,10 @@ class HeaderParser(object):
         # Error before modifying anything:
         redefs = [n for n in self.headerdefs if n in normed]
         if redefs:
-            raise errors.RedefinitionError(header=redefs[0])
+            raise ValueError('header defined more than once: '+repr(redefs[0]))
         if self.normalizer(hd.dest) in self.dests:
-            raise errors.RedefinitionError(dest=hd.dest)
+            raise ValueError('destination defined more than once: '
+                             + repr(hd.dest))
         for n in normed:
             self.headerdefs[n] = hd
         self.dests.add(self.normalizer(hd.dest))

@@ -247,10 +247,9 @@ def test_trailing_whitespace():
 def test_redefinition():
     parser = HeaderParser()
     parser.add_header('Foo')
-    with pytest.raises(headerparser.RedefinitionError) as excinfo:
+    with pytest.raises(ValueError) as excinfo:
         parser.add_header('FOO')
-    assert excinfo.value.header == 'foo'
-    assert excinfo.value.dest is None
+    assert 'header defined more than once' in str(excinfo.value)
 
 def test_many_missing_required():
     parser = HeaderParser()

@@ -9,7 +9,6 @@ from .errors   import (
                             ScannerError,
                                 MalformedHeaderError,
                                 UnexpectedFoldingError,
-                            RedefinitionError,
                       )
 from .normdict import NormalizedDict
 from .parser   import HeaderParser
@@ -33,7 +32,6 @@ __all__ = [
     'MissingHeaderError',
     'NormalizedDict',
     'ParserError',
-    'RedefinitionError',
     'ScannerError',
     'UnexpectedFoldingError',
     'UnknownHeaderError',

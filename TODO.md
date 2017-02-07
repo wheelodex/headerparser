@@ -6,7 +6,6 @@
     - Add an exception class for an unexpected body
 - Should string `default` values be passed through `type` etc. like in
   argparse?
-- Replace `RedefinitionError` with a plain `ValueError`?
 - Rethink how the original exception data is attached to `HeaderTypeError`s
 
 - Write more tests

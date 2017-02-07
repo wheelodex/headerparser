@@ -37,8 +37,3 @@ class MalformedHeaderError(ScannerError):
 class UnexpectedFoldingError(ScannerError):
     def __init__(self, line):
         self.line = line
-
-class RedefinitionError(Error, ValueError):
-    def __init__(self, header=None, dest=None):
-        self.header = header
-        self.dest = dest
