@@ -15,53 +15,59 @@ def test_blank_body():
         [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'), (None, '\n')]
 
 def test_body():
-    assert list(scan_string('Foo: red\nBar: green\nBaz: blue\n\nThis is a test.')) == \
-        [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'), (None, 'This is a test.')]
+    assert list(scan_string(
+        'Foo: red\n'
+        'Bar: green\n'
+        'Baz: blue\n'
+        '\n'
+        'This is a test.'
+    )) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'),
+           (None, 'This is a test.')]
 
 def test_headerlike_body():
-    assert list(scan_string('''\
-Foo: red
-Bar: green
-Baz: blue
-
-Foo: quux
-Bar: glarch
-Baz: cleesh
-''')) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'),
-          (None, 'Foo: quux\nBar: glarch\nBaz: cleesh\n')]
+    assert list(scan_string(
+        'Foo: red\n'
+        'Bar: green\n'
+        'Baz: blue\n'
+        '\n'
+        'Foo: quux\n'
+        'Bar: glarch\n'
+        'Baz: cleesh\n'
+    )) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'),
+           (None, 'Foo: quux\nBar: glarch\nBaz: cleesh\n')]
 
 def test_circumcolon_whitespace():
-    assert list(scan_string('''\
-Key1: Value1
-Key2 :Value2
-Key3 : Value3
-Key4:Value4
-''')) == [('Key1', 'Value1'), ('Key2', 'Value2'), ('Key3', 'Value3'),
+    assert list(scan_string(
+        'Key1: Value1\n'
+        'Key2 :Value2\n'
+        'Key3 : Value3\n'
+        'Key4:Value4\n'
+    )) == [('Key1', 'Value1'), ('Key2', 'Value2'), ('Key3', 'Value3'),
           ('Key4', 'Value4')]
 
 def test_folding():
-    assert list(scan_string('''\
-Key1: Value1
-  Folded
-    More folds
-Key2: Value2
-    Folded
-  Fewer folds
-Key3: Value3
-  Key4: Not a real header
-Key4: 
-\tTab after empty line
-  
-  After an "empty" folded line
-Key5:
- After a line without even a space!
-''')) == [
-    ('Key1', 'Value1\n  Folded\n    More folds'),
-    ('Key2', 'Value2\n    Folded\n  Fewer folds'),
-    ('Key3', 'Value3\n  Key4: Not a real header'),
-    ('Key4', '\n\tTab after empty line\n  \n  After an "empty" folded line'),
-    ('Key5', '\n After a line without even a space!'),
-]
+    assert list(scan_string(
+        'Key1: Value1\n'
+        '  Folded\n'
+        '    More folds\n'
+        'Key2: Value2\n'
+        '    Folded\n'
+        '  Fewer folds\n'
+        'Key3: Value3\n'
+        '  Key4: Not a real header\n'
+        'Key4: \n'
+        '\tTab after empty line\n'
+        '  \n'
+        ' After an "empty" folded line\n'
+        'Key5:\n'
+        ' After a line without even a space!\n'
+    )) == [
+        ('Key1', 'Value1\n  Folded\n    More folds'),
+        ('Key2', 'Value2\n    Folded\n  Fewer folds'),
+        ('Key3', 'Value3\n  Key4: Not a real header'),
+        ('Key4', '\n\tTab after empty line\n  \n After an "empty" folded line'),
+        ('Key5', '\n After a line without even a space!'),
+    ]
 
 def test_no_final_newline():
     assert list(scan_string('Foo: red\nBar: green\nBaz: blue')) == \
