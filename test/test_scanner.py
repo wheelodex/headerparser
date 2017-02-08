@@ -107,4 +107,15 @@ def test_unexpected_folding():
         list(scan_string(' Foo: red\nBar green\nBaz: blue\n'))
     assert excinfo.value.line == ' Foo: red'
 
-### multiple occurrences of the same header?
+def test_multiple():
+    assert list(scan_string(
+        'Foo: value1\n'
+        'Foo: value2\n'
+        'FOO: VALUE3\n'
+        'fOO: valueFour\n'
+    )) == [
+        ('Foo', 'value1'),
+        ('Foo', 'value2'),
+        ('FOO', 'VALUE3'),
+        ('fOO', 'valueFour'),
+    ]

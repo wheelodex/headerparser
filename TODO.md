@@ -10,9 +10,6 @@
 
 - Write more tests
     - Test `NormalizedDict`
-    - Header definition options:
-        - `unfold`
-        - `required=True` + a header value set (via `type`) to `None`
     - different header name normalizers (identity, hyphens=underscores,
       titlecase?, etc.)
     - `add_additional`
@@ -25,9 +22,11 @@ Features
 - Add some sort of handling for "From " lines
     - Give `NormalizedDict` a `from_line` attribute
     - Give the scanner a `from_line_regex` parameter; if the first line of a
-      stanza matches the regex, it is assumed to be a "From" line, and the
-      scanner yields `(line, None)`
-    - Give the parser an option for requiring a "From" line
+      stanza matches the regex, it is assumed to be a "From" line
+    - Create a "`SpecialHeader`" enum with `FromLine` and `Body` values for use
+      as the first element of `(header, value)` pairs yielded by the scanner
+      representing "From " lines and bodies
+    - Give the parser an option for requiring a "From " line
     - Export premade regexes for matching Unix mail "From " lines, HTTP
       request lines, and HTTP response status lines
 
@@ -122,6 +121,7 @@ Parsing
     - `rm_comments` — Remove RFC 822 comments from header values?
     - a stronger version of `unfold` that also squashes whitespace around the
       line break into a single space?
+        - Make this the default behavior of `unfold`?
 
 - Give `add_additional` an option for controlling whether to normalize
   additional header names before adding them to the dict?

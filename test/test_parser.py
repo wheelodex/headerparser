@@ -97,6 +97,13 @@ def test_required_default():
         parser.add_header('Foo', required=True, default='Why?')
     assert 'required and default are mutually exclusive' in str(excinfo.value)
 
+def test_required_none():
+    parser = HeaderParser()
+    parser.add_header('None', required=True, type=lambda _: None)
+    msg = parser.parse_string('None: whatever')
+    assert dict(msg) == {'None': None}
+    assert msg.body is None
+
 def test_missing_required():
     parser = HeaderParser()
     parser.add_header('Foo')
@@ -259,3 +266,21 @@ def test_many_missing_required():
     with pytest.raises(headerparser.MissingHeaderError) as excinfo:
         parser.parse_string('')
     assert excinfo.value.header in ('Foo', 'Bar', 'Baz')
+
+def test_unfold():
+    parser = HeaderParser()
+    parser.add_header('Folded')
+    parser.add_header('Unfolded', unfold=True)
+    msg = parser.parse_string(
+        'Folded: This is\n'
+        '   test\n'
+        '  text.\n'
+        'UnFolded: This is\n'
+        '   test\n'
+        '  text.\n'
+    )
+    assert dict(msg) == {
+        "Folded": "This is\n   test\n  text.",
+        "Unfolded": "This is   test  text.",
+    }
+    assert msg.body is None

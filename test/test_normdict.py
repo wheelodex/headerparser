@@ -1,4 +1,5 @@
-from headerparser import NormalizedDict
+import pytest
+from   headerparser import NormalizedDict
 
 def test_empty():
     nd = NormalizedDict()
@@ -30,6 +31,18 @@ def test_set():
     assert dict(nd) == {"fOO": "quux"}
     assert nd["Foo"] == "quux"
     assert nd["Foo"] == nd["foo"] == nd["FOO"] == nd["fOO"]
+
+def test_del():
+    nd = NormalizedDict({"Foo": "bar", "Bar": "FOO"})
+    del nd["Foo"]
+    assert dict(nd) == {"Bar": "FOO"}
+    del nd["BAR"]
+    assert dict(nd) == {}
+
+def test_del_nexists():
+    nd = NormalizedDict({"Foo": "bar", "Bar": "FOO"})
+    with pytest.raises(KeyError):
+        del nd["Baz"]
 
 def test_eq_empty():
     nd = NormalizedDict()
@@ -92,8 +105,22 @@ def test_neq_body():
     nd2 = NormalizedDict({"fOO": "bar"}, body='no')
     assert nd != nd2
 
+def test_neq_none():
+    assert NormalizedDict() != None
+    assert None != NormalizedDict()
 
-### delitem
-### eq with different normalizers
+def test_neq_bool():
+    assert NormalizedDict() != False
+    assert False != NormalizedDict()
+
+def test_neq_int():
+    assert NormalizedDict() != 42
+    assert 42 != NormalizedDict()
+
+def test_init_list():
+    nd = NormalizedDict([("Foo", "bar"), ("Bar", "baz"), ("FOO", "quux")])
+    assert dict(nd) == {"FOO": "quux", "Bar": "baz"}
+
 ### different normalizers (identity, hyphens=underscores, titlecase?, etc.)
+### eq with different normalizers
 ### copy

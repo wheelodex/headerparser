@@ -43,7 +43,7 @@ class NormalizedDict(collections.MutableMapping):
     def __ne__(self, other):
         return not (self == other)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '{0.__class__.__module__}.{0.__class__.__name__}'\
                '({1!r}, normalizer={0.normalizer!r}, body={0.body!r})'\
                .format(self, dict(self))
