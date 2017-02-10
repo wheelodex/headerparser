@@ -11,14 +11,13 @@ from .util   import ascii_splitlines
 # rather than EOF
 
 def scan_string(s):
-    return _scan_lines(ascii_splitlines(s, True))
+    return scan_lines(ascii_splitlines(s, True))
 
 def scan_file(fp):
     ### TODO: Handle files not opened in universal newlines mode?
-    return _scan_lines(fp)
+    return scan_lines(fp)
 
-def _scan_lines(iterable):
-    ### Make this public?
+def scan_lines(iterable):
     lineiter = iter(iterable)
     name  = None
     value = ''

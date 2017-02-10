@@ -2,7 +2,7 @@ from   operator  import methodcaller
 from   six       import itervalues, string_types
 from   .         import errors
 from   .normdict import NormalizedDict
-from   .scanner  import scan_file, scan_string
+from   .scanner  import scan_file, scan_lines, scan_string
 from   .util     import unfold
 
 class HeaderParser(object):
@@ -30,8 +30,7 @@ class HeaderParser(object):
         if hd.required:
             self.required.append(hd)
 
-    def _parse_stream(self, headers):
-        ### Make this public?
+    def parse_stream(self, headers):
         data = NormalizedDict()
         for k,v in headers:
             if k is None:
@@ -52,10 +51,13 @@ class HeaderParser(object):
         return data
 
     def parse_file(self, fp):
-        return self._parse_stream(scan_file(fp))
+        return self.parse_stream(scan_file(fp))
+
+    def parse_lines(self, iterable):
+        return self.parse_stream(scan_lines(iterable))
 
     def parse_string(self, s):
-        return self._parse_stream(scan_string(s))
+        return self.parse_stream(scan_string(s))
 
 
 class HeaderDef(object):
