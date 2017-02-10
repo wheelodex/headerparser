@@ -13,7 +13,7 @@ from .errors   import (
 from .normdict import NormalizedDict
 from .parser   import HeaderParser
 from .scanner  import scan_file, scan_lines, scan_string
-from .types    import BOOL
+from .types    import BOOL, lower
 
 __version__      = '0.1.0.dev1'
 __author__       = 'John Thorvald Wodder II'
@@ -35,6 +35,7 @@ __all__ = [
     'ScannerError',
     'UnexpectedFoldingError',
     'UnknownHeaderError',
+    'lower',
     'scan_file',
     'scan_lines',
     'scan_string',

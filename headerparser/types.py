@@ -1,3 +1,7 @@
+from   operator import methodcaller
+
+lower = methodcaller('lower')
+
 TRUTHY = set(['yes', 'y', 'on',  'true',  '1'])
 FALSEY = set(['no',  'n', 'off', 'false', '0'])
 

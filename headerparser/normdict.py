@@ -1,12 +1,12 @@
 import collections
-from   operator import methodcaller
-from   six      import iteritems, itervalues
+from   six    import iteritems, itervalues
+from   .types import lower
 
 class NormalizedDict(collections.MutableMapping):
-    def __init__(self, data=None, normalizer=methodcaller('lower'), body=None):
-        ### Should this do anything special when `data` is a NormalizedDict?
+    def __init__(self, data=None, normalizer=None, body=None):
+        ### TODO: Do something special when `data` is a NormalizedDict?
         self._data = {}
-        self.normalizer = normalizer
+        self.normalizer = normalizer or lower
         self.body = body
         if data is not None:
             # Don't call `update` until after `normalizer` is set.

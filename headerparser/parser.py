@@ -1,13 +1,13 @@
-from   operator  import methodcaller
 from   six       import itervalues, string_types
 from   .         import errors
 from   .normdict import NormalizedDict
 from   .scanner  import scan_file, scan_lines, scan_string
+from   .types    import lower
 from   .util     import unfold
 
 class HeaderParser(object):
-    def __init__(self, normalizer=methodcaller('lower'), body=True):
-        self.normalizer = normalizer
+    def __init__(self, normalizer=None, body=True):
+        self.normalizer = normalizer or lower
         self.body = True
         self.headerdefs = dict()
         self.required = []
@@ -31,7 +31,7 @@ class HeaderParser(object):
             self.required.append(hd)
 
     def parse_stream(self, headers):
-        data = NormalizedDict()
+        data = NormalizedDict(normalizer=self.normalizer)
         for k,v in headers:
             if k is None:
                 assert data.body is None
