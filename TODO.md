@@ -66,6 +66,8 @@ Scanning
 --------
 - Give the scanner options for:
     - header name-value delimiter (standard/default: just a colon)
+        - handling of whitespace before the delimiter (obsolete standard: trim)
+        - handling of whitespace after the delimiter (standard: always trim?)
     - definition of "whitespace" for purposes of unfolding (standard: 0x20 and
       TAB)
     - line separator/terminator (default: CR, LF, and CRLF; standard: only
@@ -103,6 +105,7 @@ Parsing
       the same character, squashing hyphens & underscores, etc.
     - unfolding if & only if the first line of the value contains any
       non-whitespace? (cf. most multiline fields in Debian control files)
+    - DKIM headers?
 
 - Add an option to the parser for requiring that headers occur in the order
   that they are defined?  (The PEP parsing code would appreciate this.)

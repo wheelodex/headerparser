@@ -121,6 +121,5 @@ def test_init_list():
     nd = NormalizedDict([("Foo", "bar"), ("Bar", "baz"), ("FOO", "quux")])
     assert dict(nd) == {"FOO": "quux", "Bar": "baz"}
 
-### different normalizers (identity, hyphens=underscores, titlecase?, etc.)
 ### eq with different normalizers
 ### copy
