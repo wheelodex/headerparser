@@ -126,5 +126,36 @@ def test_init_list():
     nd = NormalizedDict([("Foo", "bar"), ("Bar", "baz"), ("FOO", "quux")])
     assert dict(nd) == {"FOO": "quux", "Bar": "baz"}
 
+def test_copy():
+    nd = NormalizedDict({"Foo": "bar"})
+    nd2 = nd.copy()
+    assert isinstance(nd2, NormalizedDict)
+    assert dict(nd2) == {"Foo": "bar"}
+    assert nd2.body is None
+    assert nd == nd2
+    nd2["Foo"] = "gnusto"
+    assert dict(nd) == {"Foo": "bar"}
+    assert dict(nd2) == {"Foo": "gnusto"}
+    assert nd != nd2
+    nd2["fOO"] = "quux"
+    assert dict(nd) == {"Foo": "bar"}
+    assert dict(nd2) == {"fOO": "quux"}
+    assert nd != nd2
+    nd2["Glarch"] = "baz"
+    assert dict(nd) == {"Foo": "bar"}
+    assert dict(nd2) == {"fOO": "quux", "Glarch": "baz"}
+    assert nd != nd2
+
+def test_copy_with_body():
+    nd = NormalizedDict({"Foo": "bar"}, body='Glarch.')
+    nd2 = nd.copy()
+    assert isinstance(nd2, NormalizedDict)
+    assert dict(nd2) == {"Foo": "bar"}
+    assert nd2.body == 'Glarch.'
+    assert nd == nd2
+    nd2.body = 'quux'
+    assert nd.body == 'Glarch.'
+    assert nd2.body == 'quux'
+    assert nd != nd2
+
 ### eq with different normalizers
-### copy

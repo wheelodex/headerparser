@@ -78,6 +78,7 @@ def test_normalized():
     assert isinstance(nd2, NormalizedDict)
     assert dict(nd2) == {"a-key": "BAR"}
     assert nd2.body is None
+    assert nd2.normalizer is normdash
     assert nd == nd2
 
 def test_normalized_with_body():
@@ -86,6 +87,7 @@ def test_normalized_with_body():
     assert isinstance(nd2, NormalizedDict)
     assert dict(nd2) == {"a-key": "BAR"}
     assert nd2.body == 'Foo Baz'
+    assert nd2.normalizer is normdash
     assert nd == nd2
 
 def test_normalized_dict():
@@ -126,3 +128,37 @@ def test_init_list():
         normalizer=normdash,
     )
     assert dict(nd) == {"A_KEY": "quux", "Another-Key": "baz"}
+
+def test_copy():
+    nd = NormalizedDict({"A Key": "bar"}, normalizer=normdash)
+    nd2 = nd.copy()
+    assert isinstance(nd2, NormalizedDict)
+    assert dict(nd2) == {"A Key": "bar"}
+    assert nd2.body is None
+    assert nd2.normalizer is normdash
+    assert nd == nd2
+    nd2["A Key"] = "gnusto"
+    assert dict(nd) == {"A Key": "bar"}
+    assert dict(nd2) == {"A Key": "gnusto"}
+    assert nd != nd2
+    nd2["a-key"] = "quux"
+    assert dict(nd) == {"A Key": "bar"}
+    assert dict(nd2) == {"a-key": "quux"}
+    assert nd != nd2
+    nd2["Another_Key"] = "baz"
+    assert dict(nd) == {"A Key": "bar"}
+    assert dict(nd2) == {"a-key": "quux", "Another_Key": "baz"}
+    assert nd != nd2
+
+def test_copy_with_body():
+    nd = NormalizedDict({"A Key": "bar"}, body='Glarch.', normalizer=normdash)
+    nd2 = nd.copy()
+    assert isinstance(nd2, NormalizedDict)
+    assert dict(nd2) == {"A Key": "bar"}
+    assert nd2.body == 'Glarch.'
+    assert nd2.normalizer is normdash
+    assert nd == nd2
+    nd2.body = 'quux'
+    assert nd.body == 'Glarch.'
+    assert nd2.body == 'quux'
+    assert nd != nd2
