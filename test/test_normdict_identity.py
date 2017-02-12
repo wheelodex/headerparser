@@ -73,7 +73,7 @@ def test_normalized():
     nd2 = nd.normalized()
     assert isinstance(nd2, NormalizedDict)
     assert dict(nd2) == {"Foo": "BAR"}
-    assert nd.body is None
+    assert nd2.body is None
     assert nd == nd2
 
 def test_normalized_with_body():
@@ -81,7 +81,7 @@ def test_normalized_with_body():
     nd2 = nd.normalized()
     assert isinstance(nd2, NormalizedDict)
     assert dict(nd2) == {"Foo": "BAR"}
-    assert nd.body == 'Glarch.'
+    assert nd2.body == 'Glarch.'
     assert nd == nd2
 
 def test_normalized_dict():

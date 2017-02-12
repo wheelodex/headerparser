@@ -58,6 +58,11 @@ def test_eq_empty():
     nd2 = NormalizedDict(normalizer=normdash)
     assert nd == nd2
 
+def test_eq_nonempty():
+    nd = NormalizedDict({"Foo": "bar"}, normalizer=normdash)
+    nd2 = NormalizedDict({"Foo": "bar"}, normalizer=normdash)
+    assert nd == nd2
+
 def test_eq_cases():
     nd = NormalizedDict({"A Key": "bar"}, normalizer=normdash)
     nd2 = NormalizedDict({"a_key": "bar"}, normalizer=normdash)
@@ -72,7 +77,7 @@ def test_normalized():
     nd2 = nd.normalized()
     assert isinstance(nd2, NormalizedDict)
     assert dict(nd2) == {"a-key": "BAR"}
-    assert nd.body is None
+    assert nd2.body is None
     assert nd == nd2
 
 def test_normalized_with_body():
@@ -80,7 +85,7 @@ def test_normalized_with_body():
     nd2 = nd.normalized()
     assert isinstance(nd2, NormalizedDict)
     assert dict(nd2) == {"a-key": "BAR"}
-    assert nd.body == 'Foo Baz'
+    assert nd2.body == 'Foo Baz'
     assert nd == nd2
 
 def test_normalized_dict():
