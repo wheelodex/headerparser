@@ -9,7 +9,6 @@
 - Rethink how the original exception data is attached to `HeaderTypeError`s
 
 - Write more tests
-    - Test `NormalizedDict`
     - different header name normalizers (identity, hyphens=underscores,
       titlecase?, etc.)
     - `add_additional`

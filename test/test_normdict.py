@@ -158,4 +158,14 @@ def test_copy_with_body():
     assert nd2.body == 'quux'
     assert nd != nd2
 
-### eq with different normalizers
+def test_neq_normalizers_empty():
+    nd = NormalizedDict()
+    nd2 = NormalizedDict(normalizer=lambda x: x)
+    assert dict(nd) == dict(nd2) == {}
+    assert nd != nd2
+
+def test_neq_normalizers_nonempty():
+    nd = NormalizedDict({"Foo": "bar"})
+    nd2 = NormalizedDict({"Foo": "bar"}, normalizer=lambda x: x)
+    assert dict(nd) == dict(nd2) == {"Foo": "bar"}
+    assert nd != nd2
