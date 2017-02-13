@@ -284,3 +284,5 @@ def test_unfold():
         "Unfolded": "This is   test  text.",
     }
     assert msg.body is None
+
+### unknown + missing required
