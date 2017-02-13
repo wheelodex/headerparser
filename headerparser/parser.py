@@ -8,9 +8,8 @@ from   .util     import unfold
 class HeaderParser(object):
     def __init__(self, normalizer=None, body=True):
         self.normalizer = normalizer or lower
-        self.body = True
+        self.body = body
         self.headerdefs = dict()
-        self.required = []
         self.dests = set()
 
     def add_header(self, name, *altnames, **kwargs):
@@ -27,8 +26,6 @@ class HeaderParser(object):
         for n in normed:
             self.headerdefs[n] = hd
         self.dests.add(self.normalizer(hd.dest))
-        if hd.required:
-            self.required.append(hd)
 
     def parse_stream(self, headers):
         data = NormalizedDict(normalizer=self.normalizer)
