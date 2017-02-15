@@ -11,6 +11,8 @@ class HeaderParser(object):
         self.body = body
         self.headerdefs = dict()
         self.dests = set()
+        self.additional = None
+        self.custom_dests = False
 
     def add_header(self, name, *altnames, **kwargs):
         kwargs.setdefault('dest', name)
@@ -23,9 +25,21 @@ class HeaderParser(object):
         if self.normalizer(hd.dest) in self.dests:
             raise ValueError('destination defined more than once: '
                              + repr(hd.dest))
+        if self.normalizer(hd.dest) not in normed:
+            self.custom_dests = True
+            if self.additional is not None:
+                raise ValueError('add_additional and `dest` are mutually exclusive')
         for n in normed:
             self.headerdefs[n] = hd
         self.dests.add(self.normalizer(hd.dest))
+
+    def add_additional(self, allow=True, **kwargs):
+        if allow:
+            if self.custom_dests:
+                raise ValueError('add_additional and `dest` are mutually exclusive')
+            self.additional = HeaderProcessor(**kwargs)
+        else:
+            self.additional = None
 
     def parse_stream(self, headers):
         data = NormalizedDict(normalizer=self.normalizer)
@@ -37,8 +51,12 @@ class HeaderParser(object):
                 try:
                     hd = self.headerdefs[self.normalizer(k)]
                 except KeyError:
-                    raise errors.UnknownHeaderError(k)
-                hd.process_value(data, v)
+                    if self.additional is not None:
+                        self.additional.process(data, k, k, v)
+                    else:
+                        raise errors.UnknownHeaderError(k)
+                else:
+                    hd.process_value(data, v)
         for hd in itervalues(self.headerdefs):
             if hd.dest not in data:
                 if hd.required:
@@ -58,30 +76,34 @@ class HeaderParser(object):
 
 
 class HeaderDef(object):
-    def __init__(self, name, dest, type=None, multiple=False, required=False,
-                 unfold=False, choices=None, **kwargs):
+    def __init__(self, name, dest, required=False, **kwargs):
         if not isinstance(name, string_types):
             raise TypeError('header names must be strings')
         self.name = name
         self.dest = dest
+        self.required = bool(required)
+        if 'default' in kwargs:
+            if self.required:
+                raise ValueError('required and default are mutually exclusive')
+            self.default = kwargs.pop('default')
+        self.proc = HeaderProcessor(**kwargs)
+
+    def process_value(self, data, value):
+        self.proc.process(data, self.name, self.dest, value)
+
+
+class HeaderProcessor(object):
+    def __init__(self, type=None, multiple=False, unfold=False, choices=None):
         self.type = type
         self.multiple = bool(multiple)
-        self.required = bool(required)
         self.unfold = bool(unfold)
         if choices is not None:
             choices = list(choices)
             if not choices:
                 raise ValueError('empty list supplied for choices')
         self.choices = choices
-        if 'default' in kwargs:
-            if self.required:
-                raise ValueError('required and default are mutually exclusive')
-            self.default = kwargs.pop('default')
-        if kwargs:
-            raise TypeError('invalid keyword argument: '
-                            + repr(next(iter(kwargs))))
 
-    def process_value(self, data, value):
+    def process(self, data, name, dest, value):
         if self.unfold:
             value = unfold(value)
         if self.type is not None:
@@ -90,12 +112,12 @@ class HeaderDef(object):
             except errors.HeaderTypeError:
                 raise
             except Exception as e:
-                raise errors.HeaderTypeError(self.name, value, e)
+                raise errors.HeaderTypeError(name, value, e)
         if self.choices is not None and value not in self.choices:
-            raise errors.InvalidChoiceError(self.name, value)
+            raise errors.InvalidChoiceError(name, value)
         if self.multiple:
-            data.setdefault(self.dest, []).append(value)
-        elif self.dest in data:
-            raise errors.DuplicateHeaderError(self.name)
+            data.setdefault(dest, []).append(value)
+        elif dest in data:
+            raise errors.DuplicateHeaderError(name)
         else:
-            data[self.dest] = value
+            data[dest] = value
