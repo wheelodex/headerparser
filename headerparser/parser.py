@@ -16,7 +16,7 @@ class HeaderParser(object):
 
     def add_header(self, name, *altnames, **kwargs):
         kwargs.setdefault('dest', name)
-        hd = HeaderDef(name=name, **kwargs)
+        hd = NamedHeader(name=name, **kwargs)
         normed = set(map(self.normalizer, (name,) + altnames))
         # Error before modifying anything:
         redefs = [n for n in self.headerdefs if n in normed]
@@ -37,7 +37,7 @@ class HeaderParser(object):
         if allow:
             if self.custom_dests:
                 raise ValueError('add_additional and `dest` are mutually exclusive')
-            self.additional = HeaderProcessor(**kwargs)
+            self.additional = HeaderDef(**kwargs)
         else:
             self.additional = None
 
@@ -52,11 +52,10 @@ class HeaderParser(object):
                     hd = self.headerdefs[self.normalizer(k)]
                 except KeyError:
                     if self.additional is not None:
-                        self.additional.process(data, k, k, v)
+                        hd = self.additional
                     else:
                         raise errors.UnknownHeaderError(k)
-                else:
-                    hd.process_value(data, v)
+                hd.process(data, k, v)
         for hd in itervalues(self.headerdefs):
             if hd.dest not in data:
                 if hd.required:
@@ -76,23 +75,6 @@ class HeaderParser(object):
 
 
 class HeaderDef(object):
-    def __init__(self, name, dest, required=False, **kwargs):
-        if not isinstance(name, string_types):
-            raise TypeError('header names must be strings')
-        self.name = name
-        self.dest = dest
-        self.required = bool(required)
-        if 'default' in kwargs:
-            if self.required:
-                raise ValueError('required and default are mutually exclusive')
-            self.default = kwargs.pop('default')
-        self.proc = HeaderProcessor(**kwargs)
-
-    def process_value(self, data, value):
-        self.proc.process(data, self.name, self.dest, value)
-
-
-class HeaderProcessor(object):
     def __init__(self, type=None, multiple=False, unfold=False, choices=None):
         self.type = type
         self.multiple = bool(multiple)
@@ -103,7 +85,7 @@ class HeaderProcessor(object):
                 raise ValueError('empty list supplied for choices')
         self.choices = choices
 
-    def process(self, data, name, dest, value):
+    def _process(self, data, name, dest, value):
         if self.unfold:
             value = unfold(value)
         if self.type is not None:
@@ -121,3 +103,23 @@ class HeaderProcessor(object):
             raise errors.DuplicateHeaderError(name)
         else:
             data[dest] = value
+
+    def process(self, data, name, value):
+        self._process(data, name, name, value)
+
+
+class NamedHeader(HeaderDef):
+    def __init__(self, name, dest, required=False, **kwargs):
+        if not isinstance(name, string_types):
+            raise TypeError('header names must be strings')
+        self.name = name
+        self.dest = dest
+        self.required = bool(required)
+        if 'default' in kwargs:
+            if self.required:
+                raise ValueError('required and default are mutually exclusive')
+            self.default = kwargs.pop('default')
+        super(NamedHeader, self).__init__(**kwargs)
+
+    def process(self, data, _, value):
+        self._process(data, self.name, self.dest, value)

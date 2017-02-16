@@ -25,6 +25,8 @@ Features
     - Create a "`SpecialHeader`" enum with `FromLine` and `Body` values for use
       as the first element of `(header, value)` pairs yielded by the scanner
       representing "From " lines and bodies
+        - Use the enum values as keys in `NormalizedDict`s instead of having
+          dedicated `from_line` and `body` attributes?
     - Give the parser an option for requiring a "From " line
     - Export premade regexes for matching Unix mail "From " lines, HTTP
       request lines, and HTTP response status lines
