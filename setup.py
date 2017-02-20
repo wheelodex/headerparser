@@ -33,7 +33,7 @@ setup(
     long_description=long_desc,
     url='https://github.com/jwodder/headerparser',
 
-    install_requires=['six~=1.1'],
+    install_requires=['six>=1.1,<2'],
 
     classifiers=[
         'Development Status :: 3 - Alpha',
