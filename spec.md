@@ -17,8 +17,8 @@
 - `required=bool`
 - `choices=seq` — applied after `type`
 - `default=...` — Prohibited when `required=True`
-- `unfold=bool` — If true, newlines are removed from the value before passing
-  it to the `type` callable (if any)
+- `unfold=bool` — If true, newlines and surrounding whitespace are condensed to
+  a single space before passing the value to the `type` callable (if any)
 
 
     HeaderParser.add_additional(allow=True, **kwargs)

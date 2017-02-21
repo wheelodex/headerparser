@@ -44,15 +44,14 @@ def test_unfold_multiple_choices():
     assert dict(msg) == {'Corner': ['lower right', 'upper left']}
     assert msg.body is None
 
-def test_unfold_indented_invalid_choice():
+def test_unfold_indented_choices():
     parser = HeaderParser()
     parser.add_header('Corner', choices=[
         'upper left', 'upper right', 'lower left', 'lower right'
     ], unfold=True)
-    with pytest.raises(InvalidChoiceError) as excinfo:
-        parser.parse_string('Corner: upper\n    right')
-    assert excinfo.value.header == 'Corner'
-    assert excinfo.value.value == 'upper    right'
+    msg = parser.parse_string('Corner: upper\n    right')
+    assert dict(msg) == {'Corner': 'upper right'}
+    assert msg.body is None
 
 def test_lower_choices():
     parser = HeaderParser()

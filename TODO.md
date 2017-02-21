@@ -129,9 +129,6 @@ Parsing
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
     - `rm_comments` — Remove RFC 822 comments from header values?
-    - a stronger version of `unfold` that also squashes whitespace around the
-      line break into a single space?
-        - Make this the default behavior of `unfold`?
 
 - Give `add_additional` an option for controlling whether to normalize
   additional header names before adding them to the dict?

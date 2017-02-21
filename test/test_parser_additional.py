@@ -210,7 +210,7 @@ def test_additional_unfold():
     )
     assert dict(msg) == {
         "Foo": "This is\n   test\n  text.",
-        "Bar": "This is   test  text.",
+        "Bar": "This is test text.",
     }
     assert msg.body is None
 

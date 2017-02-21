@@ -274,14 +274,14 @@ def test_unfold():
     msg = parser.parse_string(
         'Folded: This is\n'
         '   test\n'
-        '  text.\n'
+        '\ttext.\n'
         'UnFolded: This is\n'
         '   test\n'
-        '  text.\n'
+        '\ttext.\n'
     )
     assert dict(msg) == {
-        "Folded": "This is\n   test\n  text.",
-        "Unfolded": "This is   test  text.",
+        "Folded": "This is\n   test\n\ttext.",
+        "Unfolded": "This is test text.",
     }
     assert msg.body is None
 
