@@ -152,13 +152,103 @@ def test_missing_additional():
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green'}
     assert msg.body is None
 
-### type
-### choices
-### unfold
-### passing bad options to add_additional (name?, dest, required, default)
+def test_additional_type():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_additional(type=int)
+    msg = parser.parse_string('Foo: 1\nBar: 2\nBaz: 3\n')
+    assert dict(msg) == {'Foo': '1', 'Bar': '2', 'Baz': 3}
+    assert msg.body is None
 
-### fun with differences in case
-### calling add_additional multiple times
-### add_additional(False)
-### named headers with altnames
-### body?
+def test_additional_bad_type():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_additional(type=int)
+    with pytest.raises(headerparser.HeaderTypeError) as excinfo:
+        parser.parse_string('Foo: 1\nBar: 2\nBaz: three\n')
+    assert excinfo.value.header == 'Baz'
+    assert excinfo.value.value == 'three'
+    assert isinstance(excinfo.value.exc_value, ValueError)
+
+def test_additional_choices():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_additional(choices=['red', 'green', 'blue'])
+    msg = parser.parse_string('Foo: mauve\nBar: red\nBaz: green\nQuux: blue\n')
+    assert dict(msg) == {
+        'Foo': 'mauve',
+        'Bar': 'red',
+        'Baz': 'green',
+        'Quux': 'blue',
+    }
+    assert msg.body is None
+
+def test_additional_bad_choices():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_additional(choices=['red', 'green', 'blue'])
+    with pytest.raises(headerparser.InvalidChoiceError) as excinfo:
+        parser.parse_string('Foo: mauve\nBar: red\nBaz: green\nQuux: taupe\n')
+    assert excinfo.value.header == 'Quux'
+    assert excinfo.value.value == 'taupe'
+
+def test_additional_unfold():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_additional(unfold=True)
+    msg = parser.parse_string(
+        'Foo: This is\n'
+        '   test\n'
+        '  text.\n'
+        'Bar: This is\n'
+        '   test\n'
+        '  text.\n'
+    )
+    assert dict(msg) == {
+        "Foo": "This is\n   test\n  text.",
+        "Bar": "This is   test  text.",
+    }
+    assert msg.body is None
+
+def test_bad_additional_dest():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    with pytest.raises(TypeError):
+        parser.add_additional(dest='somewhere')
+
+def test_bad_additional_required():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    with pytest.raises(TypeError):
+        parser.add_additional(required=True)
+
+def test_bad_additional_default():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    with pytest.raises(TypeError):
+        parser.add_additional(default='')
+
+def test_additional_multiname():
+    parser = HeaderParser()
+    parser.add_header('Foo', 'Oof')
+    parser.add_header('Bar', 'Baz')
+    parser.add_additional()
+    msg = parser.parse_string('Oof: red\nBar: green\nQuux: blue\n')
+    assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Quux': 'blue'}
+    assert msg.body is None
+
+def test_additional_off():
+    parser = HeaderParser()
+    parser.add_header('Foo')
+    parser.add_header('Bar')
+    parser.add_additional(False)
+    with pytest.raises(headerparser.UnknownHeaderError) as excinfo:
+        parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
+    assert excinfo.value.header == 'Baz'

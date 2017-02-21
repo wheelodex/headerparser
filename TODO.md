@@ -7,13 +7,19 @@
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `HeaderTypeError`s
+- Give `HeaderParser` an `__eq__` method
 
 - Write more tests
     - different header name normalizers (identity, hyphens=underscores,
       titlecase?, etc.)
     - `add_additional`
+        - calling `add_additional` multiple times (some times with
+          `allow=False`)
+        - `add_additional(False, extra arguments ...)`
     - `body=False`
     - scanning/parsing multiple stanzas
+    - calling `add_header`/`add_additional` on a `HeaderParser` after a
+      previous call raised an error
 
 
 Features
@@ -69,7 +75,7 @@ Scanning
     - header name-value delimiter (standard/default: just a colon)
         - handling of whitespace before the delimiter (obsolete standard: trim)
         - handling of whitespace after the delimiter (standard: always trim?)
-    - definition of "whitespace" for purposes of unfolding (standard: 0x20 and
+    - definition of "whitespace" for purposes of folding (standard: 0x20 and
       TAB)
     - line separator/terminator (default: CR, LF, and CRLF; standard: only
       CRLF)

@@ -26,9 +26,9 @@ class HeaderParser(object):
             raise ValueError('destination defined more than once: '
                              + repr(hd.dest))
         if self.normalizer(hd.dest) not in normed:
-            self.custom_dests = True
             if self.additional is not None:
                 raise ValueError('add_additional and `dest` are mutually exclusive')
+            self.custom_dests = True
         for n in normed:
             self.headerdefs[n] = hd
         self.dests.add(self.normalizer(hd.dest))
