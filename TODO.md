@@ -1,9 +1,8 @@
 - Write a README
 - Write docstrings
 - Set up a Readthedocs site
-- Fill in the exception classes
-    - Add an exception class for a missing body
-    - Add an exception class for an unexpected body
+- Add an exception class for a missing body
+- Add an exception class for an unexpected body
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `HeaderTypeError`s
