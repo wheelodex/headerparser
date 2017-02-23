@@ -47,7 +47,7 @@ Features
         - Give its `parse*` methods `encoding` parameters?
 
 - Write an entry point for converting RFC822-style files/headers to JSON
-    - name: `mail2json`?
+    - name: `mail2json`? `headers2json`?
     - include options for:
         - parsing multiple stanzas into an array of JSON objects
         - setting the key name for the "message body"
