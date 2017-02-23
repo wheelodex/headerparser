@@ -125,3 +125,12 @@ def test_multiple():
         ('FOO', 'VALUE3'),
         ('fOO', 'valueFour'),
     ]
+
+def test_empty():
+    assert list(scan_string('')) == []
+
+def test_one_empty_line():
+    assert list(scan_string('\n')) == [(None, '')]
+
+def test_two_empty_lines():
+    assert list(scan_string('\n\n')) == [(None, '\n')]

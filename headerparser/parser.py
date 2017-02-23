@@ -6,7 +6,7 @@ from   .types    import lower
 from   .util     import unfold
 
 class HeaderParser(object):
-    def __init__(self, normalizer=None, body=True):
+    def __init__(self, normalizer=None, body=None):
         self.normalizer = normalizer or lower
         self.body = body
         self.headerdefs = dict()
@@ -46,6 +46,8 @@ class HeaderParser(object):
         for k,v in headers:
             if k is None:
                 assert data.body is None
+                if self.body is not None and not self.body:
+                    raise errors.BodyNotAllowedError()
                 data.body = v
             else:
                 try:
@@ -62,6 +64,8 @@ class HeaderParser(object):
                     raise errors.MissingHeaderError(hd.name)
                 elif hasattr(hd, 'default'):
                     data[hd.dest] = hd.default
+        if self.body and data.body is None:
+            raise errors.MissingBodyError()
         return data
 
     def parse_file(self, fp):

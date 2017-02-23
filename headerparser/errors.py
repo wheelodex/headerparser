@@ -55,6 +55,16 @@ class InvalidChoiceError(ParserError):
         return '{0.value!r} is not a valid choice for {0.header!r}'.format(self)
 
 
+class MissingBodyError(ParserError):
+    def __str__(self):
+        return 'Message body is required but missing'
+
+
+class BodyNotAllowedError(ParserError):
+    def __str__(self):
+        return 'Message body is present but not allowed'
+
+
 class ScannerError(Error, ValueError):
     pass
 

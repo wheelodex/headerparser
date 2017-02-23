@@ -96,7 +96,7 @@ def test_body_as_unknown_headers():
 
 def test_require_body_all_empty():
     parser = HeaderParser(body=True)
-    msg = parser.parse_string('\n\n')
+    msg = parser.parse_string('\n')
     assert dict(msg) == {}
     assert msg.body == ''
 

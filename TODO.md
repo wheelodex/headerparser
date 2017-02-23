@@ -15,7 +15,6 @@
         - calling `add_additional` multiple times (some times with
           `allow=False`)
         - `add_additional(False, extra arguments ...)`
-    - `body=False`
     - scanning/parsing multiple stanzas
     - calling `add_header`/`add_additional` on a `HeaderParser` after a
       previous call raised an error
@@ -131,3 +130,5 @@ Parsing
 
 - Give `add_additional` an option for controlling whether to normalize
   additional header names before adding them to the dict?
+
+- Requiring/forbidding nonempty/non-whitespace bodies

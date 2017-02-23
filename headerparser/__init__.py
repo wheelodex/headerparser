@@ -6,6 +6,8 @@ from .errors   import (
                                 InvalidChoiceError,
                                 MissingHeaderError,
                                 UnknownHeaderError,
+                                MissingBodyError,
+                                BodyNotAllowedError,
                             ScannerError,
                                 MalformedHeaderError,
                                 UnexpectedFoldingError,
@@ -23,12 +25,14 @@ __url__          = 'https://github.com/jwodder/headerparser'
 
 __all__ = [
     'BOOL',
+    'BodyNotAllowedError',
     'DuplicateHeaderError',
     'Error',
     'HeaderParser',
     'HeaderTypeError',
     'InvalidChoiceError',
     'MalformedHeaderError',
+    'MissingBodyError',
     'MissingHeaderError',
     'NormalizedDict',
     'ParserError',
