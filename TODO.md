@@ -1,8 +1,6 @@
 - Write a README
 - Write docstrings
 - Set up a Readthedocs site
-- Add an exception class for a missing body
-- Add an exception class for an unexpected body
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `HeaderTypeError`s
@@ -15,6 +13,8 @@
         - calling `add_additional` multiple times (some times with
           `allow=False`)
         - `add_additional(False, extra arguments ...)`
+        - `add_additional` when a header has a `dest` that's just a normalized
+          form of one of its names
     - scanning/parsing multiple stanzas
     - calling `add_header`/`add_additional` on a `HeaderParser` after a
       previous call raised an error

@@ -47,4 +47,4 @@ lookup
 
 Return a list (or generator?) of header dicts
 
-- `body` attribute is ignored
+- Calling this when `body=True` results in an error
