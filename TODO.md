@@ -18,6 +18,7 @@
     - scanning/parsing multiple stanzas
     - calling `add_header`/`add_additional` on a `HeaderParser` after a
       previous call raised an error
+    - scanning & parsing Unicode
 
 
 Features
@@ -71,14 +72,10 @@ Scanning
 --------
 - Give the scanner options for:
     - header name-value delimiter (standard/default: just a colon)
-        - handling of whitespace before the delimiter (obsolete standard: trim)
-        - handling of whitespace after the delimiter (standard: always trim?)
     - definition of "whitespace" for purposes of folding (standard: 0x20 and
       TAB)
     - line separator/terminator (default: CR, LF, and CRLF; standard: only
-      CRLF)
-        - handling of lone CR and LF when CRLF is used as the line separator
-          (standard: obsolete)
+      CRLF, with lone CR and LF being obsolete)
     - stripping leading whitespace from folded lines? (standard: no)
     - handling "From " lines and the like
     - skipping empty lines at the beginning of the input (instead of treating
