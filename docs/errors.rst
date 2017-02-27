@@ -11,17 +11,17 @@ Parser Errors
     :show-inheritance:
 .. autoexception:: headerparser.errors.BodyNotAllowedError
     :show-inheritance:
-.. autoexception:: headerparser.errors.DuplicateHeaderError
+.. autoexception:: headerparser.errors.DuplicateFieldError
     :show-inheritance:
-.. autoexception:: headerparser.errors.HeaderTypeError
+.. autoexception:: headerparser.errors.FieldTypeError
     :show-inheritance:
 .. autoexception:: headerparser.errors.InvalidChoiceError
     :show-inheritance:
 .. autoexception:: headerparser.errors.MissingBodyError
     :show-inheritance:
-.. autoexception:: headerparser.errors.MissingHeaderError
+.. autoexception:: headerparser.errors.MissingFieldError
     :show-inheritance:
-.. autoexception:: headerparser.errors.UnknownHeaderError
+.. autoexception:: headerparser.errors.UnknownFieldError
     :show-inheritance:
 
 Scanner Errors

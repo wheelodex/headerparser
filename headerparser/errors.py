@@ -1,5 +1,5 @@
 class Error(Exception):
-    """ Superclass for all custom exceptions raised by the module """
+    """ Superclass for all custom exceptions raised by the package """
     pass
 
 
@@ -8,80 +8,83 @@ class ParserError(Error, ValueError):
     pass
 
 
-class MissingHeaderError(ParserError):
-    """ Raised when a header marked as required is not present in the input """
+class MissingFieldError(ParserError):
+    """
+    Raised when a header field marked as required is not present in the input
+    """
 
-    def __init__(self, header):
-        #: The name of the missing required header
-        self.header = header
-        super(MissingHeaderError, self).__init__(header)
+    def __init__(self, name):
+        #: The name of the missing header field
+        self.name = name
+        super(MissingFieldError, self).__init__(name)
 
     def __str__(self):
-        return 'Required header {0.header!r} is not present'.format(self)
+        return 'Required header field {0.name!r} is not present'.format(self)
 
 
-class UnknownHeaderError(ParserError):
+class UnknownFieldError(ParserError):
     """
-    Raised when an unknown header is encountered and additional headers are not
-    enabled
+    Raised when an unknown header field is encountered and additional header
+    fields are not enabled
     """
 
-    def __init__(self, header):
-        #: The name of the unknown header
-        self.header = header
-        super(UnknownHeaderError, self).__init__(header)
+    def __init__(self, name):
+        #: The name of the unknown header field
+        self.name = name
+        super(UnknownFieldError, self).__init__(name)
 
     def __str__(self):
-        return 'Unknown header {0.header!r}'.format(self)
+        return 'Unknown header field {0.name!r}'.format(self)
 
 
-class DuplicateHeaderError(ParserError):
+class DuplicateFieldError(ParserError):
     """
-    Raised when a header not marked as multiple occurs two or more times in the
-    input
+    Raised when a header field not marked as multiple occurs two or more times
+    in the input
     """
 
-    def __init__(self, header):
-        #: The name of the duplicated header
-        self.header = header
-        super(DuplicateHeaderError, self).__init__(header)
+    def __init__(self, name):
+        #: The name of the duplicated header field
+        self.name = name
+        super(DuplicateFieldError, self).__init__(name)
 
     def __str__(self):
-        return 'Header {0.header!r} occurs more than once'.format(self)
+        return 'Header field {0.name!r} occurs more than once'.format(self)
 
 
-class HeaderTypeError(ParserError):
+class FieldTypeError(ParserError):
     """ Raised when a ``type`` callable raises an exception """
 
-    def __init__(self, header, value, exc_value):
-        #: The name of the header for which the ``type`` callable was called
-        self.header = header
+    def __init__(self, name, value, exc_value):
+        #: The name of the header field for which the ``type`` callable was
+        #: called
+        self.name = name
         #: The value on which the ``type`` callable was called
         self.value = value
         #: The exception raised by the ``type`` callable
         self.exc_value = exc_value
-        super(HeaderTypeError, self).__init__(header, value, exc_value)
+        super(FieldTypeError, self).__init__(name, value, exc_value)
 
     def __str__(self):
-        return 'Error while parsing {0.header!r}: {0.value!r}:'\
+        return 'Error while parsing {0.name!r}: {0.value!r}:'\
                ' {0.exc_value.__class__.__name__}: {0.exc_value}'.format(self)
 
 
 class InvalidChoiceError(ParserError):
     """
-    Raised when a header is given a value that is not one of its allowed
+    Raised when a header field is given a value that is not one of its allowed
     choices
     """
 
-    def __init__(self, header, value):
-        #: The name of the header
-        self.header = header
+    def __init__(self, name, value):
+        #: The name of the header field
+        self.name = name
         #: The invalid value
         self.value = value
-        super(InvalidChoiceError, self).__init__(header, value)
+        super(InvalidChoiceError, self).__init__(name, value)
 
     def __str__(self):
-        return '{0.value!r} is not a valid choice for {0.header!r}'.format(self)
+        return '{0.value!r} is not a valid choice for {0.name!r}'.format(self)
 
 
 class MissingBodyError(ParserError):

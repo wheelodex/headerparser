@@ -4,63 +4,63 @@ from   headerparser import HeaderParser
 
 def test_simple():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body is None
 
 def test_out_of_order():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('Foo: red\nBaz: blue\nBar: green\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body is None
 
 def test_different_cases():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('Foo: red\nBAR: green\nbaz: blue\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body is None
 
 def test_empty_body():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('Foo: red\nBar: green\nBaz: blue\n\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body == ''
 
 def test_blank_body():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('Foo: red\nBar: green\nBaz: blue\n\n\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body == '\n'
 
 def test_body():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('Foo: red\nBar: green\nBaz: blue\n\nThis is a test.')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body == 'This is a test.'
 
 def test_headerlike_body():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('''\
 Foo: red
 Bar: green
@@ -75,18 +75,18 @@ Baz: cleesh
 
 def test_missing():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('Foo: red\nBar: green\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green'}
     assert msg.body is None
 
 def test_required():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz', required=True)
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz', required=True)
     msg = parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body is None
@@ -94,155 +94,155 @@ def test_required():
 def test_required_default():
     parser = HeaderParser()
     with pytest.raises(ValueError) as excinfo:
-        parser.add_header('Foo', required=True, default='Why?')
+        parser.add_field('Foo', required=True, default='Why?')
     assert 'required and default are mutually exclusive' in str(excinfo.value)
 
 def test_required_none():
     parser = HeaderParser()
-    parser.add_header('None', required=True, type=lambda _: None)
+    parser.add_field('None', required=True, type=lambda _: None)
     msg = parser.parse_string('None: whatever')
     assert dict(msg) == {'None': None}
     assert msg.body is None
 
 def test_missing_required():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz', required=True)
-    with pytest.raises(headerparser.MissingHeaderError) as excinfo:
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz', required=True)
+    with pytest.raises(headerparser.MissingFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\n')
-    assert excinfo.value.header == 'Baz'
+    assert excinfo.value.name == 'Baz'
 
 def test_present_default():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz', default=42)
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz', default=42)
     msg = parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body is None
 
 def test_missing_default():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz', default=42)
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz', default=42)
     msg = parser.parse_string('Foo: red\nBar: green\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': 42}
     assert msg.body is None
 
 def test_missing_None_default():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz', default=None)
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz', default=None)
     msg = parser.parse_string('Foo: red\nBar: green\n')
     assert dict(msg) == {'Foo': 'red', 'Bar': 'green', 'Baz': None}
     assert msg.body is None
 
 def test_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True)
-    parser.add_header('Bar')
+    parser.add_field('Foo', multiple=True)
+    parser.add_field('Bar')
     msg = parser.parse_string('Foo: red\nFOO: magenta\nBar: green\nfoo : crimson\n')
     assert dict(msg) == {'Foo': ['red', 'magenta', 'crimson'], 'Bar': 'green'}
     assert msg.body is None
 
 def test_one_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True)
-    parser.add_header('Bar')
+    parser.add_field('Foo', multiple=True)
+    parser.add_field('Bar')
     msg = parser.parse_string('Foo: red\nBar: green\n')
     assert dict(msg) == {'Foo': ['red'], 'Bar': 'green'}
     assert msg.body is None
 
 def test_no_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True)
-    parser.add_header('Bar')
+    parser.add_field('Foo', multiple=True)
+    parser.add_field('Bar')
     msg = parser.parse_string('Bar: green\n')
     assert dict(msg) == {'Bar': 'green'}
     assert msg.body is None
 
 def test_bad_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True)
-    parser.add_header('Bar')
-    with pytest.raises(headerparser.DuplicateHeaderError) as excinfo:
+    parser.add_field('Foo', multiple=True)
+    parser.add_field('Bar')
+    with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
         parser.parse_string('Foo: red\nFOO: magenta\nBar: green\nBar: lime\n')
-    assert excinfo.value.header == 'Bar'
+    assert excinfo.value.name == 'Bar'
 
 def test_default_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True, default=42)
-    parser.add_header('Bar')
+    parser.add_field('Foo', multiple=True, default=42)
+    parser.add_field('Bar')
     msg = parser.parse_string('Bar: green\n')
     assert dict(msg) == {'Foo': 42, 'Bar': 'green'}
     assert msg.body is None
 
 def test_present_default_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True, default=42)
-    parser.add_header('Bar')
+    parser.add_field('Foo', multiple=True, default=42)
+    parser.add_field('Bar')
     msg = parser.parse_string('Foo: red\nBar: green\n')
     assert dict(msg) == {'Foo': ['red'], 'Bar': 'green'}
     assert msg.body is None
 
 def test_present_default_many_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True, default=42)
-    parser.add_header('Bar')
+    parser.add_field('Foo', multiple=True, default=42)
+    parser.add_field('Bar')
     msg = parser.parse_string('Foo: red\nFOO: magenta\nBar: green\n')
     assert dict(msg) == {'Foo': ['red', 'magenta'], 'Bar': 'green'}
     assert msg.body is None
 
 def test_required_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True, required=True)
-    parser.add_header('Bar')
+    parser.add_field('Foo', multiple=True, required=True)
+    parser.add_field('Bar')
     msg = parser.parse_string('Foo: red\nBar: green\n')
     assert dict(msg) == {'Foo': ['red'], 'Bar': 'green'}
     assert msg.body is None
 
 def test_required_many_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True, required=True)
-    parser.add_header('Bar')
+    parser.add_field('Foo', multiple=True, required=True)
+    parser.add_field('Bar')
     msg = parser.parse_string('Foo: red\nFOO: magenta\nBar: green\n')
     assert dict(msg) == {'Foo': ['red', 'magenta'], 'Bar': 'green'}
     assert msg.body is None
 
 def test_missing_required_multiple():
     parser = HeaderParser()
-    parser.add_header('Foo', multiple=True, required=True)
-    parser.add_header('Bar')
-    with pytest.raises(headerparser.MissingHeaderError) as excinfo:
+    parser.add_field('Foo', multiple=True, required=True)
+    parser.add_field('Bar')
+    with pytest.raises(headerparser.MissingFieldError) as excinfo:
         parser.parse_string('Bar: green\n')
-    assert excinfo.value.header == 'Foo'
+    assert excinfo.value.name == 'Foo'
 
 def test_unknown():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
-    with pytest.raises(headerparser.UnknownHeaderError) as excinfo:
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
+    with pytest.raises(headerparser.UnknownFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nQuux: blue\n')
-    assert excinfo.value.header == 'Quux'
+    assert excinfo.value.name == 'Quux'
 
 def test_empty_input():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('')
     assert dict(msg) == {}
     assert msg.body is None
 
 def test_trailing_whitespace():
     parser = HeaderParser()
-    parser.add_header('Foo')
-    parser.add_header('Bar')
-    parser.add_header('Baz')
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
     msg = parser.parse_string('Foo: red  \nBar: green\n (ish) \nBaz: blue\n   ')
     assert dict(msg) == {
         'Foo': 'red  ',
@@ -253,24 +253,24 @@ def test_trailing_whitespace():
 
 def test_redefinition():
     parser = HeaderParser()
-    parser.add_header('Foo')
+    parser.add_field('Foo')
     with pytest.raises(ValueError) as excinfo:
-        parser.add_header('FOO')
-    assert 'header defined more than once' in str(excinfo.value)
+        parser.add_field('FOO')
+    assert 'field defined more than once' in str(excinfo.value)
 
 def test_many_missing_required():
     parser = HeaderParser()
-    parser.add_header('Foo', required=True)
-    parser.add_header('Bar', required=True)
-    parser.add_header('Baz', required=True)
-    with pytest.raises(headerparser.MissingHeaderError) as excinfo:
+    parser.add_field('Foo', required=True)
+    parser.add_field('Bar', required=True)
+    parser.add_field('Baz', required=True)
+    with pytest.raises(headerparser.MissingFieldError) as excinfo:
         parser.parse_string('')
-    assert excinfo.value.header in ('Foo', 'Bar', 'Baz')
+    assert excinfo.value.name in ('Foo', 'Bar', 'Baz')
 
 def test_unfold():
     parser = HeaderParser()
-    parser.add_header('Folded')
-    parser.add_header('Unfolded', unfold=True)
+    parser.add_field('Folded')
+    parser.add_field('Unfolded', unfold=True)
     msg = parser.parse_string(
         'Folded: This is\n'
         '   test\n'
