@@ -1,10 +1,10 @@
-- Write a README
 - Write docstrings
 - Set up a Readthedocs site
 - Should string `default` values be passed through `type` etc. like in
   argparse?
-- Rethink how the original exception data is attached to `HeaderTypeError`s
+- Rethink how the original exception data is attached to `FieldTypeError`s
 - Give `HeaderParser` an `__eq__` method
+- Make `HeaderParser`'s attributes private?
 
 - Write more tests
     - different header name normalizers (identity, hyphens=underscores,
@@ -16,7 +16,7 @@
         - `add_additional` when a header has a `dest` that's just a normalized
           form of one of its names
     - scanning/parsing multiple stanzas
-    - calling `add_header`/`add_additional` on a `HeaderParser` after a
+    - calling `add_field`/`add_additional` on a `HeaderParser` after a
       previous call raised an error
     - scanning & parsing Unicode
 
@@ -115,7 +115,7 @@ Parsing
 - Add `object_hook` and `object_pairs_hook` options? (But how would the body be
   handled then?)
 
-- New `add_header` and `add_additional` options to add:
+- New `add_field` and `add_additional` options to add:
     - `action=callable`
         - The callable should take three arguments: the `NormalizedDict` so
           far, the header name, and the value

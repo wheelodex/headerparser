@@ -3,7 +3,7 @@ from .util   import ascii_splitlines
 
 def scan_string(s):
     """
-    Scan a string for RFC822-style header fields and return a generator of
+    Scan a string for RFC 822-style header fields and return a generator of
     ``(name, value)`` pairs for each header field in the input, plus a ``(None,
     body)`` pair representing the body (if any) after the header section.
 
@@ -22,7 +22,7 @@ def scan_string(s):
 
 def scan_file(fp):
     """
-    Scan a file for RFC822-style header fields and return a generator of
+    Scan a file for RFC 822-style header fields and return a generator of
     ``(name, value)`` pairs for each header field in the input, plus a ``(None,
     body)`` pair representing the body (if any) after the header section.
 
@@ -43,7 +43,7 @@ def scan_file(fp):
 
 def scan_lines(iterable):
     """
-    Scan an iterable of lines for RFC822-style header fields and return a
+    Scan an iterable of lines for RFC 822-style header fields and return a
     generator of ``(name, value)`` pairs for each header field in the input,
     plus a ``(None, body)`` pair representing the body (if any) after the
     header section.
