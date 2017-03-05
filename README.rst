@@ -42,7 +42,7 @@ including but not limited to:
 - ``META-INF/MANIFEST.MF`` files in Java JARs
 - a subset of the `YAML <http://www.yaml.org/>`_ serialization format
 
-— all of which ``headerparser`` can parse.
+— all of which this package can parse.
 
 
 Installation

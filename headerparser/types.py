@@ -6,8 +6,18 @@ TRUTHY = set(['yes', 'y', 'on',  'true',  '1'])
 FALSEY = set(['no',  'n', 'off', 'false', '0'])
 
 def BOOL(s):
-    if isinstance(s, bool):  # In case BOOL is somehow applied twice
-        return s
+    """
+    Convert boolean-like strings to `bool` values.  The strings ``'yes'``,
+    ``'y'``, ``'on'``, ``'true'``, and ``'1'`` are converted to `True`, and the
+    strings ``'no'``, ``'n'``, ``'off'``, ``'false'``, and ``'0'`` are
+    converted to `False`.  The input is lowercased and has leading & trailing
+    whitespace stripped before conversion.  Any value that cannot be converted
+    to a `bool` results in a `ValueError`.
+
+    :param string s: a boolean-like string to convert to a `bool`
+    :rtype: bool
+    :raises ValueError: if ``s`` is not one of the values listed above
+    """
     b = s.strip().lower()
     if b in TRUTHY:
         return True

@@ -4,4 +4,7 @@ Utilities
 =========
 .. autoclass:: NormalizedDict
 .. autofunction:: BOOL
-.. autofunction:: lower
+
+.. function:: lower(s)
+
+    Alias for ``operator.methodcaller('lower')``
