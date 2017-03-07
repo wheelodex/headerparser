@@ -68,6 +68,9 @@ Features
           first line of an HTTP request or response?)
         - handling of header lettercases?
 
+- Allow lines passed to `scan_lines` and `parse_lines` to lack terminating
+  newlines
+
 Scanning
 --------
 - Give the scanner options for:
@@ -129,3 +132,5 @@ Parsing
   additional header names before adding them to the dict?
 
 - Requiring/forbidding nonempty/non-whitespace bodies
+
+- Add public methods for removing & inspecting header definitions?
