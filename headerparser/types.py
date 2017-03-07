@@ -2,8 +2,8 @@ from   operator import methodcaller
 
 lower = methodcaller('lower')
 
-TRUTHY = set(['yes', 'y', 'on',  'true',  '1'])
-FALSEY = set(['no',  'n', 'off', 'false', '0'])
+TRUTHY = {'yes', 'y', 'on',  'true',  '1'}
+FALSEY = {'no',  'n', 'off', 'false', '0'}
 
 def BOOL(s):
     """
