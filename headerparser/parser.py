@@ -6,6 +6,20 @@ from   .types    import lower
 from   .util     import unfold
 
 class HeaderParser(object):
+    """
+    A parser for RFC 822-style header sections.  Define the fields the parser
+    should recognize with the `add_field` method, configure handling of
+    unrecognized fields with `add_additional`, and then parse input with
+    `parse_file` or `parse_string`.
+
+    :param callable normalizer: a callable to apply to field names in order to
+        normalize them for storage & comparison; default:
+        ``operator.methodcaller('lower')``
+    :param bool body: whether the parser should allow or forbid a body after
+        the header section; `True` means a body is required, `False` means a
+        body is prohibited, and `None` means a body is optional
+    """
+
     def __init__(self, normalizer=None, body=None):
         self.normalizer = normalizer or lower
         self.body = body

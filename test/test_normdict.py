@@ -129,6 +129,7 @@ def test_init_list():
 def test_copy():
     nd = NormalizedDict({"Foo": "bar"})
     nd2 = nd.copy()
+    assert nd is not nd2
     assert isinstance(nd2, NormalizedDict)
     assert dict(nd2) == {"Foo": "bar"}
     assert nd2.body is None
@@ -149,6 +150,7 @@ def test_copy():
 def test_copy_with_body():
     nd = NormalizedDict({"Foo": "bar"}, body='Glarch.')
     nd2 = nd.copy()
+    assert nd is not nd2
     assert isinstance(nd2, NormalizedDict)
     assert dict(nd2) == {"Foo": "bar"}
     assert nd2.body == 'Glarch.'
