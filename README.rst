@@ -16,13 +16,13 @@
 `GitHub <https://github.com/jwodder/headerparser>`_
 | `Issues <https://github.com/jwodder/headerparser/issues>`_
 
-``headerparser`` parses files containing RFC 822-style ("e-mail") headers and
-converts them into case-insensitive dictionaries with the trailing message body
-(if any) attached.  Fields can be converted to other types, marked required, or
-given default values using an API based on the standard library's ``argparse``
-module.  (Everyone loves ``argparse``, right?)  Low-level functions for just
-scanning header fields (breaking them into sequences of key-value pairs without
-any further processing) are also included.
+``headerparser`` parses key-value pairs in the style of RFC 822 (e-mail)
+headers and converts them into case-insensitive dictionaries with the trailing
+message body (if any) attached.  Fields can be converted to other types, marked
+required, or given default values using an API based on the standard library's
+``argparse`` module.  (Everyone loves ``argparse``, right?) Low-level functions
+for just scanning header fields (breaking them into sequences of key-value
+pairs without any further processing) are also included.
 
 The Format
 ==========
@@ -61,7 +61,7 @@ Define a parser::
     >>> import headerparser
     >>> parser = headerparser.HeaderParser()
     >>> parser.add_field('Name', required=True)
-    >>> parser.add_field('Type', choices=['example', 'demonstration', 'illustration'], default='example')
+    >>> parser.add_field('Type', choices=['example', 'demonstration', 'prototype'], default='example')
     >>> parser.add_field('Public', type=headerparser.BOOL, default=False)
     >>> parser.add_field('Tag', multiple=True)
     >>> parser.add_field('Data')

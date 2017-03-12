@@ -10,9 +10,9 @@ def BOOL(s):
     Convert boolean-like strings to `bool` values.  The strings ``'yes'``,
     ``'y'``, ``'on'``, ``'true'``, and ``'1'`` are converted to `True`, and the
     strings ``'no'``, ``'n'``, ``'off'``, ``'false'``, and ``'0'`` are
-    converted to `False`.  The input is lowercased and has leading & trailing
-    whitespace stripped before conversion.  Any value that cannot be converted
-    to a `bool` results in a `ValueError`.
+    converted to `False`.  The conversion is case-insensitive and ignores
+    leading & trailing whitespace.  Any value that cannot be converted to a
+    `bool` results in a `ValueError`.
 
     :param string s: a boolean-like string to convert to a `bool`
     :rtype: bool

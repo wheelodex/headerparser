@@ -1,5 +1,8 @@
 - Write docstrings
 - Set up a Readthedocs site
+    - Include README examples in docs
+    - Add a page documenting the exact RFC 822 format recognized, combining the
+      documentation from the README and from the `scan_lines` docstring
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `FieldTypeError`s
@@ -15,9 +18,8 @@
         - `add_additional(False, extra arguments ...)`
         - `add_additional` when a header has a `dest` that's just a normalized
           form of one of its names
-    - scanning/parsing multiple stanzas
-    - calling `add_field`/`add_additional` on a `HeaderParser` after a
-      previous call raised an error
+    - calling `add_field`/`add_additional` on a `HeaderParser` after a previous
+      call raised an error
     - scanning & parsing Unicode
 
 
@@ -71,6 +73,13 @@ Features
 - Allow lines passed to `scan_lines` and `parse_lines` to lack terminating
   newlines
 
+- Add support for multiple header stanzas in a single document
+    - Add a scanner function that parses a multi-stanza document and returns an
+      iterable of iterables of key-value pairs
+    - Give `HeaderParser` `parse_stanzas_file` and `parse_stanzas_string`
+      methods (Rethink names) that return iterables of `NormalizedDict`s
+        - Calling these methods when `body=True` results in an error
+
 Scanning
 --------
 - Give the scanner options for:
@@ -94,6 +103,9 @@ Scanning
 
 Parsing
 -------
+- The `HeaderParser` constructor should accept arbitrary `**kwargs` that are
+  then passed to the scanner function(s)
+
 - Add built-in support for multi-stanza documents in which different stanzas
   follow different schemata? (e.g., one of the Debian source control file
   formats)
