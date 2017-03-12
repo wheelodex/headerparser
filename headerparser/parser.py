@@ -12,9 +12,14 @@ class HeaderParser(object):
     unrecognized fields with `add_additional`, and then parse input with
     `parse_file` or `parse_string`.
 
-    :param callable normalizer: a callable to apply to field names in order to
-        normalize them for storage & comparison; default:
-        ``operator.methodcaller('lower')``
+    :param callable normalizer: By default, the parser will consider two field
+        names to be equal iff their lowercased forms are equal.  This can be
+        overridden by setting ``normalizer`` to a custom callable that takes a
+        field name and returns a "normalized" name for use in equality testing.
+        The normalizer will also be used when looking up keys in the
+        `NormalizedDict` instances returned by the parser's ``parse_*``
+        methods.
+
     :param bool body: whether the parser should allow or forbid a body after
         the header section; `True` means a body is required, `False` means a
         body is prohibited, and `None` means a body is optional
@@ -29,6 +34,66 @@ class HeaderParser(object):
         self.custom_dests = False
 
     def add_field(self, name, *altnames, **kwargs):
+        """
+        Define a header field for the parser to parse.  During parsing, if a
+        field is encountered whose name (*modulo* normalization) equals
+        ``name`` or is in ``altnames``, the field's value will be processed
+        according to the options in ``**kwargs``.  (If no options are
+        specified, the value will just be stored in the result dictionary.)
+
+        :param string name: the primary name for the field, used in error
+            messages and as the default value of ``dest``
+
+        :param strings altnames: field name synonyms
+
+        :param dest: The key in the result dictionary in which the field's
+            value(s) will be stored; defaults to ``name``.  When additional
+            headers are enabled (see `add_additional`), ``dest`` can only equal
+            one of the field's names.
+
+        :param bool required: If `True` (default `False`), the ``parse_*``
+            methods will raise a `~headerparser.errors.MissingFieldError` if
+            the field is not present in the input
+
+        :param default: The value to associate with the field if it is not
+            present in the input.  If no default value is specified, the field
+            will be omitted from the result dictionary if it is not present in
+            the input.  ``default`` cannot be set when the field is required.
+            ``type`` and ``unfold`` will not be applied to the default value,
+            and the default value need not belong to ``choices``.
+
+        :param bool unfold: If `True` (default `False`), the field value will
+            be "unfolded" (i.e., line breaks will be removed and whitespace
+            around line breaks will be converted to a single space) before
+            applying ``type``
+
+        :param callable type: a callable to apply to the field value before
+            storing it in the result dictionary
+
+        :param iterable choices: A sequence of values which the field is
+            allowed to have.  If ``choices`` is defined, all occurrences of the
+            field in the input must have one of the given values (after
+            applying ``type``) or else an
+            `~headerparser.errors.InvalidChoiceError` is raised.
+
+        :param bool multiple: If `True`, the header field will be allowed to
+            occur more than once in the input, and all of the field's values
+            will be stored in a list.  If `False` (the default), a
+            `~headerparser.errors.DuplicateFieldError` will be raised if the
+            field occurs more than once in the input.
+
+        :return: `None`
+        :raises ValueError:
+            - if another field with the same name or ``dest`` was already
+              defined
+            - if ``dest`` is not one of the field's names and `add_additional`
+              is enabled
+            - if ``default`` is defined and ``required`` is true
+            - if ``choices`` is an empty sequence
+        :raises TypeError: if ``name`` or one of the ``altnames`` is not a
+            string
+        """
+
         kwargs.setdefault('dest', name)
         hd = NamedField(name=name, **kwargs)
         normed = set(map(self.normalizer, (name,) + altnames))
