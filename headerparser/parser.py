@@ -112,8 +112,58 @@ class HeaderParser(object):
             self.fielddefs[n] = hd
         self.dests.add(self.normalizer(hd.dest))
 
-    def add_additional(self, allow=True, **kwargs):
-        if allow:
+    def add_additional(self, enable=True, **kwargs):
+        """
+        Specify how the parser should handle fields in the input that were not
+        previously registered with `add_field`.  By default, unknown fields
+        will cause the ``parse_*`` methods to raise an
+        `~headerparser.errors.UnknownFieldError`, but calling this method with
+        ``enable=True`` (the default) will change the parser's behavior so that
+        all unregistered fields are processed according to the options in
+        ``**kwargs``.  (If no options are specified, the additional values will
+        just be stored in the result dictionary.)
+
+        If this method is called more than once, only the settings from the
+        last call will be used.
+
+        Note that additional field values are always stored in the result
+        dictionary using their field name as the key, and two fields are
+        considered the same (for the purposes of ``multiple``) iff their names
+        are the same after normalization.  Customization of the dictionary key
+        and field name can only be done through `add_field`.
+
+        :param bool enable: whether the parser should accept input fields that
+            were not registered with `add_field`; setting this to `False`
+            disables additional fields and restores the parser's default
+            behavior
+
+        :param bool unfold: If `True` (default `False`), additional field
+            values will be "unfolded" (i.e., line breaks will be removed and
+            whitespace around line breaks will be converted to a single space)
+            before applying ``type``
+
+        :param callable type: a callable to apply to additional field values
+            before storing them in the result dictionary
+
+        :param iterable choices: A sequence of values which additional fields
+            are allowed to have.  If ``choices`` is defined, all additional
+            field values in the input must have one of the given values (after
+            applying ``type``) or else an
+            `~headerparser.errors.InvalidChoiceError` is raised.
+
+        :param bool multiple: If `True`, each additional header field will be
+            allowed to occur more than once in the input, and each field's
+            values will be stored in a list.  If `False` (the default), a
+            `~headerparser.errors.DuplicateFieldError` will be raised if an
+            additional field occurs more than once in the input.
+
+        :return: `None`
+        :raises ValueError:
+            - if ``enable`` is true and a previous call to `add_field` used a
+              custom ``dest``
+            - if ``choices`` is an empty sequence
+        """
+        if enable:
             if self.custom_dests:
                 raise ValueError('add_additional and `dest` are mutually exclusive')
             self.additional = FieldDef(**kwargs)
