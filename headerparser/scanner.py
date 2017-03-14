@@ -71,9 +71,9 @@ def scan_lines(iterable):
         ``\\n`` is appended to any header field line which does not already end
         in CR, LF, or CR LF.
 
-    An "empty" line containing only a line ending (if anything) denotes the end
-    of the header section and the beginning of the body.  All lines after it
-    are concatenated & yielded as-is in a ``(None, body)`` pair.
+    An "empty" line containing only a line ending denotes the end of the header
+    section and the beginning of the body.  All lines after it are concatenated
+    & yielded as-is in a ``(None, body)`` pair.
 
     Note that if there is no empty line in ``iterable``, then no body pair is
     yielded.  If the empty line is the last line in ``iterable``, the body will

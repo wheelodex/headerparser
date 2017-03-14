@@ -171,6 +171,19 @@ class HeaderParser(object):
             self.additional = None
 
     def parse_stream(self, fields):
+        """
+        Process a sequence of ``(name, value)`` pairs as returned by
+        `scan_lines()` and return a dictionary of header fields (possibly with
+        body attached).  This is a low-level method that you will usually not
+        need to call.
+
+        :param fields: a sequence of ``(name, value)`` pairs representing the
+            input fields
+        :type fields: iterable of pairs of strings
+        :rtype: NormalizedDict
+        :raises ParserError: if the input fields do not conform to the field
+            definitions declared with `add_field` and `add_additional`
+        """
         data = NormalizedDict(normalizer=self.normalizer)
         for k,v in fields:
             if k is None:
@@ -198,12 +211,48 @@ class HeaderParser(object):
         return data
 
     def parse_file(self, fp):
+        """
+        Parse an RFC 822-style header field section (possibly followed by a
+        message body) from the contents of the given filehandle and return a
+        dictionary of the header fields (possibly with body attached)
+
+        :param fp: the file to parse
+        :type fp: file-like object
+        :rtype: NormalizedDict
+        :raises ParserError: if the input fields do not conform to the field
+            definitions declared with `add_field` and `add_additional`
+        :raises ScannerError: if the header section is malformed
+        """
         return self.parse_stream(scan_file(fp))
 
     def parse_lines(self, iterable):
+        """
+        Parse an RFC 822-style header field section (possibly followed by a
+        message body) from the given sequence of lines and return a dictionary
+        of the header fields (possibly with body attached)
+
+        :param iterable: a sequence of lines (with terminating newlines
+            retained) comprising the text to parse
+        :type iterable: iterable of strings
+        :rtype: NormalizedDict
+        :raises ParserError: if the input fields do not conform to the field
+            definitions declared with `add_field` and `add_additional`
+        :raises ScannerError: if the header section is malformed
+        """
         return self.parse_stream(scan_lines(iterable))
 
     def parse_string(self, s):
+        """
+        Parse an RFC 822-style header field section (possibly followed by a
+        message body) from the given string and return a dictionary of the
+        header fields (possibly with body attached)
+
+        :param string s: the text to parse
+        :rtype: NormalizedDict
+        :raises ParserError: if the input fields do not conform to the field
+            definitions declared with `add_field` and `add_additional`
+        :raises ScannerError: if the header section is malformed
+        """
         return self.parse_stream(scan_string(s))
 
 
