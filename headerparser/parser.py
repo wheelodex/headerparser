@@ -229,10 +229,11 @@ class HeaderParser(object):
         """
         Parse an RFC 822-style header field section (possibly followed by a
         message body) from the given sequence of lines and return a dictionary
-        of the header fields (possibly with body attached)
+        of the header fields (possibly with body attached).  Newlines will be
+        inserted where not already present in multiline header fields but will
+        not be inserted inside the body.
 
-        :param iterable: a sequence of lines (with terminating newlines
-            retained) comprising the text to parse
+        :param iterable: a sequence of lines comprising the text to parse
         :type iterable: iterable of strings
         :rtype: NormalizedDict
         :raises ParserError: if the input fields do not conform to the field

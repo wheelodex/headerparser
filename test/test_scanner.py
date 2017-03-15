@@ -1,6 +1,6 @@
 import pytest
 import headerparser
-from   headerparser import scan_string
+from   headerparser import scan_string, scan_lines
 
 def test_simple():
     assert list(scan_string('Foo: red\nBar: green\nBaz: blue\n')) == \
@@ -134,3 +134,19 @@ def test_one_empty_line():
 
 def test_two_empty_lines():
     assert list(scan_string('\n\n')) == [(None, '\n')]
+
+def test_lines_no_ends():
+    assert list(scan_lines([
+        'Key: value',
+        'Folded: hold on',
+        '  let me check',
+        ' ',
+        '  yes',
+        '',
+        'Newlines will not be added to this body.',
+        "So it'll look bad.",
+    ])) == [
+        ('Key', 'value'),
+        ('Folded', 'hold on\n  let me check\n \n  yes'),
+        (None, "Newlines will not be added to this body.So it'll look bad."),
+    ]

@@ -70,9 +70,6 @@ Features
           first line of an HTTP request or response?)
         - handling of header lettercases?
 
-- Allow lines passed to `scan_lines` and `parse_lines` to lack terminating
-  newlines
-
 - Add support for multiple header stanzas in a single document
     - Add a scanner function that parses a multi-stanza document and returns an
       iterable of iterables of key-value pairs
@@ -101,6 +98,8 @@ Scanning
         - empty header name (options: error, header with empty name, look for
           next colon, or start of body)
         - all-whitespace line (considered obsolete by RFC 5322)
+
+- `scan_lines`: Split apart lines with embedded line endings
 
 Parsing
 -------

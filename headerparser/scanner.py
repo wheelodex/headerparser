@@ -73,16 +73,16 @@ def scan_lines(iterable):
 
     An "empty" line containing only a line ending denotes the end of the header
     section and the beginning of the body.  All lines after it are concatenated
-    & yielded as-is in a ``(None, body)`` pair.
+    & yielded as-is in a ``(None, body)`` pair.  Note that body lines which do
+    not end with a line terminator will not have one appended before joining.
 
-    Note that if there is no empty line in ``iterable``, then no body pair is
-    yielded.  If the empty line is the last line in ``iterable``, the body will
-    be the empty string.  If the empty line is the *first* line in
-    ``iterable``, then all other lines will be treated as part of the body and
-    will not be scanned for header fields.
+    If there is no empty line in ``iterable``, then no body pair is yielded.
+    If the empty line is the last line in ``iterable``, the body will be the
+    empty string.  If the empty line is the *first* line in ``iterable``, then
+    all other lines will be treated as part of the body and will not be scanned
+    for header fields.
 
-    :param iterable: an iterable of strings representing lines of input, with
-        terminating newlines retained
+    :param iterable: an iterable of strings representing lines of input
     :return: a generator of ``(name, value)`` pairs
     :raises MalformedHeaderError: if an invalid header line, i.e., a line
         without either a colon or leading whitespace, is encountered
