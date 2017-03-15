@@ -12,7 +12,7 @@ def scan_string(s):
 
     :param s: a string which will be broken into lines on CR, LF, and CR LF
         boundaries and passed to `scan_lines()`
-    :return: a generator of ``(name, value)`` pairs
+    :rtype: generator of pairs of strings
     :raises MalformedHeaderError: if an invalid header line, i.e., a line
         without either a colon or leading whitespace, is encountered
     :raises UnexpectedFoldingError: if a folded (indented) line that is not
@@ -32,7 +32,7 @@ def scan_file(fp):
     :param fp: A file-like object than can be iterated over to produce lines to
         pass to `scan_lines()`.  Opening the file in universal newlines mode is
         recommended.
-    :return: a generator of ``(name, value)`` pairs
+    :rtype: generator of pairs of strings
     :raises MalformedHeaderError: if an invalid header line, i.e., a line
         without either a colon or leading whitespace, is encountered
     :raises UnexpectedFoldingError: if a folded (indented) line that is not
@@ -48,47 +48,35 @@ def scan_lines(iterable):
     plus a ``(None, body)`` pair representing the body (if any) after the
     header section.
 
-    The input is assumed to consist of at most two parts: a header section,
-    containing zero or more header fields, and an optional free-form body,
-    which (if present) is separated from the header section by an empty line.
-
-    An individual header field consists of one or more lines, with all lines
-    other than the first beginning with a space or tab.  Additionally, the
-    first line must contain a colon (optionally surrounded by whitespace)
-    separating the field name from the first line of the field value.  The
-    first line of the field value is then concatenated with the remaining lines
-    of the header field (with leading whitespace preserved) to produce the
-    complete field value.  Line endings in the field value are converted to
-    ``\\n``, and a trailing line ending (if any) at the end of the field value
-    is removed.
+    Each field value is a single string, the concatenation of one or more
+    lines, with leading whitespace on lines after the first preserved.  The
+    ending of each line is converted to ``'\\n'`` (added if there is no
+    ending), and the last line of the field value has its trailing line ending
+    (if any) removed.
 
     .. note::
 
         "Line ending" here means a CR, LF, or CR LF sequence at the end of one
         of the lines in ``iterable``.  Unicode line separators, along with line
         endings occurring in the middle of a line, are not treated as line
-        endings and are not trimmed or converted to ``\\n``.  Additionally, a
-        ``\\n`` is appended to any header field line which does not already end
-        in CR, LF, or CR LF.
+        endings and are not trimmed or converted to ``\\n``.
 
-    An "empty" line containing only a line ending denotes the end of the header
-    section and the beginning of the body.  All lines after it are concatenated
-    & yielded as-is in a ``(None, body)`` pair.  Note that body lines which do
-    not end with a line terminator will not have one appended before joining.
-
-    If there is no empty line in ``iterable``, then no body pair is yielded.
-    If the empty line is the last line in ``iterable``, the body will be the
-    empty string.  If the empty line is the *first* line in ``iterable``, then
-    all other lines will be treated as part of the body and will not be scanned
-    for header fields.
+    All lines after the first blank line are concatenated & yielded as-is in a
+    ``(None, body)`` pair.  (Note that body lines which do not end with a line
+    terminator will not have one appended.)  If there is no empty line in
+    ``iterable``, then no body pair is yielded.  If the empty line is the last
+    line in ``iterable``, the body will be the empty string.  If the empty line
+    is the *first* line in ``iterable``, then all other lines will be treated
+    as part of the body and will not be scanned for header fields.
 
     :param iterable: an iterable of strings representing lines of input
-    :return: a generator of ``(name, value)`` pairs
+    :rtype: generator of pairs of strings
     :raises MalformedHeaderError: if an invalid header line, i.e., a line
         without either a colon or leading whitespace, is encountered
     :raises UnexpectedFoldingError: if a folded (indented) line that is not
         preceded by a valid header line is encountered
     """
+
     lineiter = iter(iterable)
     name  = None
     value = ''

@@ -1,8 +1,7 @@
 - Write docstrings
 - Set up a Readthedocs site
     - Include README examples in docs
-    - Add a page documenting the exact RFC 822 format recognized, combining the
-      documentation from the README and from the `scan_lines` docstring
+    - Add examples to `format.rst`
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `FieldTypeError`s

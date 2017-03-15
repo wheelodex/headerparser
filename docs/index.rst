@@ -15,6 +15,7 @@ pairs without any further processing) are also included.
 .. toctree::
     :maxdepth: 2
 
+    format
     parser
     scanner
     errors
