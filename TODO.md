@@ -1,6 +1,5 @@
 - Write docstrings
 - Set up a Readthedocs site
-    - Include README examples in docs
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `FieldTypeError`s

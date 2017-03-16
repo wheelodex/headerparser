@@ -20,9 +20,9 @@
 headers and converts them into case-insensitive dictionaries with the trailing
 message body (if any) attached.  Fields can be converted to other types, marked
 required, or given default values using an API based on the standard library's
-``argparse`` module.  (Everyone loves ``argparse``, right?) Low-level functions
-for just scanning header fields (breaking them into sequences of key-value
-pairs without any further processing) are also included.
+``argparse`` module.  (Everyone loves ``argparse``, right?)  Low-level
+functions for just scanning header fields (breaking them into sequences of
+key-value pairs without any further processing) are also included.
 
 The Format
 ==========
@@ -115,3 +115,24 @@ Allow fields you didn't even think of::
     >>> msg = parser.parse_string('Name: unknown field\nField: Value')
     >>> msg['Field']
     'Value'
+
+Just split some headers into names & values and worry about validity later::
+
+    >>> for field in headerparser.scan_string('''\
+    ... Name: Scanner Sample
+    ... Unknown headers: no problem
+    ... Unparsed-Boolean: yes
+    ... CaSe-SeNsItIvE-rEsUlTs: true
+    ... Whitespace around colons:optional
+    ... Whitespace around colons  :  I already said it's optional.
+    ...   That means you have the _option_ to use as much as you want!
+    ... 
+    ... And there's a body, too, I guess.
+    ... '''): print(field)
+    ('Name', 'Scanner Sample')
+    ('Unknown headers', 'no problem')
+    ('Unparsed-Boolean', 'yes')
+    ('CaSe-SeNsItIvE-rEsUlTs', 'true')
+    ('Whitespace around colons', 'optional')
+    ('Whitespace around colons', "I already said it's optional.\n  That means you have the _option_ to use as much as you want!")
+    (None, "And there's a body, too, I guess.\n")
