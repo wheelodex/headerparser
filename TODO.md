@@ -1,12 +1,12 @@
 - Write docstrings
 - Set up a Readthedocs site
     - Include README examples in docs
-    - Add examples to `format.rst`
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `FieldTypeError`s
 - Give `HeaderParser` an `__eq__` method
 - Make `HeaderParser`'s attributes private?
+- Base `NormalizedDict` on `OrderedDict`?
 
 - Write more tests
     - different header name normalizers (identity, hyphens=underscores,
