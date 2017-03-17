@@ -1,4 +1,3 @@
-- Write docstrings
 - Set up a Readthedocs site
 - Should string `default` values be passed through `type` etc. like in
   argparse?

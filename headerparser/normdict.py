@@ -6,12 +6,12 @@ class NormalizedDict(collections.MutableMapping):
     """
     A generalization of a case-insensitive dictionary.  `NormalizedDict` takes
     a callable (the "normalizer") that is applied to any key passed to its
-    ``__getitem__``, ``__setitem__``, or ``__delitem__`` method, and the result
-    of the call is then used for the actual lookup.  When iterating over a
-    `NormalizedDict`, each key is returned as the "pre-normalized" form passed
-    to ``__setitem__`` the last time the key was set (but see `normalized()`
-    below).  Aside from this, `NormalizedDict` behaves like a normal
-    `~collections.MutableMapping` class.
+    `~object.__getitem__`, `~object.__setitem__`, or `~object.__delitem__`
+    method, and the result of the call is then used for the actual lookup.
+    When iterating over a `NormalizedDict`, each key is returned as the
+    "pre-normalized" form passed to `~object.__setitem__` the last time the key
+    was set (but see `normalized()` below).  Aside from this, `NormalizedDict`
+    behaves like a normal `~collections.MutableMapping` class.
 
     Two `NormalizedDict` instances compare equal iff their normalizers, bodies,
     and `normalized_dict()` return values are equal.  When comparing a
@@ -28,11 +28,11 @@ class NormalizedDict(collections.MutableMapping):
     :param mapping data: a mapping or iterable of ``(key, value)`` pairs with
         which to initialize the instance
     :param callable normalizer: A callable to apply to keys before looking them
-        up; defaults to ``operator.methodcaller('lower')``.  ``normalizer``
-        MUST be idempotent (i.e., ``normalizer(x)`` must equal
+        up; defaults to ``operator.methodcaller('lower')``.  The callable MUST
+        be idempotent (i.e., ``normalizer(x)`` must equal
         ``normalizer(normalizer(x))`` for all inputs) or else bad things will
         happen to your dictionary.
-    :param body: initial value for the ``body`` attribute
+    :param body: initial value for the `body` attribute
     :type body: string or `None`
     """
 
@@ -40,7 +40,7 @@ class NormalizedDict(collections.MutableMapping):
         self._data = {}
         self.normalizer = normalizer or lower
         #: This is where `HeaderParser` stores the message body (if any)
-        #: accompanying the header section represented by the main mapping
+        #: accompanying the header section represented by the mapping
         self.body = body
         if data is not None:
             # Don't call `update` until after `normalizer` is set.
@@ -82,6 +82,20 @@ class NormalizedDict(collections.MutableMapping):
                .format(self, dict(self))
 
     def normalized(self):
+        """
+        Return a copy of the instance such that iterating over it will return
+        normalized keys instead of the keys passed to `~object.__setitem__`
+
+        >>> normdict = NormalizedDict()
+        >>> normdict['Foo'] = 23
+        >>> normdict['bar'] = 42
+        >>> sorted(normdict)
+        ['Foo', 'bar']
+        >>> sorted(normdict.normalized())
+        ['bar', 'foo']
+
+        :rtype: NormalizedDict
+        """
         return NormalizedDict(
             self.normalized_dict(),
             normalizer=self.normalizer,
@@ -89,9 +103,16 @@ class NormalizedDict(collections.MutableMapping):
         )
 
     def normalized_dict(self):
+        """
+        Convert to a `dict` with all keys normalized.  (A `dict` with
+        non-normalized keys can be obtained with ``dict(normdict)``.)
+
+        :rtype: dict
+        """
         return {key: value for key, (_, value) in iteritems(self._data)}
 
     def copy(self):
+        """ Return a shallow copy of the mapping """
         dup = self.__class__()
         dup._data = self._data.copy()
         dup.normalizer = self.normalizer
