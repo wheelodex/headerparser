@@ -26,7 +26,7 @@ Installation
 Just use `pip <https://pip.pypa.io>`_ (You have pip, right?) to install
 ``headerparser`` and its dependencies::
 
-    pip install git+https://github.com/jwodder/headerparser.git
+    pip install headerparser
 
 
 Examples

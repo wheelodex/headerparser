@@ -1,7 +1,7 @@
-.. image:: http://www.repostatus.org/badges/latest/wip.svg
-    :target: http://www.repostatus.org/#wip
-    :alt: Project Status: WIP – Initial development is in progress, but there
-          has not yet been a stable, usable release suitable for the public.
+.. image:: http://www.repostatus.org/badges/latest/active.svg
+    :target: http://www.repostatus.org/#active
+    :alt: Project Status: Active — The project has reached a stable, usable
+          state and is being actively developed.
 
 .. image:: https://travis-ci.org/jwodder/headerparser.svg?branch=master
     :target: https://travis-ci.org/jwodder/headerparser
@@ -9,12 +9,16 @@
 .. image:: https://coveralls.io/repos/github/jwodder/headerparser/badge.svg?branch=master
     :target: https://coveralls.io/github/jwodder/headerparser?branch=master
 
+.. image:: https://img.shields.io/pypi/pyversions/headerparser.svg
+    :target: https://pypi.python.org/pypi/headerparser
+
 .. image:: https://img.shields.io/github/license/jwodder/headerparser.svg
     :target: https://opensource.org/licenses/MIT
     :alt: MIT License
 
 `GitHub <https://github.com/jwodder/headerparser>`_
-| `Documentation <https://headerparser.readthedocs.io/en/latest>`_
+| `PyPI <https://pypi.python.org/pypi/headerparser>`_
+| `Documentation <https://headerparser.readthedocs.io/en/v0.1.0>`_
 | `Issues <https://github.com/jwodder/headerparser/issues>`_
 
 ``headerparser`` parses key-value pairs in the style of RFC 822 (e-mail)
@@ -51,7 +55,7 @@ Installation
 Just use `pip <https://pip.pypa.io>`_ (You have pip, right?) to install
 ``headerparser`` and its dependencies::
 
-    pip install git+https://github.com/jwodder/headerparser.git
+    pip install headerparser
 
 
 Examples
