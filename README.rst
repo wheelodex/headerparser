@@ -14,6 +14,7 @@
     :alt: MIT License
 
 `GitHub <https://github.com/jwodder/headerparser>`_
+| `Documentation <https://headerparser.readthedocs.io/en/latest>`_
 | `Issues <https://github.com/jwodder/headerparser/issues>`_
 
 ``headerparser`` parses key-value pairs in the style of RFC 822 (e-mail)

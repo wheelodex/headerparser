@@ -1,4 +1,3 @@
-- Set up a Readthedocs site
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `FieldTypeError`s
