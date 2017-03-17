@@ -3,6 +3,7 @@
 Utilities
 =========
 .. autoclass:: NormalizedDict
+
 .. autofunction:: BOOL
 
 .. function:: lower(s)

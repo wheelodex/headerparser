@@ -6,6 +6,9 @@
 - Give `HeaderParser` an `__eq__` method
 - Make `HeaderParser`'s attributes private?
 - Base `NormalizedDict` on `OrderedDict`?
+- Make `NormalizedDict`'s default normalizer handle non-strings?
+- Rename `NormalizedDict.normalized_dict()` to something that doesn't imply it
+  returns a `NormalizedDict`?
 
 - Write more tests
     - different header name normalizers (identity, hyphens=underscores,
@@ -19,6 +22,7 @@
     - calling `add_field`/`add_additional` on a `HeaderParser` after a previous
       call raised an error
     - scanning & parsing Unicode
+    - normalizer that returns a non-string
 
 
 Features
@@ -53,8 +57,6 @@ Features
         - setting the key name for the "message body"
         - handling of multiple occurrences of the same header in a single
           stanza; choices:
-            - only use the first value for each header
-            - only use the last value
             - raise an error
             - combine multi-occurrence headers into an array of values
             - use an array of values for all headers regardless of multiplicity
