@@ -92,4 +92,8 @@ class NormalizedDict(collections.MutableMapping):
         return {key: value for key, (_, value) in iteritems(self._data)}
 
     def copy(self):
-        return self.__class__(dict(self), self.normalizer, self.body)
+        dup = self.__class__()
+        dup._data = self._data.copy()
+        dup.normalizer = self.normalizer
+        dup.body = self.body
+        return dup
