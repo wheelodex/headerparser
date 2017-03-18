@@ -24,7 +24,7 @@ autodoc_default_flags = ['members', 'undoc-members']
 #autodoc_member_order = 'bysource'
 
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/", None),
+    "python": ("https://docs.python.org/3", None),
     #"python2": ("https://docs.python.org/2", None),
 }
 

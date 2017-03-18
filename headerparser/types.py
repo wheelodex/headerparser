@@ -1,7 +1,3 @@
-from   operator import methodcaller
-
-lower = methodcaller('lower')
-
 TRUTHY = {'yes', 'y', 'on',  'true',  '1'}
 FALSEY = {'no',  'n', 'off', 'false', '0'}
 
@@ -25,3 +21,13 @@ def BOOL(s):
         return False
     else:
         raise ValueError('invalid boolean: ' + repr(s))
+
+def lower(s):
+    """
+    Convert ``s`` to lowercase by calling its :meth:`~str.lower()` method if it
+    has one; otherwise, return ``s`` unchanged
+    """
+    try:
+        return s.lower()
+    except (TypeError, AttributeError):
+        return s

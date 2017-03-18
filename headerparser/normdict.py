@@ -13,25 +13,21 @@ class NormalizedDict(collections.MutableMapping):
     was set (but see `normalized()` below).  Aside from this, `NormalizedDict`
     behaves like a normal `~collections.MutableMapping` class.
 
+    If a normalizer is not specified upon instantiation, a default will be used
+    that converts strings to lowercase and leaves everything else unchanged, so
+    `NormalizedDict` defaults to yet another case-insensitive dictionary.
+
     Two `NormalizedDict` instances compare equal iff their normalizers, bodies,
     and `normalized_dict()` return values are equal.  When comparing a
     `NormalizedDict` to any other type of mapping, the other mapping is first
     converted to a `NormalizedDict` using the same normalizer.
 
-    If not specified, the normalizer defaults to
-    ``operator.methodcaller('lower')``, so `NormalizedDict` defaults to yet
-    another case-insensitive dictionary.  (Note that this default assumes that
-    all non-normalized keys are strings, which is true when `HeaderParser` is
-    populating the mapping but need not be true when you are using this class
-    for your own purposes.)
-
     :param mapping data: a mapping or iterable of ``(key, value)`` pairs with
         which to initialize the instance
     :param callable normalizer: A callable to apply to keys before looking them
-        up; defaults to ``operator.methodcaller('lower')``.  The callable MUST
-        be idempotent (i.e., ``normalizer(x)`` must equal
-        ``normalizer(normalizer(x))`` for all inputs) or else bad things will
-        happen to your dictionary.
+        up; defaults to `lower`.  The callable MUST be idempotent (i.e.,
+        ``normalizer(x)`` must equal ``normalizer(normalizer(x))`` for all
+        inputs) or else bad things will happen to your dictionary.
     :param body: initial value for the `body` attribute
     :type body: string or `None`
     """

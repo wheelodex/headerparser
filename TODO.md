@@ -4,7 +4,6 @@
 - Give `HeaderParser` an `__eq__` method
 - Make `HeaderParser`'s attributes private?
 - Base `NormalizedDict` on `OrderedDict`?
-- Make `NormalizedDict`'s default normalizer handle non-strings?
 - Rename `NormalizedDict.normalized_dict()` to something that doesn't imply it
   returns a `NormalizedDict`?
 - Add docstrings to private classes
@@ -22,6 +21,7 @@
       call raised an error
     - scanning & parsing Unicode
     - normalizer that returns a non-string
+    - non-string keys in `NormalizedDict` with the default normalizer
 
 - Improve documentation & examples
     - Contrast handling of multi-occurrence fields with that of the standard
