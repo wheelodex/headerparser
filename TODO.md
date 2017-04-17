@@ -7,6 +7,7 @@
 - Rename `NormalizedDict.normalized_dict()` to something that doesn't imply it
   returns a `NormalizedDict`?
 - Add docstrings to private classes
+- Export `unfold()`
 
 - Write more tests
     - different header name normalizers (identity, hyphens=underscores,
@@ -71,8 +72,6 @@ Features
             - output an array of `{"header": ..., "value": ...}` objects
         - handling of non-ASCII characters and the various ways in which they
           can be escaped
-        - folding of multiline headers
-        - parsing of various structured fields (e.g., Content-Type or To)
         - handling of "From " lines (and/or other non-header headers like the
           first line of an HTTP request or response?)
         - handling of header lettercases?
@@ -92,6 +91,7 @@ Scanning
       TAB)
     - line separator/terminator (default: CR, LF, and CRLF; standard: only
       CRLF, with lone CR and LF being obsolete)
+    - using Unicode definitions of line endings and horizontal whitespace
     - stripping leading whitespace from folded lines? (standard: no)
     - handling "From " lines and the like
     - skipping empty lines at the beginning of the input (instead of treating
@@ -99,6 +99,7 @@ Scanning
     - ignoring all blank lines?
     - comments? (cf. robots.txt)
     - internationalization of header names?
+    - treating `---` as a blank line?
     - Error handling:
         - header lines without a colon or indentation (options: error, header
           with empty value, or start of body)
@@ -143,6 +144,7 @@ Parsing
           far, the header name, and the value
         - When `action` is defined, `dest` and `multiple` (and `default`?)
           cannot be
+    - `default_action=callable` for defining what to do when a header is absent
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
     - `rm_comments` — Remove RFC 822 comments from header values?

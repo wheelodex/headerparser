@@ -9,7 +9,8 @@ required, or given default values using an API based on the standard library's
 for just scanning header fields (breaking them into sequences of key-value
 pairs without any further processing) are also included.
 
-Visit <https://github.com/jwodder/headerparser> for more information.
+Visit <https://github.com/jwodder/headerparser> or
+<http://headerparser.rtfd.io> for more information.
 """
 
 from .errors   import (

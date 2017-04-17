@@ -11,7 +11,7 @@ class NormalizedDict(collections.MutableMapping):
     When iterating over a `NormalizedDict`, each key is returned as the
     "pre-normalized" form passed to `~object.__setitem__` the last time the key
     was set (but see `normalized()` below).  Aside from this, `NormalizedDict`
-    behaves like a normal `~collections.MutableMapping` class.
+    behaves like a normal `~collections.abc.MutableMapping` class.
 
     If a normalizer is not specified upon instantiation, a default will be used
     that converts strings to lowercase and leaves everything else unchanged, so
@@ -108,7 +108,7 @@ class NormalizedDict(collections.MutableMapping):
         return {key: value for key, (_, value) in iteritems(self._data)}
 
     def copy(self):
-        """ Return a shallow copy of the mapping """
+        """ Create a shallow copy of the mapping """
         dup = self.__class__()
         dup._data = self._data.copy()
         dup.normalizer = self.normalizer
