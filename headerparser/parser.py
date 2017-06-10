@@ -33,6 +33,12 @@ class HeaderParser(object):
         self.additional = None
         self.custom_dests = False
 
+    def __eq__(self, other):
+        return type(self) is type(other) and vars(self) == vars(other)
+
+    def __ne__(self, other):
+        return not (self == other)
+
     def add_field(self, name, *altnames, **kwargs):
         """
         Define a header field for the parser to parse.  During parsing, if a
@@ -267,6 +273,12 @@ class FieldDef(object):
             if not choices:
                 raise ValueError('empty list supplied for choices')
         self.choices = choices
+
+    def __eq__(self, other):
+        return type(self) is type(other) and vars(self) == vars(other)
+
+    def __ne__(self, other):
+        return not (self == other)
 
     def _process(self, data, name, dest, value):
         if self.unfold:

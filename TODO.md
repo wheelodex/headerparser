@@ -1,12 +1,11 @@
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `FieldTypeError`s
-- Give `HeaderParser` an `__eq__` method
 - Make `HeaderParser`'s attributes private?
 - Base `NormalizedDict` on `OrderedDict`?
 - Rename `NormalizedDict.normalized_dict()` to something that doesn't imply it
   returns a `NormalizedDict`?
-- Add docstrings to private classes
+- Add docstrings to private classes and attributes
 - Export `unfold()`
 
 - Write more tests
@@ -23,6 +22,7 @@
     - scanning & parsing Unicode
     - normalizer that returns a non-string
     - non-string keys in `NormalizedDict` with the default normalizer
+    - equality of `HeaderParser` objects
 
 - Improve documentation & examples
     - Contrast handling of multi-occurrence fields with that of the standard
@@ -155,3 +155,6 @@ Parsing
 - Requiring/forbidding nonempty/non-whitespace bodies
 
 - Add public methods for removing & inspecting header definitions?
+
+- Support constructing a complete `HeaderParser` in a single expression from a
+  `dict` rather than having to make multiple calls to `add_field`
