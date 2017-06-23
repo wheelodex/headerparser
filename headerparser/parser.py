@@ -191,12 +191,15 @@ class HeaderParser(object):
             definitions declared with `add_field` and `add_additional`
         """
         data = NormalizedDict(normalizer=self.normalizer)
+        fields_seen = set()
+        body_seen = False
         for k,v in fields:
             if k is None:
-                assert data.body is None
+                assert not body_seen
                 if self.body is not None and not self.body:
                     raise errors.BodyNotAllowedError()
                 data.body = v
+                body_seen = True
             else:
                 try:
                     hd = self.fielddefs[self.normalizer(k)]
@@ -205,14 +208,16 @@ class HeaderParser(object):
                         hd = self.additional
                     else:
                         raise errors.UnknownFieldError(k)
+                else:
+                    fields_seen.add(hd.name)
                 hd.process(data, k, v)
         for hd in itervalues(self.fielddefs):
-            if hd.dest not in data:
+            if hd.name not in fields_seen:
                 if hd.required:
                     raise errors.MissingFieldError(hd.name)
                 elif hasattr(hd, 'default'):
                     data[hd.dest] = hd.default
-        if self.body and data.body is None:
+        if self.body and not body_seen:
             raise errors.MissingBodyError()
         return data
 
