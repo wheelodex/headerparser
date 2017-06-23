@@ -131,12 +131,10 @@ Parsing
     - unfolding if & only if the first line of the value contains any
       non-whitespace? (cf. most multiline fields in Debian control files)
     - DKIM headers?
+    - removing RFC 822 comments?
 
 - Add an option to the parser for requiring that headers occur in the order
   that they are defined?  (The PEP parsing code would appreciate this.)
-
-- Add `object_hook` and `object_pairs_hook` options? (But how would the body be
-  handled then?)
 
 - New `add_field` and `add_additional` options to add:
     - `action=callable`
@@ -147,7 +145,6 @@ Parsing
     - `default_action=callable` for defining what to do when a header is absent
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
-    - `rm_comments` — Remove RFC 822 comments from header values?
 
 - Give `add_additional` an option for controlling whether to normalize
   additional header names before adding them to the dict?

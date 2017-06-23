@@ -73,9 +73,9 @@ class NormalizedDict(collections.MutableMapping):
         return not (self == other)
 
     def __repr__(self):  # pragma: no cover
-        return '{0.__class__.__module__}.{0.__class__.__name__}'\
-               '({1!r}, normalizer={0.normalizer!r}, body={0.body!r})'\
-               .format(self, dict(self))
+        return '{0.__module__}.{0.__name__}'\
+               '({1!r}, normalizer={1.normalizer!r}, body={1.body!r})'\
+               .format(type(self), self, dict(self))
 
     def normalized(self):
         """
@@ -109,7 +109,7 @@ class NormalizedDict(collections.MutableMapping):
 
     def copy(self):
         """ Create a shallow copy of the mapping """
-        dup = self.__class__()
+        dup = type(self)()
         dup._data = self._data.copy()
         dup.normalizer = self.normalizer
         dup.body = self.body
