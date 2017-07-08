@@ -286,3 +286,5 @@ def test_unfold():
     assert msg.body is None
 
 ### unknown + missing required
+### leading whitespace in a field value
+### folded field value that is all-whitespace on first line

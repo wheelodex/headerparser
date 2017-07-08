@@ -23,6 +23,7 @@
     - normalizer that returns a non-string
     - non-string keys in `NormalizedDict` with the default normalizer
     - equality of `HeaderParser` objects
+    - Test that `HeaderParser.parse_stream()` won't choke on non-string inputs
 
 - Improve documentation & examples
     - Contrast handling of multi-occurrence fields with that of the standard
@@ -132,6 +133,7 @@ Parsing
       non-whitespace? (cf. most multiline fields in Debian control files)
     - DKIM headers?
     - removing RFC 822 comments?
+    - comma-and-space-separated lists?
 
 - Add an option to the parser for requiring that headers occur in the order
   that they are defined?  (The PEP parsing code would appreciate this.)
@@ -140,8 +142,7 @@ Parsing
     - `action=callable`
         - The callable should take three arguments: the `NormalizedDict` so
           far, the header name, and the value
-        - When `action` is defined, `dest` and `multiple` (and `default`?)
-          cannot be
+        - When `action` is defined, `dest` cannot be
     - `default_action=callable` for defining what to do when a header is absent
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
@@ -155,3 +156,13 @@ Parsing
 
 - Support constructing a complete `HeaderParser` in a single expression from a
   `dict` rather than having to make multiple calls to `add_field`
+
+- Allow two different named fields to have the same `dest` if they both have
+  `multiple=True`? (or both `multiple=False`?)
+
+- Give `add_additional` an argument for putting all additional fields in a
+  given subdict (or a presupplied arbitrary mapping object?) so that named
+  fields can still use custom dests?
+
+- Give parsers a way to store parsed fields in a presupplied arbitrary mapping
+  object instead of creating a new NormalizedDict?

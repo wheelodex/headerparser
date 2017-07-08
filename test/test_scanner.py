@@ -150,3 +150,6 @@ def test_lines_no_ends():
         ('Folded', 'hold on\n  let me check\n \n  yes'),
         (None, "Newlines will not be added to this body.So it'll look bad."),
     ]
+
+### leading whitespace in a field value
+### folded field value that is all-whitespace on first line
