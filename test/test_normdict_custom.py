@@ -10,6 +10,7 @@ def test_empty():
     assert nd.body is None
     assert len(nd) == 0
     assert not bool(nd)
+    assert nd.normalizer is normdash
 
 def test_one():
     nd = NormalizedDict({"A Key": "bar"}, normalizer=normdash)
@@ -17,6 +18,7 @@ def test_one():
     assert nd.body is None
     assert len(nd) == 1
     assert bool(nd)
+    assert nd.normalizer is normdash
 
 def test_get_cases():
     nd = NormalizedDict({"A Key": "bar"}, normalizer=normdash)
