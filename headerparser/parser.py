@@ -100,6 +100,8 @@ class HeaderParser(object):
             string
         """
 
+        if 'action' in kwargs and 'dest' in kwargs:
+            raise ValueError('`action` and `dest` are mutually exclusive')
         kwargs.setdefault('dest', name)
         hd = NamedField(name=name, **kwargs)
         normed = set(map(self.normalizer, (name,) + altnames))
@@ -111,8 +113,6 @@ class HeaderParser(object):
             raise ValueError('destination defined more than once: '
                              + repr(hd.dest))
         if self.normalizer(hd.dest) not in normed:
-            if 'action' in kwargs:
-                raise ValueError('`action` and `dest` are mutually exclusive')
             if self.additional is not None:
                 raise ValueError('add_additional and `dest` are mutually exclusive')
             self.custom_dests = True
