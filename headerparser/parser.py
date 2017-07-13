@@ -111,6 +111,8 @@ class HeaderParser(object):
             raise ValueError('destination defined more than once: '
                              + repr(hd.dest))
         if self.normalizer(hd.dest) not in normed:
+            if 'action' in kwargs:
+                raise ValueError('`action` and `dest` are mutually exclusive')
             if self.additional is not None:
                 raise ValueError('add_additional and `dest` are mutually exclusive')
             self.custom_dests = True
@@ -269,7 +271,8 @@ class HeaderParser(object):
 
 
 class FieldDef(object):
-    def __init__(self, type=None, multiple=False, unfold=False, choices=None):
+    def __init__(self, type=None, multiple=False, unfold=False, choices=None,
+                       action=None):
         self.type = type
         self.multiple = bool(multiple)
         self.unfold = bool(unfold)
@@ -278,6 +281,7 @@ class FieldDef(object):
             if not choices:
                 raise ValueError('empty list supplied for choices')
         self.choices = choices
+        self.action = action
 
     def __eq__(self, other):
         return type(self) is type(other) and vars(self) == vars(other)
@@ -297,7 +301,9 @@ class FieldDef(object):
                 raise errors.FieldTypeError(name, value, e)
         if self.choices is not None and value not in self.choices:
             raise errors.InvalidChoiceError(name, value)
-        if self.multiple:
+        if self.action is not None:
+            self.action(data, name, value)
+        elif self.multiple:
             data.setdefault(dest, []).append(value)
         elif dest in data:
             raise errors.DuplicateFieldError(name)

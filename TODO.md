@@ -139,10 +139,6 @@ Parsing
   that they are defined?  (The PEP parsing code would appreciate this.)
 
 - New `add_field` and `add_additional` options to add:
-    - `action=callable`
-        - The callable should take three arguments: the `NormalizedDict` so
-          far, the header name, and the value
-        - When `action` is defined, `dest` cannot be
     - `default_action=callable` for defining what to do when a header is absent
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
@@ -165,4 +161,5 @@ Parsing
   fields can still use custom dests?
 
 - Give parsers a way to store parsed fields in a presupplied arbitrary mapping
-  object instead of creating a new NormalizedDict?
+  object (or one created from a `dict_factory` callable?) instead of creating a
+  new NormalizedDict?

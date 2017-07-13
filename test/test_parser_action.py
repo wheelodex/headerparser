@@ -169,9 +169,9 @@ def test_action_multiple(mocker):
     assert dict(msg) == {'Bar': 'green', 'Baz': 'blue'}
     assert msg.body is None
     assert stub.call_args_list == [
-        (msg, 'Foo', 'red'),
-        (msg, 'Foo', 'purple'),
-        (msg, 'Foo', 'orange'),
+        mocker.call(msg, 'Foo', 'red'),
+        mocker.call(msg, 'Foo', 'purple'),
+        mocker.call(msg, 'Foo', 'orange'),
     ]
 
 def test_action_dest(mocker):
@@ -190,7 +190,10 @@ def test_action_additional(mocker):
     msg = parser.parse_string('Bar: green\nFoo: red\nBaz: blue\n')
     assert dict(msg) == {'Foo': 'red'}
     assert msg.body is None
-    assert stub.call_args_list == [(msg, 'Bar', 'green'), (msg, 'Baz', 'blue')]
+    assert stub.call_args_list == [
+        mocker.call(msg, 'Bar', 'green'),
+        mocker.call(msg, 'Baz', 'blue'),
+    ]
 
 def test_action_multiple_additional(mocker):
     stub = mocker.stub()
@@ -207,10 +210,10 @@ def test_action_multiple_additional(mocker):
     assert dict(msg) == {'Foo': 'red'}
     assert msg.body is None
     assert stub.call_args_list == [
-        (msg, 'Bar', 'green'),
-        (msg, 'Baz', 'blue'),
-        (msg, 'baz', 'mauve'),
-        (msg, 'BAR', 'taupe'),
+        mocker.call(msg, 'Bar', 'green'),
+        mocker.call(msg, 'Baz', 'blue'),
+        mocker.call(msg, 'baz', 'mauve'),
+        mocker.call(msg, 'BAR', 'taupe'),
     ]
 
 @pytest.mark.parametrize('body', [True, None])
