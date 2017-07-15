@@ -32,6 +32,7 @@
       when retriving from the dict
     - Give examples of custom normalization (or at least explain what it is and
       why it's worth having)
+    - Add `action` examples
 
 
 Features

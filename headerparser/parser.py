@@ -47,6 +47,9 @@ class HeaderParser(object):
         according to the options in ``**kwargs``.  (If no options are
         specified, the value will just be stored in the result dictionary.)
 
+        .. versionadded:: 0.2.0
+            ``action`` argument added
+
         :param string name: the primary name for the field, used in error
             messages and as the default value of ``dest``
 
@@ -54,8 +57,8 @@ class HeaderParser(object):
 
         :param dest: The key in the result dictionary in which the field's
             value(s) will be stored; defaults to ``name``.  When additional
-            headers are enabled (see `add_additional`), ``dest`` can only equal
-            one of the field's names.
+            headers are enabled (see `add_additional`), ``dest`` must equal
+            (after normalization) one of the field's names.
 
         :param bool required: If `True` (default `False`), the ``parse_*``
             methods will raise a `~headerparser.errors.MissingFieldError` if
@@ -65,8 +68,15 @@ class HeaderParser(object):
             present in the input.  If no default value is specified, the field
             will be omitted from the result dictionary if it is not present in
             the input.  ``default`` cannot be set when the field is required.
-            ``type`` and ``unfold`` will not be applied to the default value,
-            and the default value need not belong to ``choices``.
+            ``type``, ``unfold``, and ``action`` will not be applied to the
+            default value, and the default value need not belong to
+            ``choices``.
+
+        :param bool multiple: If `True`, the header field will be allowed to
+            occur more than once in the input, and all of the field's values
+            will be stored in a list.  If `False` (the default), a
+            `~headerparser.errors.DuplicateFieldError` will be raised if the
+            field occurs more than once in the input.
 
         :param bool unfold: If `True` (default `False`), the field value will
             be "unfolded" (i.e., line breaks will be removed and whitespace
@@ -82,11 +92,14 @@ class HeaderParser(object):
             applying ``type``) or else an
             `~headerparser.errors.InvalidChoiceError` is raised.
 
-        :param bool multiple: If `True`, the header field will be allowed to
-            occur more than once in the input, and all of the field's values
-            will be stored in a list.  If `False` (the default), a
-            `~headerparser.errors.DuplicateFieldError` will be raised if the
-            field occurs more than once in the input.
+        :param callable action: A callable to invoke whenever the field is
+            encountered in the input.  The callable will be passed the current
+            dictionary of header fields, the field's ``name``, and the field's
+            value (after processing with ``type`` and ``unfold`` and checking
+            against ``choices``).  The callable replaces the default behavior
+            of storing the field's values in the result dictionary, and so the
+            callable must explicitly store the values if desired.  When
+            ``action`` is defined for a field, ``dest`` cannot be.
 
         :return: `None`
         :raises ValueError:
@@ -96,6 +109,7 @@ class HeaderParser(object):
               is enabled
             - if ``default`` is defined and ``required`` is true
             - if ``choices`` is an empty sequence
+            - if both ``dest`` and ``action`` are defined
         :raises TypeError: if ``name`` or one of the ``altnames`` is not a
             string
         """
@@ -140,10 +154,19 @@ class HeaderParser(object):
         are the same after normalization.  Customization of the dictionary key
         and field name can only be done through `add_field`.
 
+        .. versionadded:: 0.2.0
+            ``action`` argument added
+
         :param bool enable: whether the parser should accept input fields that
             were not registered with `add_field`; setting this to `False`
             disables additional fields and restores the parser's default
             behavior
+
+        :param bool multiple: If `True`, each additional header field will be
+            allowed to occur more than once in the input, and each field's
+            values will be stored in a list.  If `False` (the default), a
+            `~headerparser.errors.DuplicateFieldError` will be raised if an
+            additional field occurs more than once in the input.
 
         :param bool unfold: If `True` (default `False`), additional field
             values will be "unfolded" (i.e., line breaks will be removed and
@@ -159,11 +182,13 @@ class HeaderParser(object):
             applying ``type``) or else an
             `~headerparser.errors.InvalidChoiceError` is raised.
 
-        :param bool multiple: If `True`, each additional header field will be
-            allowed to occur more than once in the input, and each field's
-            values will be stored in a list.  If `False` (the default), a
-            `~headerparser.errors.DuplicateFieldError` will be raised if an
-            additional field occurs more than once in the input.
+        :param callable action: A callable to invoke whenever the field is
+            encountered in the input.  The callable will be passed the current
+            dictionary of header fields, the field's name, and the field's
+            value (after processing with ``type`` and ``unfold`` and checking
+            against ``choices``).  The callable replaces the default behavior
+            of storing the field's values in the result dictionary, and so the
+            callable must explicitly store the values if desired.
 
         :return: `None`
         :raises ValueError:

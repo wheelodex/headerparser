@@ -24,6 +24,8 @@ def BOOL(s):
 
 def lower(s):
     """
+    .. versionadded:: 0.2.0
+
     Convert ``s`` to lowercase by calling its :meth:`~str.lower()` method if it
     has one; otherwise, return ``s`` unchanged
     """
