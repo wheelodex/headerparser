@@ -28,7 +28,7 @@ def test_action_missing(mocker):
     msg = parser.parse_string('Bar: green\nBaz: blue\n')
     assert dict(msg) == {'Bar': 'green', 'Baz': 'blue'}
     assert msg.body is None
-    stub.assert_not_called()
+    assert not stub.called
 
 def test_action_type(mocker):
     stub = mocker.stub()
@@ -47,7 +47,7 @@ def test_action_type_error(mocker):
     parser.add_field('Bar')
     with pytest.raises(headerparser.FieldTypeError):
         parser.parse_string('Foo: maybe\nBar: green\n')
-    stub.assert_not_called()
+    assert not stub.called
 
 def test_action_required(mocker):
     stub = mocker.stub()
@@ -68,7 +68,7 @@ def test_action_required_missing(mocker):
     parser.add_field('Baz')
     with pytest.raises(headerparser.MissingFieldError):
         parser.parse_string('Bar: green\nBaz: blue\n')
-    stub.assert_not_called()
+    assert not stub.called
 
 def test_action_choices(mocker):
     stub = mocker.stub()
@@ -87,7 +87,7 @@ def test_action_bad_choice(mocker):
     parser.add_field('Bar')
     with pytest.raises(headerparser.InvalidChoiceError):
         parser.parse_string('Foo: taupe\nBar: green\n')
-    stub.assert_not_called()
+    assert not stub.called
 
 def test_action_unfold(mocker):
     stub = mocker.stub()
@@ -129,7 +129,7 @@ def test_action_default_missing(mocker):
     msg = parser.parse_string('Bar: green\nBaz: blue\n')
     assert dict(msg) == {'Foo': 'orange', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body is None
-    stub.assert_not_called()
+    assert not stub.called
 
 def test_action_different_case(mocker):
     stub = mocker.stub()
@@ -180,7 +180,7 @@ def test_action_dest(mocker):
     with pytest.raises(ValueError) as excinfo:
         parser.add_field('Foo', action=stub, dest='bar')
     assert '`action` and `dest` are mutually exclusive' in str(excinfo.value)
-    stub.assert_not_called()
+    assert not stub.called
 
 def test_action_additional(mocker):
     stub = mocker.stub()
