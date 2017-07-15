@@ -33,6 +33,8 @@ setup(
     long_description=long_desc,
     url='https://github.com/jwodder/headerparser',
 
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, <4',
+
     install_requires=['six>=1.1,<2'],
 
     classifiers=[
@@ -56,9 +58,4 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Text Processing',
     ],
-
-    entry_points={
-        "console_scripts": [
-        ]
-    },
 )
