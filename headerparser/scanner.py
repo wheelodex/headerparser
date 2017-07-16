@@ -18,7 +18,7 @@ def scan_string(s):
     :raises UnexpectedFoldingError: if a folded (indented) line that is not
         preceded by a valid header line is encountered
     """
-    return scan_lines(ascii_splitlines(s, True))
+    return scan_lines(ascii_splitlines(s))
 
 def scan_file(fp):
     """
