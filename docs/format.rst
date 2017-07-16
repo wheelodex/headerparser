@@ -11,11 +11,11 @@ the Internet Message (e-mail) Format specified in :rfc:`822`, :rfc:`2822`, and
   there is no body.
 
 - The header section is composed of zero or more :dfn:`header fields`.  A
-  header field is composed of one or more lines, with all lines other than the
-  first beginning with a space or tab.  Additionally, the first line must
-  contain a colon (optionally surrounded by whitespace); everything before the
-  colon is the :dfn:`header field name`, while everything after (including
-  subsequent lines) is the :dfn:`header field value`.
+  header field is composed of one or more lines, with all lines after the first
+  beginning with a space or tab.  Additionally, the first line must contain a
+  colon (optionally surrounded by whitespace); everything before the colon is
+  the :dfn:`header field name`, while everything after (including subsequent
+  lines) is the :dfn:`header field value`.
 
 .. note::
 

@@ -1,8 +1,5 @@
 import re
 
-def unfold(s):
-    return re.sub(r'[ \t]*[\r\n][ \t\r\n]*', ' ', s).strip(' ')
-
 def ascii_splitlines(s):
     lines = []
     lastend = 0

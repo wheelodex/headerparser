@@ -2,8 +2,7 @@ from   six       import itervalues, string_types
 from   .         import errors
 from   .normdict import NormalizedDict
 from   .scanner  import scan_file, scan_lines, scan_string
-from   .types    import lower
-from   .util     import unfold
+from   .types    import lower, unfold
 
 class HeaderParser(object):
     """

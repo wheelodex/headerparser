@@ -6,7 +6,6 @@
 - Rename `NormalizedDict.normalized_dict()` to something that doesn't imply it
   returns a `NormalizedDict`?
 - Add docstrings to private classes and attributes
-- Export `unfold()`
 
 - Write more tests
     - different header name normalizers (identity, hyphens=underscores,

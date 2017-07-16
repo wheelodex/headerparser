@@ -1,4 +1,4 @@
-from headerparser.util import unfold
+from headerparser import unfold
 
 def test_unfold_single_line():
     assert unfold('some value') == 'some value'

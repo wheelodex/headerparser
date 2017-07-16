@@ -1,3 +1,5 @@
+import re
+
 TRUTHY = {'yes', 'y', 'on',  'true',  '1'}
 FALSEY = {'no',  'n', 'off', 'false', '0'}
 
@@ -33,3 +35,19 @@ def lower(s):
         return s.lower()
     except (TypeError, AttributeError):
         return s
+
+def unfold(s):
+    r"""
+    .. versionadded:: 0.2.0
+
+    Remove folding whitespace from a string by converting line breaks (and any
+    whitespace adjacent to line breaks) to a single space and removing leading
+    & trailing whitespace.
+
+    >>> unfold('This is a \n folded string.\n')
+    'This is a folded string.'
+
+    :param string s: a string to unfold
+    :rtype: string
+    """
+    return re.sub(r'[ \t]*[\r\n][ \t\r\n]*', ' ', s).strip(' ')
