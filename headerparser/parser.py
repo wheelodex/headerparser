@@ -215,13 +215,15 @@ class HeaderParser(object):
         :rtype: NormalizedDict
         :raises ParserError: if the input fields do not conform to the field
             definitions declared with `add_field` and `add_additional`
+        :raises ValueError: if the input contains more than one body pair
         """
         data = NormalizedDict(normalizer=self.normalizer)
         fields_seen = set()
         body_seen = False
         for k,v in fields:
             if k is None:
-                assert not body_seen
+                if body_seen:
+                    raise ValueError('Body appears twice in input')
                 if self.body is not None and not self.body:
                     raise errors.BodyNotAllowedError()
                 data.body = v
