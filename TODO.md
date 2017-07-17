@@ -1,7 +1,6 @@
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `FieldTypeError`s
-- Make `HeaderParser`'s attributes private?
 - Base `NormalizedDict` on `OrderedDict`?
 - Rename `NormalizedDict.normalized_dict()` to something that doesn't imply it
   returns a `NormalizedDict`?

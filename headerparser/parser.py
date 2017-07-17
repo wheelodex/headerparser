@@ -21,16 +21,26 @@ class HeaderParser(object):
 
     :param bool body: whether the parser should allow or forbid a body after
         the header section; `True` means a body is required, `False` means a
-        body is prohibited, and `None` means a body is optional
+        body is prohibited, and `None` (the default) means a body is optional
     """
 
     def __init__(self, normalizer=None, body=None):
-        self.normalizer = normalizer or lower
-        self.body = body
-        self.fielddefs = dict()
-        self.dests = set()
-        self.additional = None
-        self.custom_dests = False
+        #: The ``normalizer`` argument passed to the constructor, or `lower` if
+        #: no normalizer was supplied
+        self._normalizer = normalizer or lower
+        #: The ``body`` argument passed to the constructor
+        self._body = body
+        #: A mapping from normalized field names to `NamedField` instances
+        self._fielddefs = dict()
+        #: The set of all normalized ``dest`` values for all named fields
+        #: defined so far
+        self._dests = set()
+        #: If additional fields are enabled, this is the `FieldDef` instance
+        #: used to process them; otherwise, it is `None`.
+        self._additional = None
+        #: Whether any fields with custom ``dest`` values have been defined,
+        #: thereby precluding `add_additional()`
+        self._custom_dests = False
 
     def __eq__(self, other):
         return type(self) is type(other) and vars(self) == vars(other)
@@ -117,21 +127,21 @@ class HeaderParser(object):
             raise ValueError('`action` and `dest` are mutually exclusive')
         kwargs.setdefault('dest', name)
         hd = NamedField(name=name, **kwargs)
-        normed = set(map(self.normalizer, (name,) + altnames))
+        normed = set(map(self._normalizer, (name,) + altnames))
         # Error before modifying anything:
-        redefs = [n for n in self.fielddefs if n in normed]
+        redefs = [n for n in self._fielddefs if n in normed]
         if redefs:
             raise ValueError('field defined more than once: ' + repr(redefs[0]))
-        if self.normalizer(hd.dest) in self.dests:
+        if self._normalizer(hd.dest) in self._dests:
             raise ValueError('destination defined more than once: '
                              + repr(hd.dest))
-        if self.normalizer(hd.dest) not in normed:
-            if self.additional is not None:
+        if self._normalizer(hd.dest) not in normed:
+            if self._additional is not None:
                 raise ValueError('add_additional and `dest` are mutually exclusive')
-            self.custom_dests = True
+            self._custom_dests = True
         for n in normed:
-            self.fielddefs[n] = hd
-        self.dests.add(self.normalizer(hd.dest))
+            self._fielddefs[n] = hd
+        self._dests.add(self._normalizer(hd.dest))
 
     def add_additional(self, enable=True, **kwargs):
         """
@@ -196,11 +206,11 @@ class HeaderParser(object):
             - if ``choices`` is an empty sequence
         """
         if enable:
-            if self.custom_dests:
+            if self._custom_dests:
                 raise ValueError('add_additional and `dest` are mutually exclusive')
-            self.additional = FieldDef(**kwargs)
+            self._additional = FieldDef(**kwargs)
         else:
-            self.additional = None
+            self._additional = None
 
     def parse_stream(self, fields):
         """
@@ -217,35 +227,35 @@ class HeaderParser(object):
             definitions declared with `add_field` and `add_additional`
         :raises ValueError: if the input contains more than one body pair
         """
-        data = NormalizedDict(normalizer=self.normalizer)
+        data = NormalizedDict(normalizer=self._normalizer)
         fields_seen = set()
         body_seen = False
         for k,v in fields:
             if k is None:
                 if body_seen:
                     raise ValueError('Body appears twice in input')
-                if self.body is not None and not self.body:
+                if self._body is not None and not self._body:
                     raise errors.BodyNotAllowedError()
                 data.body = v
                 body_seen = True
             else:
                 try:
-                    hd = self.fielddefs[self.normalizer(k)]
+                    hd = self._fielddefs[self._normalizer(k)]
                 except KeyError:
-                    if self.additional is not None:
-                        hd = self.additional
+                    if self._additional is not None:
+                        hd = self._additional
                     else:
                         raise errors.UnknownFieldError(k)
                 else:
                     fields_seen.add(hd.name)
                 hd.process(data, k, v)
-        for hd in itervalues(self.fielddefs):
+        for hd in itervalues(self._fielddefs):
             if hd.name not in fields_seen:
                 if hd.required:
                     raise errors.MissingFieldError(hd.name)
                 elif hasattr(hd, 'default'):
                     data[hd.dest] = hd.default
-        if self.body and not body_seen:
+        if self._body and not body_seen:
             raise errors.MissingBodyError()
         return data
 
