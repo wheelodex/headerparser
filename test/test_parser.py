@@ -285,6 +285,11 @@ def test_unfold():
     }
     assert msg.body is None
 
-### unknown + missing required
-### leading whitespace in a field value
-### folded field value that is all-whitespace on first line
+def test_space_in_name():
+    parser = HeaderParser()
+    parser.add_field('Key Name')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
+    msg = parser.parse_string('key name: red\nBar: green\nBaz: blue\n')
+    assert dict(msg) == {'Key Name': 'red', 'Bar': 'green', 'Baz': 'blue'}
+    assert msg.body is None

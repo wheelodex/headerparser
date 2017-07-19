@@ -182,6 +182,14 @@ def test_action_dest(mocker):
     assert '`action` and `dest` are mutually exclusive' in str(excinfo.value)
     assert not stub.called
 
+def test_action_normalized_dest(mocker):
+    stub = mocker.stub()
+    parser = HeaderParser()
+    with pytest.raises(ValueError) as excinfo:
+        parser.add_field('Foo', action=stub, dest='foo')
+    assert '`action` and `dest` are mutually exclusive' in str(excinfo.value)
+    assert not stub.called
+
 def test_action_additional(mocker):
     stub = mocker.stub()
     parser = HeaderParser()

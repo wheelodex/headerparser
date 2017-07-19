@@ -151,6 +151,9 @@ Parsing
 
 - Support constructing a complete `HeaderParser` in a single expression from a
   `dict` rather than having to make multiple calls to `add_field`
+    - Support converting a `HeaderParser` instance to such a `dict`
+
+- Support modifying a `HeaderParser`'s field definitions after they're defined?
 
 - Allow two different named fields to have the same `dest` if they both have
   `multiple=True`? (or both `multiple=False`?)

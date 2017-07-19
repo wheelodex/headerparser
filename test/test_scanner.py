@@ -151,5 +151,18 @@ def test_lines_no_ends():
         (None, "Newlines will not be added to this body.So it'll look bad."),
     ]
 
-### leading whitespace in a field value
-### folded field value that is all-whitespace on first line
+def test_untrimmed_value():
+    assert list(scan_string(
+        'Leading:   value\n'
+        'Trailing: value  \n'
+        'Leading-Tab:\tvalue\n'
+        'Trailing-Tab:value\t\n'
+    )) == [
+        ('Leading', 'value'),
+        ('Trailing', 'value  '),
+        ('Leading-Tab', 'value'),
+        ('Trailing-Tab', 'value\t'),
+    ]
+
+def test_space_in_name():
+    assert list(scan_string('Key Name: value')) == [('Key Name', 'value')]
