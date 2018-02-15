@@ -1,5 +1,5 @@
-v0.2.0 (in development)
------------------------
+v0.2.0 (2018-02-14)
+-------------------
 - `NormalizedDict`'s default normalizer (exposed as the `lower()` function) now
   passes non-strings through unchanged
 - `HeaderParser` instances can now be compared for non-identity equality
