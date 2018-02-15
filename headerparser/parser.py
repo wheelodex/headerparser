@@ -43,7 +43,10 @@ class HeaderParser(object):
         self._custom_dests = False
 
     def __eq__(self, other):
-        return type(self) is type(other) and vars(self) == vars(other)
+        if type(self) is type(other):
+            return vars(self) == vars(other)
+        else:
+            return NotImplemented
 
     def __ne__(self, other):
         return not (self == other)
@@ -51,9 +54,9 @@ class HeaderParser(object):
     def add_field(self, name, *altnames, **kwargs):
         """
         Define a header field for the parser to parse.  During parsing, if a
-        field is encountered whose name (*modulo* normalization) equals
-        ``name`` or is in ``altnames``, the field's value will be processed
-        according to the options in ``**kwargs``.  (If no options are
+        field is encountered whose name (*modulo* normalization) equals either
+        ``name`` or one of the ``altnames``, the field's value will be
+        processed according to the options in ``**kwargs``.  (If no options are
         specified, the value will just be stored in the result dictionary.)
 
         .. versionadded:: 0.2.0
@@ -320,7 +323,10 @@ class FieldDef(object):
         self.action = action
 
     def __eq__(self, other):
-        return type(self) is type(other) and vars(self) == vars(other)
+        if type(self) is type(other):
+            return vars(self) == vars(other)
+        else:
+            return NotImplemented
 
     def __ne__(self, other):
         return not (self == other)

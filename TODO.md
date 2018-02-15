@@ -122,6 +122,7 @@ Parsing
     - RFC822 dates, addresses, etc.
     - Content-Type-style "parameterized" headers
         - Include an `object_pairs_hook` for the parameters?
+        - cf. `cgi.parse_header()`
     - internationalized strings
     - converting lines with just '.' to blank lines
     - Somehow support the types in `email.headerregistry`
@@ -133,6 +134,7 @@ Parsing
     - DKIM headers?
     - removing RFC 822 comments?
     - comma-and-space-separated lists?
+        - cf. `urllib.request.parse_http_list()`?
 
 - Add an option to the parser for requiring that headers occur in the order
   that they are defined?  (The PEP parsing code would appreciate this.)
