@@ -1,3 +1,7 @@
+v0.3.0 (in development)
+-----------------------
+- Drop support for Python 3.3
+
 v0.2.0 (2018-02-14)
 -------------------
 - `NormalizedDict`'s default normalizer (exposed as the `lower()` function) now
