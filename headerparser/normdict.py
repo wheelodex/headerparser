@@ -1,8 +1,12 @@
-import collections
-from   six    import iteritems, itervalues
+from   six    import PY2, iteritems, itervalues
 from   .types import lower
 
-class NormalizedDict(collections.MutableMapping):
+if PY2:
+    from collections     import Mapping, MutableMapping
+else:
+    from collections.abc import Mapping, MutableMapping
+
+class NormalizedDict(MutableMapping):
     """
     A generalization of a case-insensitive dictionary.  `NormalizedDict` takes
     a callable (the "normalizer") that is applied to any key passed to its
@@ -61,7 +65,7 @@ class NormalizedDict(collections.MutableMapping):
         if isinstance(other, NormalizedDict):
             if self.normalizer != other.normalizer or self.body != other.body:
                 return False
-        elif isinstance(other, collections.Mapping):
+        elif isinstance(other, Mapping):
             if self.body is not None:
                 return False
             other = NormalizedDict(other, normalizer=self.normalizer)
