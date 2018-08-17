@@ -6,8 +6,8 @@
 .. image:: https://travis-ci.org/jwodder/headerparser.svg?branch=master
     :target: https://travis-ci.org/jwodder/headerparser
 
-.. image:: https://coveralls.io/repos/github/jwodder/headerparser/badge.svg?branch=master
-    :target: https://coveralls.io/github/jwodder/headerparser?branch=master
+.. image:: https://codecov.io/gh/jwodder/headerparser/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/jwodder/headerparser
 
 .. image:: https://img.shields.io/pypi/pyversions/headerparser.svg
     :target: https://pypi.python.org/pypi/headerparser
