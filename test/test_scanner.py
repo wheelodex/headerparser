@@ -6,23 +6,44 @@ def test_simple():
     assert list(scan_string('Foo: red\nBar: green\nBaz: blue\n')) == \
         [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
 
-def test_empty_body():
-    assert list(scan_string('Foo: red\nBar: green\nBaz: blue\n\n')) == \
-        [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'), (None, '')]
+@pytest.mark.parametrize('skip_leading_newlines', [True, False])
+def test_empty_body(skip_leading_newlines):
+    assert list(scan_string(
+        'Foo: red\nBar: green\nBaz: blue\n\n',
+        skip_leading_newlines=skip_leading_newlines,
+    )) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'), (None, '')]
 
-def test_blank_body():
-    assert list(scan_string('Foo: red\nBar: green\nBaz: blue\n\n\n')) == \
-        [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'), (None, '\n')]
+@pytest.mark.parametrize('skip_leading_newlines', [True, False])
+def test_blank_body(skip_leading_newlines):
+    assert list(scan_string(
+        'Foo: red\nBar: green\nBaz: blue\n\n\n',
+        skip_leading_newlines=skip_leading_newlines,
+    )) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'), (None, '\n')]
 
-def test_body():
+@pytest.mark.parametrize('skip_leading_newlines', [True, False])
+def test_body(skip_leading_newlines):
     assert list(scan_string(
         'Foo: red\n'
         'Bar: green\n'
         'Baz: blue\n'
         '\n'
-        'This is a test.'
+        'This is a test.',
+        skip_leading_newlines=skip_leading_newlines,
     )) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'),
            (None, 'This is a test.')]
+
+@pytest.mark.parametrize('skip_leading_newlines', [True, False])
+def test_body_extra_blanks(skip_leading_newlines):
+    assert list(scan_string(
+        'Foo: red\n'
+        'Bar: green\n'
+        'Baz: blue\n'
+        '\n'
+        '\n'
+        'This is a test.',
+        skip_leading_newlines=skip_leading_newlines,
+    )) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue'),
+           (None, '\nThis is a test.')]
 
 def test_headerlike_body():
     assert list(scan_string(
@@ -77,6 +98,12 @@ def test_leading_newline():
     assert list(scan_string('\nFoo: red\nBar: green\nBaz: blue\n')) == \
         [(None, 'Foo: red\nBar: green\nBaz: blue\n')]
 
+def test_skip_leading_newlines():
+    assert list(scan_string(
+        '\nFoo: red\nBar: green\nBaz: blue\n',
+        skip_leading_newlines=True,
+    )) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
+
 def test_cr_terminated():
     assert list(scan_string('Foo: red\rBar: green\rBaz: blue\r')) == \
         [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
@@ -126,14 +153,22 @@ def test_multiple():
         ('fOO', 'valueFour'),
     ]
 
-def test_empty():
-    assert list(scan_string('')) == []
+@pytest.mark.parametrize('skip_leading_newlines', [True, False])
+def test_empty(skip_leading_newlines):
+    assert list(scan_string('', skip_leading_newlines=skip_leading_newlines)) \
+        == []
 
 def test_one_empty_line():
     assert list(scan_string('\n')) == [(None, '')]
 
+def test_one_empty_line_skip_leading_newlines():
+    assert list(scan_string('\n', skip_leading_newlines=True)) == []
+
 def test_two_empty_lines():
     assert list(scan_string('\n\n')) == [(None, '\n')]
+
+def test_two_empty_lines_skip_leading_newlines():
+    assert list(scan_string('\n\n', skip_leading_newlines=True)) == []
 
 def test_lines_no_ends():
     assert list(scan_lines([

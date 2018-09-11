@@ -1,7 +1,7 @@
 from .errors import MalformedHeaderError, UnexpectedFoldingError
 from .util   import ascii_splitlines
 
-def scan_string(s):
+def scan_string(s, **kwargs):
     """
     Scan a string for RFC 822-style header fields and return a generator of
     ``(name, value)`` pairs for each header field in the input, plus a ``(None,
@@ -18,9 +18,9 @@ def scan_string(s):
     :raises UnexpectedFoldingError: if a folded (indented) line that is not
         preceded by a valid header line is encountered
     """
-    return scan_lines(ascii_splitlines(s))
+    return scan_lines(ascii_splitlines(s), **kwargs)
 
-def scan_file(fp):
+def scan_file(fp, **kwargs):
     """
     Scan a file for RFC 822-style header fields and return a generator of
     ``(name, value)`` pairs for each header field in the input, plus a ``(None,
@@ -39,9 +39,9 @@ def scan_file(fp):
         preceded by a valid header line is encountered
     """
     ### TODO: Handle files not opened in universal newlines mode?
-    return scan_lines(fp)
+    return scan_lines(fp, **kwargs)
 
-def scan_lines(iterable):
+def scan_lines(iterable, skip_leading_newlines=False):
     """
     Scan an iterable of lines for RFC 822-style header fields and return a
     generator of ``(name, value)`` pairs for each header field in the input,
@@ -81,21 +81,27 @@ def scan_lines(iterable):
     name  = None
     value = ''
     eof   = False
+    begun = False
     for line in lineiter:
         line = line.rstrip('\r\n')
         if line.startswith((' ', '\t')):
+            begun = True
             if name is not None:
                 value += '\n' + line
             else:
                 raise UnexpectedFoldingError(line)
         elif ':' in line:
+            begun = True
             if name is not None:
                 yield (name, value)
             name, _, value = line.partition(':')
             name = name.rstrip(' \t')
             value = value.lstrip(' \t')
         elif line == '':
-            break
+            if skip_leading_newlines and not begun:
+                continue
+            else:
+                break
         else:
             raise MalformedHeaderError(line)
     else:
