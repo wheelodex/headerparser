@@ -22,6 +22,7 @@
     - non-string keys in `NormalizedDict` with the default normalizer
     - equality of `HeaderParser` objects
     - Test that `HeaderParser.parse_stream()` won't choke on non-string inputs
+    - passing scanner options to `HeaderParser`
 
 - Improve documentation & examples
     - Contrast handling of multi-occurrence fields with that of the standard
@@ -111,9 +112,6 @@ Scanning
 
 Parsing
 -------
-- The `HeaderParser` constructor should accept arbitrary `**kwargs` that are
-  then passed to the scanner function(s)
-
 - Add built-in support for multi-stanza documents in which different stanzas
   follow different schemata? (e.g., one of the Debian source control file
   formats)

@@ -22,14 +22,18 @@ class HeaderParser(object):
     :param bool body: whether the parser should allow or forbid a body after
         the header section; `True` means a body is required, `False` means a
         body is prohibited, and `None` (the default) means a body is optional
+
+    :param kwargs: extra options that will be passed to the scanner function
     """
 
-    def __init__(self, normalizer=None, body=None):
+    def __init__(self, normalizer=None, body=None, **kwargs):
         #: The ``normalizer`` argument passed to the constructor, or `lower` if
         #: no normalizer was supplied
         self._normalizer = normalizer or lower
         #: The ``body`` argument passed to the constructor
         self._body = body
+        #: Scanner options
+        self._scan_opts = kwargs
         #: A mapping from normalized field names to `NamedField` instances
         self._fielddefs = dict()
         #: The set of all normalized ``dest`` values for all named fields
@@ -275,7 +279,7 @@ class HeaderParser(object):
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scan_file(fp))
+        return self.parse_stream(scan_file(fp, **self._scan_opts))
 
     def parse_lines(self, iterable):
         """
@@ -292,7 +296,7 @@ class HeaderParser(object):
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scan_lines(iterable))
+        return self.parse_stream(scan_lines(iterable, **self._scan_opts))
 
     def parse_string(self, s):
         """
@@ -306,7 +310,7 @@ class HeaderParser(object):
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scan_string(s))
+        return self.parse_stream(scan_string(s, **self._scan_opts))
 
 
 class FieldDef(object):
