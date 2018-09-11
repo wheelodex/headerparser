@@ -95,8 +95,6 @@ Scanning
     - using Unicode definitions of line endings and horizontal whitespace
     - stripping leading whitespace from folded lines? (standard: no)
     - handling "From " lines and the like
-    - skipping empty lines at the beginning of the input (instead of treating
-      them as ending an empty header stanza)
     - ignoring all blank lines?
     - comments? (cf. robots.txt)
     - internationalization of header names?

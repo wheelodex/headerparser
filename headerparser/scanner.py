@@ -12,6 +12,7 @@ def scan_string(s, **kwargs):
 
     :param s: a string which will be broken into lines on CR, LF, and CR LF
         boundaries and passed to `scan_lines()`
+    :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of pairs of strings
     :raises MalformedHeaderError: if an invalid header line, i.e., a line
         without either a colon or leading whitespace, is encountered
@@ -32,6 +33,7 @@ def scan_file(fp, **kwargs):
     :param fp: A file-like object than can be iterated over to produce lines to
         pass to `scan_lines()`.  Opening the file in universal newlines mode is
         recommended.
+    :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of pairs of strings
     :raises MalformedHeaderError: if an invalid header line, i.e., a line
         without either a colon or leading whitespace, is encountered
@@ -66,10 +68,12 @@ def scan_lines(iterable, skip_leading_newlines=False):
     terminator will not have one appended.)  If there is no empty line in
     ``iterable``, then no body pair is yielded.  If the empty line is the last
     line in ``iterable``, the body will be the empty string.  If the empty line
-    is the *first* line in ``iterable``, then all other lines will be treated
-    as part of the body and will not be scanned for header fields.
+    is the *first* line in ``iterable`` and the ``skip_leading_newlines``
+    option is `False` (the default), then all other lines will be treated as
+    part of the body and will not be scanned for header fields.
 
     :param iterable: an iterable of strings representing lines of input
+    :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of pairs of strings
     :raises MalformedHeaderError: if an invalid header line, i.e., a line
         without either a colon or leading whitespace, is encountered

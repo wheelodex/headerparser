@@ -23,7 +23,7 @@ class HeaderParser(object):
         the header section; `True` means a body is required, `False` means a
         body is prohibited, and `None` (the default) means a body is optional
 
-    :param kwargs: extra options that will be passed to the scanner function
+    :param kwargs: :ref:`scanner options <scan_opts>`
     """
 
     def __init__(self, normalizer=None, body=None, **kwargs):

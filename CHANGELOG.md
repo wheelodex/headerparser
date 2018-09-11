@@ -1,6 +1,8 @@
 v0.3.0 (in development)
 -----------------------
 - Drop support for Python 3.3
+- Gave `HeaderParser` and the scanner functions a `skip_leading_newlines`
+  option
 
 v0.2.0 (2018-02-14)
 -------------------
