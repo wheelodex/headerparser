@@ -1,9 +1,4 @@
-from   __future__ import unicode_literals
-import os.path
-import sys
-
-sys.path.insert(0, os.path.abspath('..'))
-from   headerparser import __version__
+from headerparser import __version__
 
 project   = 'headerparser'
 author    = 'John T. Wodder II'
@@ -16,7 +11,10 @@ extensions = [
     'sphinx.ext.viewcode',
 ]
 
-autodoc_default_flags = ['members', 'undoc-members']
+autodoc_default_options = {
+    'members': None,
+    'undoc-members': None,
+}
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
