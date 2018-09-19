@@ -53,12 +53,6 @@ Features
   and only consumes the header lines and the terminating blank line, leaving
   the body in the iterator
 
-- Support binary input
-    - Add a `bytes` variant of the scanner
-    - Add a separate "`BytesHeaderParser`" class that decodes headers (or just
-      names? neither?) and leaves the body as bytes
-        - Give its `parse*` methods `encoding` parameters?
-
 - Write an entry point for converting RFC822-style files/headers to JSON
     - name: `mail2json`? `headers2json`?
     - include options for:
@@ -87,7 +81,6 @@ Features
 Scanning
 --------
 - Give the scanner options for:
-    - header name-value delimiter (standard/default: just a colon)
     - definition of "whitespace" for purposes of folding (standard: 0x20 and
       TAB)
     - line separator/terminator (default: CR, LF, and CRLF; standard: only
@@ -97,7 +90,7 @@ Scanning
     - handling "From " lines and the like
     - ignoring all blank lines?
     - comments? (cf. robots.txt)
-    - internationalization of header names?
+    - internationalization of header names
     - treating `---` as a blank line?
     - Error handling:
         - header lines without a colon or indentation (options: error, header

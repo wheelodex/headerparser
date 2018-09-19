@@ -1,3 +1,4 @@
+import re
 import pytest
 import headerparser
 from   headerparser import scan_string, scan_lines
@@ -64,6 +65,16 @@ def test_circumcolon_whitespace():
         'Key3 : Value3\n'
         'Key4:Value4\n'
     )) == [('Key1', 'Value1'), ('Key2', 'Value2'), ('Key3', 'Value3'),
+          ('Key4', 'Value4')]
+
+def test_circumcolon_whitespace_spaceless_separator_regex():
+    assert list(scan_string(
+        'Key1: Value1\n'
+        'Key2 :Value2\n'
+        'Key3 : Value3\n'
+        'Key4:Value4\n',
+        separator_regex=':',
+    )) == [('Key1', ' Value1'), ('Key2 ', 'Value2'), ('Key3 ', ' Value3'),
           ('Key4', 'Value4')]
 
 def test_folding():
@@ -201,3 +212,24 @@ def test_untrimmed_value():
 
 def test_space_in_name():
     assert list(scan_string('Key Name: value')) == [('Key Name', 'value')]
+
+@pytest.mark.parametrize('separator_regex', [
+    r'\s*=\s*',
+    re.compile(r'\s*=\s*'),
+])
+def test_separator_regex(separator_regex):
+    assert list(scan_string(
+        'Foo = red\nBar =green\nBaz= blue\n',
+        separator_regex=separator_regex,
+    )) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
+
+def test_separator_regex_multi_match():
+    assert list(scan_string(
+        'Foo = red = crimson=scarlet\n',
+        separator_regex=r'\s*=\s*',
+    )) == [('Foo', 'red = crimson=scarlet')]
+
+def test_separator_regex_default_separator():
+    with pytest.raises(headerparser.MalformedHeaderError) as excinfo:
+        list(scan_string('Foo = red\nBar: green\n', separator_regex=r'\s*=\s*'))
+    assert excinfo.value.line == 'Bar: green'

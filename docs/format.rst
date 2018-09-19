@@ -19,6 +19,11 @@ the Internet Message (e-mail) Format specified in :rfc:`822`, :rfc:`2822`, and
 
 .. note::
 
+    Name-value separators other than a colon can be used by setting the
+    ``separator_regex`` :ref:`scanner option <scan_opts>`.
+
+.. note::
+
     This format only recognizes CR, LF, and CR LF sequences as line endings.
 
 An example::

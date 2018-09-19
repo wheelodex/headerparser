@@ -1,8 +1,10 @@
 v0.3.0 (in development)
 -----------------------
 - Drop support for Python 3.3
-- Gave `HeaderParser` and the scanner functions a `skip_leading_newlines`
-  option
+- Gave `HeaderParser` and the scanner functions options for configuring
+  scanning behavior:
+    - `separator_regex`
+    - `skip_leading_newlines`
 - Fixed a `DeprecationWarning` in Python 3.7
 
 v0.2.0 (2018-02-14)

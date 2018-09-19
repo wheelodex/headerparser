@@ -1,5 +1,6 @@
-from .errors import MalformedHeaderError, UnexpectedFoldingError
-from .util   import ascii_splitlines
+import re
+from   .errors import MalformedHeaderError, UnexpectedFoldingError
+from   .util   import ascii_splitlines
 
 def scan_string(s, **kwargs):
     """
@@ -43,7 +44,11 @@ def scan_file(fp, **kwargs):
     ### TODO: Handle files not opened in universal newlines mode?
     return scan_lines(fp, **kwargs)
 
-def scan_lines(iterable, skip_leading_newlines=False):
+def scan_lines(
+    iterable,
+    separator_regex       = re.compile(r'[ \t]*:[ \t]*'),
+    skip_leading_newlines = False,
+):
     """
     Scan an iterable of lines for RFC 822-style header fields and return a
     generator of ``(name, value)`` pairs for each header field in the input,
@@ -86,6 +91,8 @@ def scan_lines(iterable, skip_leading_newlines=False):
     value = ''
     eof   = False
     begun = False
+    if not hasattr(separator_regex, 'match'):
+        separator_regex = re.compile(separator_regex)
     for line in lineiter:
         line = line.rstrip('\r\n')
         if line.startswith((' ', '\t')):
@@ -94,20 +101,21 @@ def scan_lines(iterable, skip_leading_newlines=False):
                 value += '\n' + line
             else:
                 raise UnexpectedFoldingError(line)
-        elif ':' in line:
-            begun = True
-            if name is not None:
-                yield (name, value)
-            name, _, value = line.partition(':')
-            name = name.rstrip(' \t')
-            value = value.lstrip(' \t')
-        elif line == '':
-            if skip_leading_newlines and not begun:
-                continue
-            else:
-                break
         else:
-            raise MalformedHeaderError(line)
+            m = separator_regex.search(line)
+            if m:
+                begun = True
+                if name is not None:
+                    yield (name, value)
+                name = line[:m.start()]
+                value = line[m.end():]
+            elif line == '':
+                if skip_leading_newlines and not begun:
+                    continue
+                else:
+                    break
+            else:
+                raise MalformedHeaderError(line)
     else:
         eof = True
     if name is not None:
