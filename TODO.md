@@ -1,6 +1,7 @@
 - Should string `default` values be passed through `type` etc. like in
   argparse?
 - Rethink how the original exception data is attached to `FieldTypeError`s
+    - Include everything from `sys.exc_info()`?
 - Base `NormalizedDict` on `OrderedDict`?
 - Rename `NormalizedDict.normalized_dict()` to something that doesn't imply it
   returns a `NormalizedDict`?
@@ -100,6 +101,7 @@ Scanning
         - all-whitespace line (considered obsolete by RFC 5322)
 
 - `scan_lines`: Split apart lines with embedded line endings
+- Deprecate `scan_lines` in favor of `scan_file` (or _vice versa_) ?
 
 Parsing
 -------

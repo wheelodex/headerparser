@@ -223,11 +223,21 @@ def test_separator_regex(separator_regex):
         separator_regex=separator_regex,
     )) == [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')]
 
+def test_multi_colon():
+    assert list(scan_string('Foo: red : crimson: scarlet\n')) == \
+        [('Foo', 'red : crimson: scarlet')]
+
 def test_separator_regex_multi_match():
     assert list(scan_string(
         'Foo = red = crimson=scarlet\n',
         separator_regex=r'\s*=\s*',
     )) == [('Foo', 'red = crimson=scarlet')]
+
+def test_separator_regex_mixed_multi_match():
+    assert list(scan_string(
+        'Key: Value = foo\nKey = Value: foo\n',
+        separator_regex=r'\s*=\s*',
+    )) == [('Key: Value', 'foo'), ('Key', 'Value: foo')]
 
 def test_separator_regex_default_separator():
     with pytest.raises(headerparser.MalformedHeaderError) as excinfo:

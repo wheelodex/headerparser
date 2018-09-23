@@ -293,3 +293,23 @@ def test_space_in_name():
     msg = parser.parse_string('key name: red\nBar: green\nBaz: blue\n')
     assert dict(msg) == {'Key Name': 'red', 'Bar': 'green', 'Baz': 'blue'}
     assert msg.body is None
+
+def test_scan_opts_passed(mocker):
+    import headerparser.parser
+    mocker.patch(
+        'headerparser.parser.scan_string',
+        wraps=headerparser.parser.scan_string,
+    )
+    parser = HeaderParser(
+        separator_regex=r'\s*:\s*',
+        skip_leading_newlines=True,
+    )
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
+    parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
+    headerparser.parser.scan_string.assert_called_with(
+        'Foo: red\nBar: green\nBaz: blue\n',
+        separator_regex=r'\s*:\s*',
+        skip_leading_newlines=True,
+    )
