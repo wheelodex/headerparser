@@ -19,10 +19,13 @@ functions in order to configure scanning behavior:
    A regex (as a `str` or compiled regex object) defining the name-value
    separator.  When the regex matches a line, everything before the matched
    substring becomes the field name, and everything after becomes the first
-   line of the field value.
+   line of the field value.  Note that the regex must match any surrounding
+   whitespace in order for it to be trimmed from the key & value.
 
 ``skip_leading_newlines=False``
-   If `True`, blank lines at the beginning of the input will be discarded.
+   If `True`, blank lines at the beginning of the input will be discarded.  If
+   `False`, a blank line at the beginning of the input marks the end of an
+   empty header section and the beginning of the message body.
 
 .. versionadded:: 0.3.0
     ``separator_regex``, ``skip_leading_newlines``
