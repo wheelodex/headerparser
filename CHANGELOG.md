@@ -1,5 +1,5 @@
-v0.3.0 (in development)
------------------------
+v0.3.0 (2018-10-12)
+-------------------
 - Drop support for Python 3.3
 - Gave `HeaderParser` and the scanner functions options for configuring
   scanning behavior:
