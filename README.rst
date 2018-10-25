@@ -10,14 +10,17 @@
     :target: https://codecov.io/gh/jwodder/headerparser
 
 .. image:: https://img.shields.io/pypi/pyversions/headerparser.svg
-    :target: https://pypi.python.org/pypi/headerparser
+    :target: https://pypi.org/project/headerparser
 
 .. image:: https://img.shields.io/github/license/jwodder/headerparser.svg
     :target: https://opensource.org/licenses/MIT
     :alt: MIT License
 
+.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+    :target: https://saythanks.io/to/jwodder
+
 `GitHub <https://github.com/jwodder/headerparser>`_
-| `PyPI <https://pypi.python.org/pypi/headerparser>`_
+| `PyPI <https://pypi.org/project/headerparser>`_
 | `Documentation <https://headerparser.readthedocs.io>`_
 | `Issues <https://github.com/jwodder/headerparser/issues>`_
 
