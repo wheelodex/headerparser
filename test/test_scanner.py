@@ -1,7 +1,7 @@
 import re
 import pytest
 import headerparser
-from   headerparser import scan_string, scan_lines
+from   headerparser import scan, scan_file, scan_lines, scan_string
 
 def test_simple():
     assert list(scan_string('Foo: red\nBar: green\nBaz: blue\n')) == \
@@ -182,7 +182,7 @@ def test_two_empty_lines_skip_leading_newlines():
     assert list(scan_string('\n\n', skip_leading_newlines=True)) == []
 
 def test_lines_no_ends():
-    assert list(scan_lines([
+    assert list(scan([
         'Key: value',
         'Folded: hold on',
         '  let me check',
@@ -243,3 +243,23 @@ def test_separator_regex_default_separator():
     with pytest.raises(headerparser.MalformedHeaderError) as excinfo:
         list(scan_string('Foo = red\nBar: green\n', separator_regex=r'\s*=\s*'))
     assert excinfo.value.line == 'Bar: green'
+
+def test_deprecated_scan_lines(mocker):
+    mockscan = mocker.patch(
+        'headerparser.scanner.scan',
+        return_value=mocker.sentinel.OUTPUT,
+    )
+    with pytest.warns(DeprecationWarning):
+        r = scan_lines(mocker.sentinel.INPUT)
+    mockscan.assert_called_once_with(mocker.sentinel.INPUT)
+    assert r is mocker.sentinel.OUTPUT
+
+def test_deprecated_scan_file(mocker):
+    mockscan = mocker.patch(
+        'headerparser.scanner.scan',
+        return_value=mocker.sentinel.OUTPUT,
+    )
+    with pytest.warns(DeprecationWarning):
+        r = scan_file(mocker.sentinel.INPUT)
+    mockscan.assert_called_once_with(mocker.sentinel.INPUT)
+    assert r is mocker.sentinel.OUTPUT

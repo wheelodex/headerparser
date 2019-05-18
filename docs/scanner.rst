@@ -3,8 +3,9 @@
 Scanner
 =======
 
+.. autofunction:: scan(iterable, **kwargs)
 .. autofunction:: scan_file
-.. autofunction:: scan_lines(iterable, **kwargs)
+.. autofunction:: scan_lines
 .. autofunction:: scan_string
 
 .. _scan_opts:

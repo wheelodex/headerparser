@@ -1,7 +1,7 @@
 from   six       import itervalues, string_types
 from   .         import errors
 from   .normdict import NormalizedDict
-from   .scanner  import scan_file, scan_lines, scan_string
+from   .scanner  import scan, scan_string
 from   .types    import lower, unfold
 
 class HeaderParser(object):
@@ -221,10 +221,9 @@ class HeaderParser(object):
 
     def parse_stream(self, fields):
         """
-        Process a sequence of ``(name, value)`` pairs as returned by
-        `scan_lines()` and return a dictionary of header fields (possibly with
-        body attached).  This is a low-level method that you will usually not
-        need to call.
+        Process a sequence of ``(name, value)`` pairs as returned by `scan()`
+        and return a dictionary of header fields (possibly with body attached).
+        This is a low-level method that you will usually not need to call.
 
         :param fields: a sequence of ``(name, value)`` pairs representing the
             input fields
@@ -279,7 +278,7 @@ class HeaderParser(object):
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scan_file(fp, **self._scan_opts))
+        return self.parse_stream(scan(fp, **self._scan_opts))
 
     def parse_lines(self, iterable):
         """
@@ -296,7 +295,7 @@ class HeaderParser(object):
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scan_lines(iterable, **self._scan_opts))
+        return self.parse_stream(scan(iterable, **self._scan_opts))
 
     def parse_string(self, s):
         """

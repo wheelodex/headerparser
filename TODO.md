@@ -2,10 +2,11 @@
   argparse?
 - Rethink how the original exception data is attached to `FieldTypeError`s
     - Include everything from `sys.exc_info()`?
-- Base `NormalizedDict` on `OrderedDict`?
 - Rename `NormalizedDict.normalized_dict()` to something that doesn't imply it
   returns a `NormalizedDict`?
 - Add docstrings to private classes and attributes
+- Merge `scan_file()` and `scan_lines()` (and `scan_string()`?) into a single
+  `scan()` function, and likewise for the `parse_*()` methods?
 
 - Write more tests
     - different header name normalizers (identity, hyphens=underscores,
@@ -24,6 +25,7 @@
     - equality of `HeaderParser` objects
     - Test that `HeaderParser.parse_stream()` won't choke on non-string inputs
     - passing scanner options to `HeaderParser`
+    - scanning files not opened in universal newlines mode
 
 - Improve documentation & examples
     - Contrast handling of multi-occurrence fields with that of the standard
@@ -100,9 +102,6 @@ Scanning
           next colon, or start of body)
         - all-whitespace line (considered obsolete by RFC 5322)
 
-- `scan_lines`: Split apart lines with embedded line endings
-- Deprecate `scan_lines` in favor of `scan_file` (or _vice versa_) ?
-
 Parsing
 -------
 - Add built-in support for multi-stanza documents in which different stanzas
@@ -132,6 +131,8 @@ Parsing
 
 - New `add_field` and `add_additional` options to add:
     - `default_action=callable` for defining what to do when a header is absent
+    - `multiple_type` and `multiple_action` — like `type` and `action`, but
+      called on a list of all values encountered for a `multiple` field
     - `i18n=bool` — turns on decoding of internationalized mail headers before
       passing to `type` (Do this via a custom type instead?)
 
@@ -156,5 +157,13 @@ Parsing
   fields can still use custom dests?
 
 - Give parsers a way to store parsed fields in a presupplied arbitrary mapping
-  object (or one created from a `dict_factory` callable?) instead of creating a
-  new NormalizedDict?
+  object (or one created from a `dict_factory`/`dict_cls` callable?) instead of
+  creating a new NormalizedDict?
+
+- Give `HeaderParser` an option for storing the body in a given `dict` key
+
+- Create a `BODY` token to use as a `dict` key for storing bodies instead of
+  storing them as an attribute?
+
+- Add an option/method for ignoring & discarding any unknown/"additional"
+  fields

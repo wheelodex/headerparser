@@ -29,7 +29,7 @@ from .errors   import (
                       )
 from .normdict import NormalizedDict
 from .parser   import HeaderParser
-from .scanner  import scan_file, scan_lines, scan_string
+from .scanner  import scan, scan_file, scan_lines, scan_string
 from .types    import BOOL, lower, unfold
 
 __version__      = '0.4.0.dev1'
@@ -55,6 +55,7 @@ __all__ = [
     'UnexpectedFoldingError',
     'UnknownFieldError',
     'lower',
+    'scan',
     'scan_file',
     'scan_lines',
     'scan_string',
