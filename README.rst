@@ -23,6 +23,7 @@
 | `PyPI <https://pypi.org/project/headerparser>`_
 | `Documentation <https://headerparser.readthedocs.io>`_
 | `Issues <https://github.com/jwodder/headerparser/issues>`_
+| `Changelog <https://github.com/jwodder/headerparser/blob/master/CHANGELOG.md>`_
 
 ``headerparser`` parses key-value pairs in the style of RFC 822 (e-mail)
 headers and converts them into case-insensitive dictionaries with the trailing
