@@ -1,3 +1,4 @@
+from   warnings  import warn
 from   six       import itervalues, string_types
 from   .         import errors
 from   .normdict import NormalizedDict
@@ -222,8 +223,9 @@ class HeaderParser(object):
     def parse_stream(self, fields):
         """
         Process a sequence of ``(name, value)`` pairs as returned by `scan()`
-        and return a dictionary of header fields (possibly with body attached).
-        This is a low-level method that you will usually not need to call.
+        or `scan_string()` and return a dictionary of header fields (possibly
+        with body attached).  This is a low-level method that you will usually
+        not need to call.
 
         :param fields: a sequence of ``(name, value)`` pairs representing the
             input fields
@@ -265,11 +267,33 @@ class HeaderParser(object):
             raise errors.MissingBodyError()
         return data
 
+    def parse(self, iterable):
+        """
+        .. versionadded:: 0.4.0
+
+        Parse an RFC 822-style header field section (possibly followed by a
+        message body) from the contents of the given filehandle or sequence of
+        lines and return a dictionary of the header fields (possibly with body
+        attached).  If ``iterable`` is an iterable of `str`, newlines will be
+        appended to lines in multiline header fields where not already present
+        but will not be inserted where missing inside the body.
+
+        :param iterable: a text-file-like object or iterable of lines to parse
+        :rtype: NormalizedDict
+        :raises ParserError: if the input fields do not conform to the field
+            definitions declared with `add_field` and `add_additional`
+        :raises ScannerError: if the header section is malformed
+        """
+        return self.parse_stream(scan(iterable, **self._scan_opts))
+
     def parse_file(self, fp):
         """
         Parse an RFC 822-style header field section (possibly followed by a
         message body) from the contents of the given filehandle and return a
         dictionary of the header fields (possibly with body attached)
+
+        .. deprecated:: 0.4.0
+            Use `parse()` instead.
 
         :param fp: the file to parse
         :type fp: file-like object
@@ -278,6 +302,11 @@ class HeaderParser(object):
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
+        warn(
+            'HeaderParser.parse_file() is deprecated.'
+            '  Use the parse() method instead.',
+            DeprecationWarning,
+        )
         return self.parse_stream(scan(fp, **self._scan_opts))
 
     def parse_lines(self, iterable):
@@ -288,6 +317,9 @@ class HeaderParser(object):
         inserted where not already present in multiline header fields but will
         not be inserted inside the body.
 
+        .. deprecated:: 0.4.0
+            Use `parse()` instead.
+
         :param iterable: a sequence of lines comprising the text to parse
         :type iterable: iterable of strings
         :rtype: NormalizedDict
@@ -295,6 +327,11 @@ class HeaderParser(object):
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
+        warn(
+            'HeaderParser.parse_lines() is deprecated.'
+            '  Use the parse() method instead.',
+            DeprecationWarning,
+        )
         return self.parse_stream(scan(iterable, **self._scan_opts))
 
     def parse_string(self, s):

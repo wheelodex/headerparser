@@ -1,4 +1,5 @@
 import pytest
+from   six          import StringIO
 import headerparser
 from   headerparser import HeaderParser
 
@@ -313,3 +314,24 @@ def test_scan_opts_passed(mocker):
         separator_regex=r'\s*:\s*',
         skip_leading_newlines=True,
     )
+
+def test_deprecated_parse_lines():
+    parser = HeaderParser()
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
+    INPUT = 'Foo: red\nBar: green\nBaz: blue\n'.splitlines(True)
+    with pytest.warns(DeprecationWarning):
+        msg = parser.parse_lines(INPUT)
+    assert msg == parser.parse(INPUT)
+
+def test_deprecated_parse_file():
+    parser = HeaderParser()
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
+    INPUT = StringIO('Foo: red\nBar: green\nBaz: blue\n')
+    with pytest.warns(DeprecationWarning):
+        msg = parser.parse_file(INPUT)
+    INPUT.seek(0)
+    assert msg == parser.parse(INPUT)

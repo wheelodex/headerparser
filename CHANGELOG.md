@@ -2,6 +2,8 @@ v0.4.0 (in development)
 -----------------------
 - Added a `scan()` function combining the behavior of `scan_file()` and
   `scan_lines()`, which are now deprecated
+- Gave `HeaderParser` a `parse()` method combining the behavior of
+  `parse_file()` and `parse_lines()`, which are now deprecated
 
 v0.3.0 (2018-10-12)
 -------------------

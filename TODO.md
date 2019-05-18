@@ -5,8 +5,6 @@
 - Rename `NormalizedDict.normalized_dict()` to something that doesn't imply it
   returns a `NormalizedDict`?
 - Add docstrings to private classes and attributes
-- Merge `scan_file()` and `scan_lines()` (and `scan_string()`?) into a single
-  `scan()` function, and likewise for the `parse_*()` methods?
 
 - Write more tests
     - different header name normalizers (identity, hyphens=underscores,
@@ -77,8 +75,8 @@ Features
 - Add support for multiple header stanzas in a single document
     - Add a scanner function that parses a multi-stanza document and returns an
       iterable of iterables of key-value pairs
-    - Give `HeaderParser` `parse_stanzas_file` and `parse_stanzas_string`
-      methods (Rethink names) that return iterables of `NormalizedDict`s
+    - Give `HeaderParser` `parse_stanzas` and `parse_stanzas_string` methods
+      (Rethink names) that return iterables of `NormalizedDict`s
         - Calling these methods when `body=True` results in an error
 
 Scanning
