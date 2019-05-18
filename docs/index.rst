@@ -4,14 +4,21 @@
 headerparser — argparse for mail-style headers
 ==============================================
 
+`GitHub <https://github.com/jwodder/headerparser>`_
+| `PyPI <https://pypi.org/project/headerparser>`_
+| `Documentation <https://headerparser.readthedocs.io>`_
+| `Issues <https://github.com/jwodder/headerparser/issues>`_
+| :doc:`Changelog <changelog>`
+
 .. toctree::
-    :maxdepth: 2
+    :hidden:
 
     format
     parser
     scanner
     util
     errors
+    changelog
 
 `headerparser` parses key-value pairs in the style of :rfc:`822` (e-mail)
 headers and converts them into case-insensitive dictionaries with the trailing
