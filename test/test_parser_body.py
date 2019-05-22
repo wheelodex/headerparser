@@ -31,8 +31,9 @@ def test_missing_required_body():
     parser.add_field('Foo')
     parser.add_field('Bar')
     parser.add_field('Baz')
-    with pytest.raises(headerparser.MissingBodyError):
+    with pytest.raises(headerparser.MissingBodyError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
+    assert str(excinfo.value) == "Message body is required but missing"
 
 def test_forbid_body():
     parser = HeaderParser(body=False)
@@ -48,15 +49,16 @@ def test_empty_forbidden_body():
     parser.add_field('Foo')
     parser.add_field('Bar')
     parser.add_field('Baz')
-    with pytest.raises(headerparser.BodyNotAllowedError):
+    with pytest.raises(headerparser.BodyNotAllowedError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nBaz: blue\n\n')
+    assert str(excinfo.value) == "Message body is present but not allowed"
 
 def test_present_forbidden_body():
     parser = HeaderParser(body=False)
     parser.add_field('Foo')
     parser.add_field('Bar')
     parser.add_field('Baz')
-    with pytest.raises(headerparser.BodyNotAllowedError):
+    with pytest.raises(headerparser.BodyNotAllowedError) as excinfo:
         parser.parse_string(
             'Foo: red\n'
             'Bar: green\n'
@@ -64,6 +66,7 @@ def test_present_forbidden_body():
             '\n'
             'This space intentionally left nonblank.\n'
         )
+    assert str(excinfo.value) == "Message body is present but not allowed"
 
 def test_headers_as_required_body():
     parser = HeaderParser(body=True)
@@ -79,8 +82,9 @@ def test_headers_as_forbidden_body():
     parser.add_field('Foo')
     parser.add_field('Bar')
     parser.add_field('Baz')
-    with pytest.raises(headerparser.BodyNotAllowedError):
+    with pytest.raises(headerparser.BodyNotAllowedError) as excinfo:
         parser.parse_string('\nFoo: red\nBar: green\nBaz: blue\n')
+    assert str(excinfo.value) == "Message body is present but not allowed"
 
 def test_required_body_only():
     parser = HeaderParser(body=True)
@@ -92,6 +96,7 @@ def test_body_as_unknown_headers():
     parser = HeaderParser(body=True)
     with pytest.raises(headerparser.UnknownFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
+    assert str(excinfo.value) == "Unknown header field 'Foo'"
     assert excinfo.value.name == 'Foo'
 
 def test_require_body_all_empty():
@@ -102,5 +107,6 @@ def test_require_body_all_empty():
 
 def test_forbid_body_all_empty():
     parser = HeaderParser(body=False)
-    with pytest.raises(headerparser.BodyNotAllowedError):
+    with pytest.raises(headerparser.BodyNotAllowedError) as excinfo:
         parser.parse_string('\n\n')
+    assert str(excinfo.value) == "Message body is present but not allowed"

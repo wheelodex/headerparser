@@ -112,6 +112,7 @@ def test_missing_required():
     parser.add_field('Baz', required=True)
     with pytest.raises(headerparser.MissingFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\n')
+    assert str(excinfo.value) == "Required header field 'Baz' is not present"
     assert excinfo.value.name == 'Baz'
 
 def test_present_default():
@@ -171,6 +172,7 @@ def test_bad_multiple():
     parser.add_field('Bar')
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
         parser.parse_string('Foo: red\nFOO: magenta\nBar: green\nBar: lime\n')
+    assert str(excinfo.value) == "Header field 'Bar' occurs more than once"
     assert excinfo.value.name == 'Bar'
 
 def test_default_multiple():
@@ -219,6 +221,7 @@ def test_missing_required_multiple():
     parser.add_field('Bar')
     with pytest.raises(headerparser.MissingFieldError) as excinfo:
         parser.parse_string('Bar: green\n')
+    assert str(excinfo.value) == "Required header field 'Foo' is not present"
     assert excinfo.value.name == 'Foo'
 
 def test_unknown():
@@ -228,6 +231,7 @@ def test_unknown():
     parser.add_field('Baz')
     with pytest.raises(headerparser.UnknownFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nQuux: blue\n')
+    assert str(excinfo.value) == "Unknown header field 'Quux'"
     assert excinfo.value.name == 'Quux'
 
 def test_empty_input():

@@ -74,6 +74,7 @@ def test_one_missing_required_switched_dest():
     parser.add_field('Bar', dest='Foo', required=True)
     with pytest.raises(headerparser.MissingFieldError) as excinfo:
         parser.parse_string('Foo: foo\n')
+    assert str(excinfo.value) == "Required header field 'Bar' is not present"
     assert excinfo.value.name == 'Bar'
 
 def test_missing_default_switched_dest():
@@ -104,4 +105,5 @@ def test_dest_as_unknown_header():
     parser.add_field('Foo', dest='Bar')
     with pytest.raises(headerparser.UnknownFieldError) as excinfo:
         parser.parse_string('Bar: not a header')
+    assert str(excinfo.value) == "Unknown header field 'Bar'"
     assert excinfo.value.name == 'Bar'

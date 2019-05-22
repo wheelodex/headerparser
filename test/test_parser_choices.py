@@ -13,13 +13,15 @@ def test_invalid_choice():
     parser.add_field('Color', choices=['red', 'green', 'blue'])
     with pytest.raises(InvalidChoiceError) as excinfo:
         parser.parse_string('Color: taupe')
+    assert str(excinfo.value) == "'taupe' is not a valid choice for 'Color'"
     assert excinfo.value.name == 'Color'
     assert excinfo.value.value == 'taupe'
 
 def test_no_choice():
     parser = HeaderParser()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         parser.add_field('Unicorn', choices=[])
+    assert str(excinfo.value) == 'empty list supplied for choices'
 
 def test_default_choice():
     parser = HeaderParser()
@@ -65,6 +67,7 @@ def test_lower_invalid_choice():
     parser.add_field('Color', choices=['red', 'green', 'blue'], type=str.lower)
     with pytest.raises(InvalidChoiceError) as excinfo:
         parser.parse_string('Color: MAUVE')
+    assert str(excinfo.value) == "'mauve' is not a valid choice for 'Color'"
     assert excinfo.value.name == 'Color'
     assert excinfo.value.value == 'mauve'
 
@@ -80,5 +83,6 @@ def test_bool_choices_invalid_choice():
     parser.add_field('Boolean', type=BOOL, choices=(False, 'foo'))
     with pytest.raises(InvalidChoiceError) as excinfo:
         parser.parse_string('BOOLEAN: Y\n')
+    assert str(excinfo.value) == "True is not a valid choice for 'Boolean'"
     assert excinfo.value.name == 'Boolean'
     assert excinfo.value.value is True

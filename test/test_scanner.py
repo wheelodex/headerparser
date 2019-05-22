@@ -144,11 +144,15 @@ def test_mixed_folding():
 def test_malformed_header():
     with pytest.raises(headerparser.MalformedHeaderError) as excinfo:
         list(scan_string('Foo: red\nBar green\nBaz: blue\n'))
+    assert str(excinfo.value) == "Invalid header line encountered: 'Bar green'"
     assert excinfo.value.line == 'Bar green'
 
 def test_unexpected_folding():
     with pytest.raises(headerparser.UnexpectedFoldingError) as excinfo:
         list(scan_string(' Foo: red\nBar green\nBaz: blue\n'))
+    assert str(excinfo.value) == (
+        "Indented line without preceding header line encountered: ' Foo: red'"
+    )
     assert excinfo.value.line == ' Foo: red'
 
 def test_multiple():
@@ -242,6 +246,7 @@ def test_separator_regex_mixed_multi_match():
 def test_separator_regex_default_separator():
     with pytest.raises(headerparser.MalformedHeaderError) as excinfo:
         list(scan_string('Foo = red\nBar: green\n', separator_regex=r'\s*=\s*'))
+    assert str(excinfo.value) == "Invalid header line encountered: 'Bar: green'"
     assert excinfo.value.line == 'Bar: green'
 
 def test_deprecated_scan_lines(mocker):

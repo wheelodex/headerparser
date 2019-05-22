@@ -30,6 +30,7 @@ def test_multiname_bad_multiple():
     parser.add_field('Baz')
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
+    assert str(excinfo.value) == "Header field 'Foo' occurs more than once"
     assert excinfo.value.name == 'Foo'
 
 def test_multiname_conflict():

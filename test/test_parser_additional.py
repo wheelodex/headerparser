@@ -74,6 +74,7 @@ def test_additional_bad_named_multiple():
     parser.add_additional()
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
         parser.parse_string('Foo: red\nFOO: magenta\nBar: green\n')
+    assert str(excinfo.value) == "Header field 'Foo' occurs more than once"
     assert excinfo.value.name == 'Foo'
 
 def test_additional_named_multiple():
@@ -90,6 +91,7 @@ def test_additional_bad_multiple():
     parser.add_additional()
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nBar: lime\n')
+    assert str(excinfo.value) == "Header field 'Bar' occurs more than once"
     assert excinfo.value.name == 'Bar'
 
 def test_additional_bad_multiple_cases():
@@ -98,6 +100,7 @@ def test_additional_bad_multiple_cases():
     parser.add_additional()
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nBAR: lime\n')
+    assert str(excinfo.value) == "Header field 'BAR' occurs more than once"
     assert excinfo.value.name == 'BAR'
 
 def test_multiple_additional():
@@ -123,6 +126,7 @@ def test_multiple_additional_bad_named_multiple():
     parser.add_additional(multiple=True)
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nBaz: blue\nFOO: magenta\n')
+    assert str(excinfo.value) == "Header field 'Foo' occurs more than once"
     assert excinfo.value.name == 'Foo'
 
 def test_additional_missing_named():
@@ -141,6 +145,7 @@ def test_additional_missing_required_named():
     parser.add_additional()
     with pytest.raises(headerparser.MissingFieldError) as excinfo:
         parser.parse_string('Baz: blue\nQUUX: purple\nglarch: orange\n')
+    assert str(excinfo.value) == "Required header field 'Foo' is not present"
     assert excinfo.value.name == 'Foo'
 
 def test_missing_additional():
@@ -168,6 +173,10 @@ def test_additional_bad_type():
     parser.add_additional(type=int)
     with pytest.raises(headerparser.FieldTypeError) as excinfo:
         parser.parse_string('Foo: 1\nBar: 2\nBaz: three\n')
+    assert str(excinfo.value) == (
+        "Error while parsing 'Baz': 'three': ValueError: "
+        + str(excinfo.value.exc_value)
+    )
     assert excinfo.value.name == 'Baz'
     assert excinfo.value.value == 'three'
     assert isinstance(excinfo.value.exc_value, ValueError)
@@ -193,6 +202,7 @@ def test_additional_bad_choices():
     parser.add_additional(choices=['red', 'green', 'blue'])
     with pytest.raises(headerparser.InvalidChoiceError) as excinfo:
         parser.parse_string('Foo: mauve\nBar: red\nBaz: green\nQuux: taupe\n')
+    assert str(excinfo.value) == "'taupe' is not a valid choice for 'Quux'"
     assert excinfo.value.name == 'Quux'
     assert excinfo.value.value == 'taupe'
 
@@ -251,4 +261,5 @@ def test_additional_off():
     parser.add_additional(False)
     with pytest.raises(headerparser.UnknownFieldError) as excinfo:
         parser.parse_string('Foo: red\nBar: green\nBaz: blue\n')
+    assert str(excinfo.value) == "Unknown header field 'Baz'"
     assert excinfo.value.name == 'Baz'

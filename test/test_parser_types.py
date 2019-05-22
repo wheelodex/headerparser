@@ -49,6 +49,10 @@ def test_invalid_bool():
     parser.add_field('Boolean', type=BOOL)
     with pytest.raises(FieldTypeError) as excinfo:
         parser.parse_string('Boolean: One\n')
+    assert str(excinfo.value) == (
+        "Error while parsing 'Boolean': 'One': ValueError: invalid boolean:"
+        " 'One'"
+    )
     assert excinfo.value.name == 'Boolean'
     assert excinfo.value.value == 'One'
     assert isinstance(excinfo.value.exc_value, ValueError)
@@ -66,6 +70,10 @@ def test_bool_choices_bad_type():
     parser.add_field('Boolean', type=BOOL, choices=(False, 'foo'))
     with pytest.raises(FieldTypeError) as excinfo:
         parser.parse_string('BOOLEAN: foo\n')
+    assert str(excinfo.value) == (
+        "Error while parsing 'Boolean': 'foo': ValueError: invalid boolean:"
+        " 'foo'"
+    )
     assert excinfo.value.name == 'Boolean'
     assert excinfo.value.value == 'foo'
     assert isinstance(excinfo.value.exc_value, ValueError)
@@ -83,6 +91,10 @@ def test_bad_native_type():
     parser.add_field('Number', 'No.', type=int, dest='#')
     with pytest.raises(FieldTypeError) as excinfo:
         parser.parse_string('No.: forty-two')
+    assert str(excinfo.value) == (
+        "Error while parsing 'Number': 'forty-two': ValueError: "
+        + str(excinfo.value.exc_value)
+    )
     assert excinfo.value.name == 'Number'
     assert excinfo.value.value == 'forty-two'
     assert isinstance(excinfo.value.exc_value, ValueError)

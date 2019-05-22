@@ -118,7 +118,7 @@ class MalformedHeaderError(ScannerError):
         super(MalformedHeaderError, self).__init__(line)
 
     def __str__(self):
-        return 'Invalid header line found: {0.line!r}'.format(self)
+        return 'Invalid header line encountered: {0.line!r}'.format(self)
 
 
 class UnexpectedFoldingError(ScannerError):
@@ -133,5 +133,5 @@ class UnexpectedFoldingError(ScannerError):
         super(UnexpectedFoldingError, self).__init__(line)
 
     def __str__(self):
-        return 'Indented line without preceding header line found: {0.line!r}'\
-               .format(self)
+        return 'Indented line without preceding header line encountered:'\
+               ' {0.line!r}'.format(self)
