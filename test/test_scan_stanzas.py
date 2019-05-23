@@ -1,8 +1,24 @@
 import pytest
-from   headerparser import MalformedHeaderError, scan_stanzas_string
+from   six          import StringIO
+from   headerparser import MalformedHeaderError, scan_stanzas, \
+                            scan_stanzas_string
 
-def test_simple():
-    assert list(scan_stanzas_string(
+def scan_stanzas_string_as_file(s, **kwargs):
+    return scan_stanzas(StringIO(s), **kwargs)
+
+def scan_stanzas_string_as_list(s, **kwargs):
+    return scan_stanzas(s.splitlines(True), **kwargs)
+
+@pytest.fixture(params=[
+    scan_stanzas_string_as_file,
+    scan_stanzas_string_as_list,
+    scan_stanzas_string,
+])
+def scanner(request):
+    return request.param
+
+def test_simple(scanner):
+    assert list(scanner(
         'Foo: red\n'
         'Bar: green\n'
         'Baz: blue\n'
@@ -21,8 +37,8 @@ def test_simple():
     ]
 
 @pytest.mark.parametrize('skip_leading_newlines', [True, False])
-def test_extra_interstitial_blanks(skip_leading_newlines):
-    assert list(scan_stanzas_string(
+def test_extra_interstitial_blanks(scanner, skip_leading_newlines):
+    assert list(scanner(
         'Foo: red\n'
         'Bar: green\n'
         'Baz: blue\n'
@@ -45,8 +61,8 @@ def test_extra_interstitial_blanks(skip_leading_newlines):
     ]
 
 @pytest.mark.parametrize('skip_leading_newlines', [True, False])
-def test_trailing_blanks(skip_leading_newlines):
-    assert list(scan_stanzas_string(
+def test_trailing_blanks(scanner, skip_leading_newlines):
+    assert list(scanner(
         'Foo: red\n'
         'Bar: green\n'
         'Baz: blue\n'
@@ -67,8 +83,8 @@ def test_trailing_blanks(skip_leading_newlines):
         [('Blue', 'foo'), ('Red', 'bar'), ('Green', 'baz')],
     ]
 
-def test_leading_blanks_skip():
-    assert list(scan_stanzas_string(
+def test_leading_blanks_skip(scanner):
+    assert list(scanner(
         '\n'
         '\n'
         'Foo: red\n'
@@ -89,8 +105,8 @@ def test_leading_blanks_skip():
         [('Blue', 'foo'), ('Red', 'bar'), ('Green', 'baz')],
     ]
 
-def test_leading_blanks_no_skip():
-    assert list(scan_stanzas_string(
+def test_leading_blanks_no_skip(scanner):
+    assert list(scanner(
         '\n'
         '\n'
         'Foo: red\n'
@@ -112,8 +128,8 @@ def test_leading_blanks_no_skip():
         [('Blue', 'foo'), ('Red', 'bar'), ('Green', 'baz')],
     ]
 
-def test_invalid_stanza():
-    stanzas = scan_stanzas_string(
+def test_invalid_stanza(scanner):
+    stanzas = scanner(
         'Foo: red\n'
         'Bar: green\n'
         'Baz: blue\n'
