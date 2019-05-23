@@ -69,11 +69,7 @@ def scan_lines(fp, **kwargs):
     warn('scan_lines() is deprecated.  Use scan() instead.', DeprecationWarning)
     return scan(fp, **kwargs)
 
-def scan(
-    iterable,
-    separator_regex       = re.compile(r'[ \t]*:[ \t]*'),
-    skip_leading_newlines = False,
-):
+def scan(iterable, **kwargs):
     """
     .. versionadded:: 0.4.0
 
@@ -113,15 +109,30 @@ def scan(
     :raises UnexpectedFoldingError: if a folded (indented) line that is not
         preceded by a valid header line is encountered
     """
-
     lineiter = iter(iterable)
+    for name, value in _scan_next_stanza(lineiter, **kwargs):
+        if name is not None:
+            yield (name, value)
+        elif value:
+            yield (None, ''.join(lineiter))
+
+def scan_next_stanza(iterator, **kwargs):
+    for name, value in _scan_next_stanza(iterator, **kwargs):
+        if name is not None:
+            yield (name, value)
+
+def _scan_next_stanza(
+    iterator,
+    separator_regex       = re.compile(r'[ \t]*:[ \t]*'),
+    skip_leading_newlines = False,
+):
     name  = None
     value = ''
-    eof   = False
     begun = False
+    more_left = False
     if not hasattr(separator_regex, 'match'):
         separator_regex = re.compile(separator_regex)
-    for line in lineiter:
+    for line in iterator:
         line = line.rstrip('\r\n')
         if line.startswith((' ', '\t')):
             begun = True
@@ -141,12 +152,30 @@ def scan(
                 if skip_leading_newlines and not begun:
                     continue
                 else:
+                    more_left = True
                     break
             else:
                 raise MalformedHeaderError(line)
-    else:
-        eof = True
     if name is not None:
         yield (name, value)
-    if not eof:
-        yield (None, ''.join(lineiter))
+    yield (None, more_left)
+
+def scan_next_stanza_string(s, **kwargs):
+    lineiter = iter(ascii_splitlines(s))
+    fields = list(scan_next_stanza(lineiter, **kwargs))
+    body = ''.join(lineiter)
+    return (fields, body)
+
+def scan_stanzas(iterable, **kwargs):
+    lineiter = iter(iterable)
+    while True:
+        fields = list(_scan_next_stanza(lineiter, **kwargs))
+        more_left = fields.pop()[1]
+        if fields or more_left:
+            yield fields
+        else:
+            break
+        kwargs["skip_leading_newlines"] = True
+
+def scan_stanzas_string(s, **kwargs):
+    return scan_stanzas(ascii_splitlines(s), **kwargs)

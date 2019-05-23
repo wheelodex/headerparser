@@ -73,7 +73,7 @@ def test_trailing_blanks(scanner, skip_leading_newlines):
         '\n'
         'Blue: foo\n'
         'Red: bar\n'
-        'Green: baz\n',
+        'Green: baz\n'
         '\n'
         '\n',
         skip_leading_newlines=skip_leading_newlines,
