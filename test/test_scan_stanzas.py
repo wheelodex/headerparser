@@ -150,3 +150,13 @@ def test_invalid_stanza(scanner):
     assert str(excinfo.value) == (
         "Invalid header line encountered: \"Wait, this isn't a header.\""
     )
+
+@pytest.mark.parametrize('skip_leading_newlines', [True, False])
+def test_empty(scanner, skip_leading_newlines):
+    assert list(scanner('', skip_leading_newlines=skip_leading_newlines)) == []
+
+def test_all_blanks_skip(scanner):
+    assert list(scanner('\n\n', skip_leading_newlines=True)) == []
+
+def test_all_blanks_no_skip(scanner):
+    assert list(scanner('\n\n', skip_leading_newlines=False)) == [[]]

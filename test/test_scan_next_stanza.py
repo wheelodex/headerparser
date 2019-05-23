@@ -154,3 +154,32 @@ def test_stanza_only_string():
         [('Foo', 'red'), ('Bar', 'green'), ('Baz', 'blue')],
         '',
     )
+
+def test_empty():
+    lines = []
+    liter = iter(lines)
+    assert list(scan_next_stanza(liter)) == []
+    assert list(liter) == []
+
+def test_empty_string():
+    assert scan_next_stanza_string('') == ([], '')
+
+def test_all_blanks_skip():
+    lines = ['\n', '\n']
+    liter = iter(lines)
+    assert list(scan_next_stanza(liter, skip_leading_newlines=True)) == []
+    assert list(liter) == []
+
+def test_all_blanks_no_skip():
+    lines = ['\n', '\n']
+    liter = iter(lines)
+    assert list(scan_next_stanza(liter, skip_leading_newlines=False)) == []
+    assert list(liter) == ['\n']
+
+def test_all_blanks_skip_string():
+    assert scan_next_stanza_string('\n\n', skip_leading_newlines=True) \
+        == ([], '')
+
+def test_all_blanks_no_skip_string():
+    assert scan_next_stanza_string('\n\n', skip_leading_newlines=False) \
+        == ([], '\n')
