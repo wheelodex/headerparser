@@ -3,10 +3,17 @@
 Scanner
 =======
 
-.. autofunction:: scan(iterable, **kwargs)
+.. autofunction:: scan
+.. autofunction:: scan_string
+.. autofunction:: scan_next_stanza
+.. autofunction:: scan_next_stanza_string
+.. autofunction:: scan_stanzas
+.. autofunction:: scan_stanzas_string
+
+Deprecated Functions
+--------------------
 .. autofunction:: scan_file
 .. autofunction:: scan_lines
-.. autofunction:: scan_string
 
 .. _scan_opts:
 
