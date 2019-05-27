@@ -4,6 +4,10 @@ v0.4.0 (in development)
   `scan_lines()`, which are now deprecated
 - Gave `HeaderParser` a `parse()` method combining the behavior of
   `parse_file()` and `parse_lines()`, which are now deprecated
+- Added `scan_next_stanza()` and `scan_next_stanza_string()` functions for
+  scanning & consuming input only up to the end of the first header section
+- Added `scan_stanzas()` and `scan_stanzas_string()` functions for scanning
+  input composed entirely of multiple stanzas/header sections
 
 v0.3.0 (2018-10-12)
 -------------------
