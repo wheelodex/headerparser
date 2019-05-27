@@ -5,22 +5,29 @@ the Internet Message (e-mail) Format specified in :rfc:`822`, :rfc:`2822`, and
 :rfc:`5322`.  Specifically:
 
 - Everything in the input up to (but not including) the first blank line (i.e.,
-  a line containing only a line ending) constitutes the :dfn:`header section`.
-  Everything after the first blank line is a free-form :dfn:`message body`.  If
-  there are no blank lines, the entire input is used as the header section, and
-  there is no body.
+  a line containing only a line ending) constitutes a :dfn:`stanza` or
+  :dfn:`header section`.  Everything after the first blank line is a free-form
+  :dfn:`message body`.  If there are no blank lines, the entire input is used
+  as the header section, and there is no body.
 
-- The header section is composed of zero or more :dfn:`header fields`.  A
-  header field is composed of one or more lines, with all lines after the first
-  beginning with a space or tab.  Additionally, the first line must contain a
-  colon (optionally surrounded by whitespace); everything before the colon is
-  the :dfn:`header field name`, while everything after (including subsequent
-  lines) is the :dfn:`header field value`.
+.. note::
+
+    By default, blank lines at the beginning of a document are interpreted as
+    the ending of a zero-length stanza.  Such blank lines can instead be
+    ignored by setting the ``skip_leading_newlines`` :ref:`scanner option
+    <scan_opts>` to true.
+
+- A stanza or header section is composed of zero or more :dfn:`header fields`.
+  A header field is composed of one or more lines, with all lines after the
+  first beginning with a space or tab.  Additionally, the first line must
+  contain a colon (optionally surrounded by whitespace); everything before the
+  colon is the :dfn:`header field name`, while everything after (including
+  subsequent lines) is the :dfn:`header field value`.
 
 .. note::
 
     Name-value separators other than a colon can be used by setting the
-    ``separator_regex`` :ref:`scanner option <scan_opts>`.
+    ``separator_regex`` :ref:`scanner option <scan_opts>` appropriately.
 
 .. note::
 

@@ -15,10 +15,7 @@ def scan_string(s, **kwargs):
         boundaries and passed to `scan()`
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of pairs of strings
-    :raises MalformedHeaderError: if an invalid header line, i.e., a line
-        without either a colon or leading whitespace, is encountered
-    :raises UnexpectedFoldingError: if a folded (indented) line that is not
-        preceded by a valid header line is encountered
+    :raises ScannerError: if the header section is malformed
     """
     return scan(ascii_splitlines(s), **kwargs)
 
@@ -38,10 +35,7 @@ def scan_file(fp, **kwargs):
         recommended.
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of pairs of strings
-    :raises MalformedHeaderError: if an invalid header line, i.e., a line
-        without either a colon or leading whitespace, is encountered
-    :raises UnexpectedFoldingError: if a folded (indented) line that is not
-        preceded by a valid header line is encountered
+    :raises ScannerError: if the header section is malformed
     """
     warn('scan_file() is deprecated.  Use scan() instead.', DeprecationWarning)
     return scan(fp, **kwargs)
@@ -61,10 +55,7 @@ def scan_lines(fp, **kwargs):
     :param iterable: an iterable of strings representing lines of input
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of pairs of strings
-    :raises MalformedHeaderError: if an invalid header line, i.e., a line
-        without either a colon or leading whitespace, is encountered
-    :raises UnexpectedFoldingError: if a folded (indented) line that is not
-        preceded by a valid header line is encountered
+    :raises ScannerError: if the header section is malformed
     """
     warn('scan_lines() is deprecated.  Use scan() instead.', DeprecationWarning)
     return scan(fp, **kwargs)
@@ -78,36 +69,20 @@ def scan(iterable, **kwargs):
     field in the input, plus a ``(None, body)`` pair representing the body (if
     any) after the header section.
 
-    Each field value is a single string, the concatenation of one or more
-    lines, with leading whitespace on lines after the first preserved.  The
-    ending of each line is converted to ``'\\n'`` (added if there is no
-    ending), and the last line of the field value has its trailing line ending
-    (if any) removed.
-
-    .. note::
-
-        "Line ending" here means a CR, LF, or CR LF sequence at the end of one
-        of the lines in ``iterable``.  Unicode line separators, along with line
-        endings occurring in the middle of a line, are not treated as line
-        endings and are not trimmed or converted to ``\\n``.
-
     All lines after the first blank line are concatenated & yielded as-is in a
     ``(None, body)`` pair.  (Note that body lines which do not end with a line
     terminator will not have one appended.)  If there is no empty line in
     ``iterable``, then no body pair is yielded.  If the empty line is the last
     line in ``iterable``, the body will be the empty string.  If the empty line
     is the *first* line in ``iterable`` and the ``skip_leading_newlines``
-    option is `False` (the default), then all other lines will be treated as
-    part of the body and will not be scanned for header fields.
+    option is false (the default), then all other lines will be treated as part
+    of the body and will not be scanned for header fields.
 
     :param iterable: a text-file-like object or iterable of strings
         representing lines of input
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of pairs of strings
-    :raises MalformedHeaderError: if an invalid header line, i.e., a line
-        without either a colon or leading whitespace, is encountered
-    :raises UnexpectedFoldingError: if a folded (indented) line that is not
-        preceded by a valid header line is encountered
+    :raises ScannerError: if the header section is malformed
     """
     lineiter = iter(iterable)
     for name, value in _scan_next_stanza(lineiter, **kwargs):
@@ -131,10 +106,7 @@ def scan_next_stanza(iterator, **kwargs):
         representing lines of input
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of pairs of strings
-    :raises MalformedHeaderError: if an invalid header line, i.e., a line
-        without either a colon or leading whitespace, is encountered
-    :raises UnexpectedFoldingError: if a folded (indented) line that is not
-        preceded by a valid header line is encountered
+    :raises ScannerError: if the header section is malformed
     """
     for name, value in _scan_next_stanza(iterator, **kwargs):
         if name is not None:
@@ -204,10 +176,7 @@ def scan_next_stanza_string(s, **kwargs):
     :param s: a string to scan
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: pair of a list of pairs of strings and a string
-    :raises MalformedHeaderError: if an invalid header line, i.e., a line
-        without either a colon or leading whitespace, is encountered
-    :raises UnexpectedFoldingError: if a folded (indented) line that is not
-        preceded by a valid header line is encountered
+    :raises ScannerError: if the header section is malformed
     """
     lineiter = iter(ascii_splitlines(s))
     fields = list(scan_next_stanza(lineiter, **kwargs))
@@ -231,10 +200,7 @@ def scan_stanzas(iterable, **kwargs):
         representing lines of input
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of lists of pairs of strings
-    :raises MalformedHeaderError: if an invalid header line, i.e., a line
-        without either a colon or leading whitespace, is encountered
-    :raises UnexpectedFoldingError: if a folded (indented) line that is not
-        preceded by a valid header line is encountered
+    :raises ScannerError: if the header section is malformed
     """
     lineiter = iter(iterable)
     while True:
@@ -262,9 +228,6 @@ def scan_stanzas_string(s, **kwargs):
         boundaries and passed to `scan_stanzas()`
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of lists of pairs of strings
-    :raises MalformedHeaderError: if an invalid header line, i.e., a line
-        without either a colon or leading whitespace, is encountered
-    :raises UnexpectedFoldingError: if a folded (indented) line that is not
-        preceded by a valid header line is encountered
+    :raises ScannerError: if the header section is malformed
     """
     return scan_stanzas(ascii_splitlines(s), **kwargs)
