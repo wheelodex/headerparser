@@ -2,7 +2,8 @@ from   warnings  import warn
 from   six       import itervalues, string_types
 from   .         import errors
 from   .normdict import NormalizedDict
-from   .scanner  import scan, scan_string
+from   .scanner  import scan, scan_string, scan_stanzas, scan_stanzas_string, \
+                        scan_next_stanza, scan_next_stanza_string
 from   .types    import lower, unfold
 
 class HeaderParser(object):
@@ -347,6 +348,27 @@ class HeaderParser(object):
         :raises ScannerError: if the header section is malformed
         """
         return self.parse_stream(scan_string(s, **self._scan_opts))
+
+    def parse_stanzas(self, iterable):
+        return self.parse_stanzas_stream(
+            scan_stanzas(iterable, **self._scan_opts)
+        )
+
+    def parse_stanzas_string(self, s):
+        return self.parse_stanzas_stream(
+            scan_stanzas_string(s, **self._scan_opts)
+        )
+
+    def parse_stanzas_stream(self, fields):
+        for stanza in fields:
+            yield self.parse_stream(stanza)
+
+    def parse_next_stanza(self, iterator):
+        return self.parse_stream(scan_next_stanza(iterator, **self._scan_opts))
+
+    def parse_next_stanza_string(self, s):
+        fields, extra = scan_next_stanza_string(s, **self._scan_opts)
+        return (self.parse_stream(fields), extra)
 
 
 class FieldDef(object):
