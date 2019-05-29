@@ -35,6 +35,8 @@
     - Add `action` examples
     - Add example recipes to the documentation of `HeaderParser`s for common
       mail-like formats
+    - Write more user-friendly documentation that goes through `HeaderParser`
+      feature by feature like `attrs`' documentation
 
 
 Features
@@ -69,11 +71,6 @@ Features
         - handling of "From " lines (and/or other non-header headers like the
           first line of an HTTP request or response?)
         - handling of header lettercases?
-
-- Add support for multiple header stanzas in a single document
-    - Give `HeaderParser` `parse_stanzas` and `parse_stanzas_string` methods
-      (Rethink names) that return iterables of `NormalizedDict`s
-        - Calling these methods when `body=True` results in an error
 
 Scanning
 --------

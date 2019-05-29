@@ -14,6 +14,11 @@ v0.4.0 (in development)
   scanning & consuming input only up to the end of the first header section
 - Added `scan_stanzas()` and `scan_stanzas_string()` functions for scanning
   input composed entirely of multiple stanzas/header sections
+- Gave `HeaderParser` `parse_next_stanza()` and `parse_next_stanza_string()`
+  methods for parsing & comsuming input only up to the end of the first header
+  section
+- Gave `HeaderParser` `parse_stanzas()` and `parse_stanzas_string()` methods
+  for parsing input composed entirely of multiple stanzas/header sections
 
 v0.3.0 (2018-10-12)
 -------------------
