@@ -1,7 +1,8 @@
 import pytest
 from   headerparser import NormalizedDict
 
-def identity(s): return s
+def identity(s):
+    return s
 
 def test_empty():
     nd = NormalizedDict(normalizer=identity)

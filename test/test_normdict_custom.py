@@ -2,7 +2,8 @@ import re
 import pytest
 from   headerparser import NormalizedDict
 
-def normdash(s): return re.sub(r'[-_\s]+', '-', s.lower())
+def normdash(s):
+    return re.sub(r'[-_\s]+', '-', s.lower())
 
 def test_empty():
     nd = NormalizedDict(normalizer=normdash)

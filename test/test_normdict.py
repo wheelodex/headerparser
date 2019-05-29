@@ -114,12 +114,12 @@ def test_neq_body():
     assert nd != nd2
 
 def test_neq_none():
-    assert NormalizedDict() != None
-    assert None != NormalizedDict()
+    assert NormalizedDict() != None  # noqa: E711
+    assert None != NormalizedDict()  # noqa: E711
 
 def test_neq_bool():
-    assert NormalizedDict() != False
-    assert False != NormalizedDict()
+    assert NormalizedDict() != False  # noqa: E712
+    assert False != NormalizedDict()  # noqa: E712
 
 def test_neq_int():
     assert NormalizedDict() != 42
@@ -175,8 +175,11 @@ def test_neq_normalizers_nonempty():
     assert dict(nd) == dict(nd2) == {"Foo": "bar"}
     assert nd != nd2
 
-def normdash(s): return re.sub(r'[-_\s]+', '-', s.lower())
-def identity(s): return s
+def normdash(s):
+    return re.sub(r'[-_\s]+', '-', s.lower())
+
+def identity(s):
+    return s
 
 @pytest.mark.parametrize('data', [
     {}, {'Foo': 'Bar'}, {'foo': 'Bar'}, {'FOO_BAR': 'BAZ'},

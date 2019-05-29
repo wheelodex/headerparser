@@ -114,7 +114,7 @@ def scan_next_stanza(iterator, **kwargs):
 
 def _scan_next_stanza(
     iterator,
-    separator_regex       = re.compile(r'[ \t]*:[ \t]*'),
+    separator_regex       = re.compile(r'[ \t]*:[ \t]*'),  # noqa: B008
     skip_leading_newlines = False,
 ):
     """
