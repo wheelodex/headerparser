@@ -339,3 +339,26 @@ def test_deprecated_parse_file():
         msg = parser.parse_file(INPUT)
     INPUT.seek(0)
     assert msg == parser.parse(INPUT)
+
+def test_body_twice():
+    parser = HeaderParser()
+    parser.add_field('Foo')
+    parser.add_field('Bar')
+    parser.add_field('Baz')
+    with pytest.raises(ValueError) as excinfo:
+        parser.parse_stream([
+            ('Foo', 'red'),
+            ('Bar', 'green'),
+            ('Baz', 'blue'),
+            (None, 'Body #1'),
+            (None, 'Body #2'),
+        ])
+    assert str(excinfo.value) == 'Body appears twice in input'
+
+@pytest.mark.parametrize('name', [42, None, 3.14, True, ['B', 'a', 'r']])
+def test_nonstr_field_name(name):
+    parser = HeaderParser()
+    parser.add_field('Foo')
+    with pytest.raises(TypeError) as excinfo:
+        parser.add_field(name)
+    assert str(excinfo.value) == 'field names must be strings'

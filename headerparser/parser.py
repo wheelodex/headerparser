@@ -464,10 +464,10 @@ class FieldDef(object):
     def __eq__(self, other):
         if type(self) is type(other):
             return vars(self) == vars(other)
-        else:
+        else:  # pragma: no cover
             return NotImplemented
 
-    def __ne__(self, other):
+    def __ne__(self, other):  # pragma: no cover
         return not (self == other)
 
     def _process(self, data, name, dest, value):

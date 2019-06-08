@@ -1,9 +1,16 @@
+import pytest
 from   headerparser import HeaderParser
 
 def test_eq_empty():
     p1 = HeaderParser()
     p2 = HeaderParser()
     assert p1 == p2
+
+@pytest.mark.parametrize('other', [None, False, True, 42, '', [], {}])
+def test_neq_empty_other(other):
+    p = HeaderParser()
+    assert p != other
+    assert other != p
 
 def test_eq_one_field():
     p1 = HeaderParser()
