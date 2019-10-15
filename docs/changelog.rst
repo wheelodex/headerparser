@@ -3,6 +3,10 @@
 Changelog
 =========
 
+v0.5.0 (in development)
+-----------------------
+- Support Python 3.8
+
 v0.4.0 (2019-05-29)
 -------------------
 - Added a `scan()` function combining the behavior of `scan_file()` and

@@ -34,7 +34,7 @@ from .scanner  import scan, scan_file, scan_lines, scan_string, scan_stanzas, \
                         scan_next_stanza_string
 from .types    import BOOL, lower, unfold
 
-__version__      = '0.4.0'
+__version__      = '0.5.0.dev1'
 __author__       = 'John Thorvald Wodder II'
 __author_email__ = 'headerparser@varonathe.org'
 __license__      = 'MIT'
