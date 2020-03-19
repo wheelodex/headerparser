@@ -13,25 +13,16 @@ Visit <https://github.com/jwodder/headerparser> or
 <http://headerparser.rtfd.io> for more information.
 """
 
-from .errors   import (
-                        Error,
-                            ParserError,
-                                DuplicateFieldError,
-                                FieldTypeError,
-                                InvalidChoiceError,
-                                MissingFieldError,
-                                UnknownFieldError,
-                                MissingBodyError,
-                                BodyNotAllowedError,
-                            ScannerError,
-                                MalformedHeaderError,
-                                UnexpectedFoldingError,
-                      )
+from .errors   import BodyNotAllowedError, DuplicateFieldError, Error, \
+                        FieldTypeError, InvalidChoiceError, \
+                        MalformedHeaderError, MissingBodyError, \
+                        MissingFieldError, ParserError, ScannerError, \
+                        UnexpectedFoldingError, UnknownFieldError
 from .normdict import NormalizedDict
 from .parser   import HeaderParser
-from .scanner  import scan, scan_file, scan_lines, scan_string, scan_stanzas, \
-                        scan_stanzas_string, scan_next_stanza, \
-                        scan_next_stanza_string
+from .scanner  import scan, scan_file, scan_lines, scan_next_stanza, \
+                        scan_next_stanza_string, scan_stanzas, \
+                        scan_stanzas_string, scan_string
 from .types    import BOOL, lower, unfold
 
 __version__      = '0.5.0.dev1'

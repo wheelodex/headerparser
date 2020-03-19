@@ -2,8 +2,8 @@ from   warnings  import warn
 from   six       import itervalues, string_types
 from   .         import errors
 from   .normdict import NormalizedDict
-from   .scanner  import scan, scan_string, scan_stanzas, scan_stanzas_string, \
-                        scan_next_stanza, scan_next_stanza_string
+from   .scanner  import scan, scan_next_stanza, scan_next_stanza_string, \
+                            scan_stanzas, scan_stanzas_string, scan_string
 from   .types    import lower, unfold
 
 class HeaderParser(object):
@@ -65,7 +65,7 @@ class HeaderParser(object):
         processed according to the options in ``**kwargs``.  (If no options are
         specified, the value will just be stored in the result dictionary.)
 
-        .. versionadded:: 0.2.0
+        .. versionchanged:: 0.2.0
             ``action`` argument added
 
         :param string name: the primary name for the field, used in error
@@ -172,7 +172,7 @@ class HeaderParser(object):
         are the same after normalization.  Customization of the dictionary key
         and field name can only be done through `add_field`.
 
-        .. versionadded:: 0.2.0
+        .. versionchanged:: 0.2.0
             ``action`` argument added
 
         :param bool enable: whether the parser should accept input fields that

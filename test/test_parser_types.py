@@ -1,5 +1,5 @@
 import pytest
-from   headerparser import BOOL, HeaderParser, FieldTypeError
+from   headerparser import BOOL, FieldTypeError, HeaderParser
 
 def test_bool():
     parser = HeaderParser()
