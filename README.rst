@@ -66,83 +66,83 @@ Just use `pip <https://pip.pypa.io>`_ (You have pip, right?) to install
 Examples
 ========
 
-Define a parser::
+Define a parser:
 
-    >>> import headerparser
-    >>> parser = headerparser.HeaderParser()
-    >>> parser.add_field('Name', required=True)
-    >>> parser.add_field('Type', choices=['example', 'demonstration', 'prototype'], default='example')
-    >>> parser.add_field('Public', type=headerparser.BOOL, default=False)
-    >>> parser.add_field('Tag', multiple=True)
-    >>> parser.add_field('Data')
+>>> import headerparser
+>>> parser = headerparser.HeaderParser()
+>>> parser.add_field('Name', required=True)
+>>> parser.add_field('Type', choices=['example', 'demonstration', 'prototype'], default='example')
+>>> parser.add_field('Public', type=headerparser.BOOL, default=False)
+>>> parser.add_field('Tag', multiple=True)
+>>> parser.add_field('Data')
 
-Parse some headers and inspect the results::
+Parse some headers and inspect the results:
 
-    >>> msg = parser.parse_string('''\
-    ... Name: Sample Input
-    ... Public: yes
-    ... tag: doctest, examples,
-    ...   whatever
-    ... TAG: README
-    ... 
-    ... Wait, why I am using a body instead of the "Data" field?
-    ... ''')
-    >>> sorted(msg.keys())
-    ['Name', 'Public', 'Tag', 'Type']
-    >>> msg['Name']
-    'Sample Input'
-    >>> msg['Public']
-    True
-    >>> msg['Tag']
-    ['doctest, examples,\n  whatever', 'README']
-    >>> msg['TYPE']
-    'example'
-    >>> msg['Data']
-    Traceback (most recent call last):
-        ...
-    KeyError: 'data'
-    >>> msg.body
-    'Wait, why I am using a body instead of the "Data" field?\n'
+>>> msg = parser.parse_string('''\
+... Name: Sample Input
+... Public: yes
+... tag: doctest, examples,
+...   whatever
+... TAG: README
+... 
+... Wait, why I am using a body instead of the "Data" field?
+... ''')
+>>> sorted(msg.keys())
+['Name', 'Public', 'Tag', 'Type']
+>>> msg['Name']
+'Sample Input'
+>>> msg['Public']
+True
+>>> msg['Tag']
+['doctest, examples,\n  whatever', 'README']
+>>> msg['TYPE']
+'example'
+>>> msg['Data']
+Traceback (most recent call last):
+    ...
+KeyError: 'data'
+>>> msg.body
+'Wait, why I am using a body instead of the "Data" field?\n'
 
-Fail to parse headers that don't meet your requirements::
+Fail to parse headers that don't meet your requirements:
 
-    >>> parser.parse_string('Type: demonstration')
-    Traceback (most recent call last):
-        ...
-    headerparser.errors.MissingFieldError: Required header field 'Name' is not present
-    >>> parser.parse_string('Name: Bad type\nType: other')
-    Traceback (most recent call last):
-        ...
-    headerparser.errors.InvalidChoiceError: 'other' is not a valid choice for 'Type'
-    >>> parser.parse_string('Name: unknown field\nField: Value')
-    Traceback (most recent call last):
-        ...
-    headerparser.errors.UnknownFieldError: Unknown header field 'Field'
+>>> parser.parse_string('Type: demonstration')
+Traceback (most recent call last):
+    ...
+headerparser.errors.MissingFieldError: Required header field 'Name' is not present
+>>> parser.parse_string('Name: Bad type\nType: other')
+Traceback (most recent call last):
+    ...
+headerparser.errors.InvalidChoiceError: 'other' is not a valid choice for 'Type'
+>>> parser.parse_string('Name: unknown field\nField: Value')
+Traceback (most recent call last):
+    ...
+headerparser.errors.UnknownFieldError: Unknown header field 'Field'
 
-Allow fields you didn't even think of::
+Allow fields you didn't even think of:
 
-    >>> parser.add_additional()
-    >>> msg = parser.parse_string('Name: unknown field\nField: Value')
-    >>> msg['Field']
-    'Value'
+>>> parser.add_additional()
+>>> msg = parser.parse_string('Name: unknown field\nField: Value')
+>>> msg['Field']
+'Value'
 
-Just split some headers into names & values and worry about validity later::
+Just split some headers into names & values and worry about validity later:
 
-    >>> for field in headerparser.scan_string('''\
-    ... Name: Scanner Sample
-    ... Unknown headers: no problem
-    ... Unparsed-Boolean: yes
-    ... CaSe-SeNsItIvE-rEsUlTs: true
-    ... Whitespace around colons:optional
-    ... Whitespace around colons  :  I already said it's optional.
-    ...   That means you have the _option_ to use as much as you want!
-    ... 
-    ... And there's a body, too, I guess.
-    ... '''): print(field)
-    ('Name', 'Scanner Sample')
-    ('Unknown headers', 'no problem')
-    ('Unparsed-Boolean', 'yes')
-    ('CaSe-SeNsItIvE-rEsUlTs', 'true')
-    ('Whitespace around colons', 'optional')
-    ('Whitespace around colons', "I already said it's optional.\n  That means you have the _option_ to use as much as you want!")
-    (None, "And there's a body, too, I guess.\n")
+>>> for field in headerparser.scan_string('''\
+... Name: Scanner Sample
+... Unknown headers: no problem
+... Unparsed-Boolean: yes
+... CaSe-SeNsItIvE-rEsUlTs: true
+... Whitespace around colons:optional
+... Whitespace around colons  :  I already said it's optional.
+...   That means you have the _option_ to use as much as you want!
+... 
+... And there's a body, too, I guess.
+... '''): print(field)
+('Name', 'Scanner Sample')
+('Unknown headers', 'no problem')
+('Unparsed-Boolean', 'yes')
+('CaSe-SeNsItIvE-rEsUlTs', 'true')
+('Whitespace around colons', 'optional')
+('Whitespace around colons', "I already said it's optional.\n  That means you have the _option_ to use as much as you want!")
+(None, "And there's a body, too, I guess.\n")
