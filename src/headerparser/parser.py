@@ -53,9 +53,6 @@ class HeaderParser:
         else:
             return NotImplemented
 
-    def __ne__(self, other):
-        return not (self == other)
-
     def add_field(self, name, *altnames, **kwargs):
         """
         Define a header field for the parser to parse.  During parsing, if a

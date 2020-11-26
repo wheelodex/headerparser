@@ -68,9 +68,6 @@ class NormalizedDict(MutableMapping):
             return NotImplemented
         return self.normalized_dict() == other.normalized_dict()
 
-    def __ne__(self, other):
-        return not (self == other)
-
     def __repr__(self):
         return '{0.__module__}.{0.__name__}'\
                '({2!r}, normalizer={1.normalizer!r}, body={1.body!r})'\
