@@ -1,10 +1,5 @@
-from   six    import PY2, iteritems, itervalues
-from   .types import lower
-
-if PY2:
-    from collections     import Mapping, MutableMapping
-else:
-    from collections.abc import Mapping, MutableMapping
+from collections.abc import Mapping, MutableMapping
+from .types          import lower
 
 class NormalizedDict(MutableMapping):
     """
@@ -56,7 +51,7 @@ class NormalizedDict(MutableMapping):
         del self._data[self.normalizer(key)]
 
     def __iter__(self):
-        return (key for key, value in itervalues(self._data))
+        return (key for key, value in self._data.values())
 
     def __len__(self):
         return len(self._data)
@@ -109,7 +104,7 @@ class NormalizedDict(MutableMapping):
 
         :rtype: dict
         """
-        return {key: value for key, (_, value) in iteritems(self._data)}
+        return {key: value for key, (_, value) in self._data.items()}
 
     def copy(self):
         """ Create a shallow copy of the mapping """

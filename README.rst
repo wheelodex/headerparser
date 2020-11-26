@@ -54,10 +54,11 @@ including but not limited to:
 
 Installation
 ============
-Just use `pip <https://pip.pypa.io>`_ (You have pip, right?) to install
-``headerparser`` and its dependencies::
+``headerparser`` requires Python 3.6 or higher.  Just use `pip
+<https://pip.pypa.io>`_ for Python 3 (You have pip, right?) to install
+``headerparser``::
 
-    pip install headerparser
+    python3 -m pip install headerparser
 
 
 Examples

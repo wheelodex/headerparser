@@ -1,12 +1,11 @@
 from   warnings  import warn
-from   six       import itervalues, string_types
 from   .         import errors
 from   .normdict import NormalizedDict
 from   .scanner  import scan, scan_next_stanza, scan_next_stanza_string, \
                             scan_stanzas, scan_stanzas_string, scan_string
 from   .types    import lower, unfold
 
-class HeaderParser(object):
+class HeaderParser:
     """
     A parser for RFC 822-style header sections.  Define the fields the parser
     should recognize with the `add_field()` method, configure handling of
@@ -258,7 +257,7 @@ class HeaderParser(object):
                 else:
                     fields_seen.add(hd.name)
                 hd.process(data, k, v)
-        for hd in itervalues(self._fielddefs):
+        for hd in self._fielddefs.values():
             if hd.name not in fields_seen:
                 if hd.required:
                     raise errors.MissingFieldError(hd.name)
@@ -448,7 +447,7 @@ class HeaderParser(object):
         return (self.parse_stream(fields), extra)
 
 
-class FieldDef(object):
+class FieldDef:
     def __init__(self, type=None, multiple=False, unfold=False, choices=None,
                        action=None):
         self.type = type
@@ -497,7 +496,7 @@ class FieldDef(object):
 
 class NamedField(FieldDef):
     def __init__(self, name, dest, required=False, **kwargs):
-        if not isinstance(name, string_types):
+        if not isinstance(name, str):
             raise TypeError('field names must be strings')
         self.name = name
         self.dest = dest

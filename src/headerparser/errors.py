@@ -16,10 +16,9 @@ class MissingFieldError(ParserError):
     def __init__(self, name):
         #: The name of the missing header field
         self.name = name
-        super(MissingFieldError, self).__init__(name)
 
     def __str__(self):
-        return 'Required header field {0.name!r} is not present'.format(self)
+        return f'Required header field {self.name!r} is not present'
 
 
 class UnknownFieldError(ParserError):
@@ -31,10 +30,9 @@ class UnknownFieldError(ParserError):
     def __init__(self, name):
         #: The name of the unknown header field
         self.name = name
-        super(UnknownFieldError, self).__init__(name)
 
     def __str__(self):
-        return 'Unknown header field {0.name!r}'.format(self)
+        return f'Unknown header field {self.name!r}'
 
 
 class DuplicateFieldError(ParserError):
@@ -46,10 +44,9 @@ class DuplicateFieldError(ParserError):
     def __init__(self, name):
         #: The name of the duplicated header field
         self.name = name
-        super(DuplicateFieldError, self).__init__(name)
 
     def __str__(self):
-        return 'Header field {0.name!r} occurs more than once'.format(self)
+        return f'Header field {self.name!r} occurs more than once'
 
 
 class FieldTypeError(ParserError):
@@ -63,11 +60,12 @@ class FieldTypeError(ParserError):
         self.value = value
         #: The exception raised by the ``type`` callable
         self.exc_value = exc_value
-        super(FieldTypeError, self).__init__(name, value, exc_value)
 
     def __str__(self):
-        return 'Error while parsing {0.name!r}: {0.value!r}:'\
-               ' {0.exc_value.__class__.__name__}: {0.exc_value}'.format(self)
+        return (
+            f'Error while parsing {self.name!r}: {self.value!r}:'
+            f' {self.exc_value.__class__.__name__}: {self.exc_value}'
+        )
 
 
 class InvalidChoiceError(ParserError):
@@ -81,10 +79,9 @@ class InvalidChoiceError(ParserError):
         self.name = name
         #: The invalid value
         self.value = value
-        super(InvalidChoiceError, self).__init__(name, value)
 
     def __str__(self):
-        return '{0.value!r} is not a valid choice for {0.name!r}'.format(self)
+        return f'{self.value!r} is not a valid choice for {self.name!r}'
 
 
 class MissingBodyError(ParserError):
@@ -115,10 +112,9 @@ class MalformedHeaderError(ScannerError):
     def __init__(self, line):
         #: The invalid header line
         self.line = line
-        super(MalformedHeaderError, self).__init__(line)
 
     def __str__(self):
-        return 'Invalid header line encountered: {0.line!r}'.format(self)
+        return f'Invalid header line encountered: {self.line!r}'
 
 
 class UnexpectedFoldingError(ScannerError):
@@ -130,8 +126,9 @@ class UnexpectedFoldingError(ScannerError):
     def __init__(self, line):
         #: The line containing the unexpected folding (indentation)
         self.line = line
-        super(UnexpectedFoldingError, self).__init__(line)
 
     def __str__(self):
-        return 'Indented line without preceding header line encountered:'\
-               ' {0.line!r}'.format(self)
+        return (
+            'Indented line without preceding header line encountered:'
+            f' {self.line!r}'
+        )
