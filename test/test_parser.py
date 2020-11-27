@@ -1,5 +1,5 @@
+from   io           import StringIO
 import pytest
-from   six          import StringIO
 import headerparser
 from   headerparser import HeaderParser
 

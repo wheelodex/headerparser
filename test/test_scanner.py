@@ -1,6 +1,6 @@
+from   io           import StringIO
 import re
 import pytest
-from   six          import StringIO
 import headerparser
 from   headerparser import scan, scan_file, scan_lines, scan_string
 

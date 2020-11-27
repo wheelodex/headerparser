@@ -1,5 +1,5 @@
+from   io           import StringIO
 import pytest
-from   six          import StringIO
 from   headerparser import HeaderParser, MissingBodyError
 
 def test_simple():

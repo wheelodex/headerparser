@@ -463,9 +463,6 @@ class FieldDef:
         else:  # pragma: no cover
             return NotImplemented
 
-    def __ne__(self, other):  # pragma: no cover
-        return not (self == other)
-
     def _process(self, data, name, dest, value):
         if self.unfold:
             value = unfold(value)
