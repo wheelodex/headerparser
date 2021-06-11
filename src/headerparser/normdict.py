@@ -1,5 +1,6 @@
 from collections.abc import Mapping, MutableMapping
-from .types          import lower
+from .types import lower
+
 
 class NormalizedDict(MutableMapping):
     """
@@ -69,9 +70,12 @@ class NormalizedDict(MutableMapping):
         return self.normalized_dict() == other.normalized_dict()
 
     def __repr__(self):
-        return '{0.__module__}.{0.__name__}'\
-               '({2!r}, normalizer={1.normalizer!r}, body={1.body!r})'\
-               .format(type(self), self, dict(self))
+        return (
+            "{0.__module__}.{0.__name__}"
+            "({2!r}, normalizer={1.normalizer!r}, body={1.body!r})".format(
+                type(self), self, dict(self)
+            )
+        )
 
     def normalized(self):
         """
@@ -104,7 +108,7 @@ class NormalizedDict(MutableMapping):
         return {key: value for key, (_, value) in self._data.items()}
 
     def copy(self):
-        """ Create a shallow copy of the mapping """
+        """Create a shallow copy of the mapping"""
         dup = type(self)()
         dup._data = self._data.copy()
         dup.normalizer = self.normalizer

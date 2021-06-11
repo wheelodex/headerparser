@@ -1,9 +1,16 @@
-from   warnings  import warn
-from   .         import errors
-from   .normdict import NormalizedDict
-from   .scanner  import scan, scan_next_stanza, scan_next_stanza_string, \
-                            scan_stanzas, scan_stanzas_string, scan_string
-from   .types    import lower, unfold
+from warnings import warn
+from . import errors
+from .normdict import NormalizedDict
+from .scanner import (
+    scan,
+    scan_next_stanza,
+    scan_next_stanza_string,
+    scan_stanzas,
+    scan_stanzas_string,
+    scan_string,
+)
+from .types import lower, unfold
+
 
 class HeaderParser:
     """
@@ -128,21 +135,20 @@ class HeaderParser:
             string
         """
 
-        if 'action' in kwargs and 'dest' in kwargs:
-            raise ValueError('`action` and `dest` are mutually exclusive')
-        kwargs.setdefault('dest', name)
+        if "action" in kwargs and "dest" in kwargs:
+            raise ValueError("`action` and `dest` are mutually exclusive")
+        kwargs.setdefault("dest", name)
         hd = NamedField(name=name, **kwargs)
         normed = set(map(self._normalizer, (name,) + altnames))
         # Error before modifying anything:
         redefs = [n for n in self._fielddefs if n in normed]
         if redefs:
-            raise ValueError('field defined more than once: ' + repr(redefs[0]))
+            raise ValueError("field defined more than once: " + repr(redefs[0]))
         if self._normalizer(hd.dest) in self._dests:
-            raise ValueError('destination defined more than once: '
-                             + repr(hd.dest))
+            raise ValueError("destination defined more than once: " + repr(hd.dest))
         if self._normalizer(hd.dest) not in normed:
             if self._additional is not None:
-                raise ValueError('add_additional and `dest` are mutually exclusive')
+                raise ValueError("add_additional and `dest` are mutually exclusive")
             self._custom_dests = True
         for n in normed:
             self._fielddefs[n] = hd
@@ -212,7 +218,7 @@ class HeaderParser:
         """
         if enable:
             if self._custom_dests:
-                raise ValueError('add_additional and `dest` are mutually exclusive')
+                raise ValueError("add_additional and `dest` are mutually exclusive")
             self._additional = FieldDef(**kwargs)
         else:
             self._additional = None
@@ -235,10 +241,10 @@ class HeaderParser:
         data = NormalizedDict(normalizer=self._normalizer)
         fields_seen = set()
         body_seen = False
-        for k,v in fields:
+        for k, v in fields:
             if k is None:
                 if body_seen:
-                    raise ValueError('Body appears twice in input')
+                    raise ValueError("Body appears twice in input")
                 if self._body is not None and not self._body:
                     raise errors.BodyNotAllowedError()
                 data.body = v
@@ -258,7 +264,7 @@ class HeaderParser:
             if hd.name not in fields_seen:
                 if hd.required:
                     raise errors.MissingFieldError(hd.name)
-                elif hasattr(hd, 'default'):
+                elif hasattr(hd, "default"):
                     data[hd.dest] = hd.default
         if self._body and not body_seen:
             raise errors.MissingBodyError()
@@ -300,8 +306,8 @@ class HeaderParser:
         :raises ScannerError: if the header section is malformed
         """
         warn(
-            'HeaderParser.parse_file() is deprecated.'
-            '  Use the parse() method instead.',
+            "HeaderParser.parse_file() is deprecated."
+            "  Use the parse() method instead.",
             DeprecationWarning,
         )
         return self.parse_stream(scan(fp, **self._scan_opts))
@@ -325,8 +331,8 @@ class HeaderParser:
         :raises ScannerError: if the header section is malformed
         """
         warn(
-            'HeaderParser.parse_lines() is deprecated.'
-            '  Use the parse() method instead.',
+            "HeaderParser.parse_lines() is deprecated."
+            "  Use the parse() method instead.",
             DeprecationWarning,
         )
         return self.parse_stream(scan(iterable, **self._scan_opts))
@@ -363,9 +369,7 @@ class HeaderParser:
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if a header section is malformed
         """
-        return self.parse_stanzas_stream(
-            scan_stanzas(iterable, **self._scan_opts)
-        )
+        return self.parse_stanzas_stream(scan_stanzas(iterable, **self._scan_opts))
 
     def parse_stanzas_string(self, s):
         """
@@ -384,9 +388,7 @@ class HeaderParser:
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if a header section is malformed
         """
-        return self.parse_stanzas_stream(
-            scan_stanzas_string(s, **self._scan_opts)
-        )
+        return self.parse_stanzas_stream(scan_stanzas_string(s, **self._scan_opts))
 
     def parse_stanzas_stream(self, fields):
         """
@@ -445,15 +447,16 @@ class HeaderParser:
 
 
 class FieldDef:
-    def __init__(self, type=None, multiple=False, unfold=False, choices=None,
-                       action=None):
+    def __init__(
+        self, type=None, multiple=False, unfold=False, choices=None, action=None
+    ):
         self.type = type
         self.multiple = bool(multiple)
         self.unfold = bool(unfold)
         if choices is not None:
             choices = list(choices)
             if not choices:
-                raise ValueError('empty list supplied for choices')
+                raise ValueError("empty list supplied for choices")
         self.choices = choices
         self.action = action
 
@@ -491,14 +494,14 @@ class FieldDef:
 class NamedField(FieldDef):
     def __init__(self, name, dest, required=False, **kwargs):
         if not isinstance(name, str):
-            raise TypeError('field names must be strings')
+            raise TypeError("field names must be strings")
         self.name = name
         self.dest = dest
         self.required = bool(required)
-        if 'default' in kwargs:
+        if "default" in kwargs:
             if self.required:
-                raise ValueError('required and default are mutually exclusive')
-            self.default = kwargs.pop('default')
+                raise ValueError("required and default are mutually exclusive")
+            self.default = kwargs.pop("default")
         super(NamedField, self).__init__(**kwargs)
 
     def process(self, data, _, value):

@@ -1,7 +1,8 @@
 import re
-from   warnings import warn
-from   .errors  import MalformedHeaderError, UnexpectedFoldingError
-from   .util    import ascii_splitlines
+from warnings import warn
+from .errors import MalformedHeaderError, UnexpectedFoldingError
+from .util import ascii_splitlines
+
 
 def scan_string(s, **kwargs):
     """
@@ -18,6 +19,7 @@ def scan_string(s, **kwargs):
     :raises ScannerError: if the header section is malformed
     """
     return scan(ascii_splitlines(s), **kwargs)
+
 
 def scan_file(fp, **kwargs):
     """
@@ -37,8 +39,9 @@ def scan_file(fp, **kwargs):
     :rtype: generator of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    warn('scan_file() is deprecated.  Use scan() instead.', DeprecationWarning)
+    warn("scan_file() is deprecated.  Use scan() instead.", DeprecationWarning)
     return scan(fp, **kwargs)
+
 
 def scan_lines(fp, **kwargs):
     """
@@ -57,8 +60,9 @@ def scan_lines(fp, **kwargs):
     :rtype: generator of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    warn('scan_lines() is deprecated.  Use scan() instead.', DeprecationWarning)
+    warn("scan_lines() is deprecated.  Use scan() instead.", DeprecationWarning)
     return scan(fp, **kwargs)
+
 
 def scan(iterable, **kwargs):
     """
@@ -89,7 +93,8 @@ def scan(iterable, **kwargs):
         if name is not None:
             yield (name, value)
         elif value:
-            yield (None, ''.join(lineiter))
+            yield (None, "".join(lineiter))
+
 
 def scan_next_stanza(iterator, **kwargs):
     """
@@ -112,10 +117,11 @@ def scan_next_stanza(iterator, **kwargs):
         if name is not None:
             yield (name, value)
 
+
 def _scan_next_stanza(
     iterator,
-    separator_regex       = re.compile(r'[ \t]*:[ \t]*'),  # noqa: B008
-    skip_leading_newlines = False,
+    separator_regex=re.compile(r"[ \t]*:[ \t]*"),  # noqa: B008
+    skip_leading_newlines=False,
 ):
     """
     .. versionadded:: 0.4.0
@@ -127,18 +133,18 @@ def _scan_next_stanza(
 
     This is the core function that all other scanners ultimately call.
     """
-    name  = None
-    value = ''
+    name = None
+    value = ""
     begun = False
     more_left = False
-    if not hasattr(separator_regex, 'match'):
+    if not hasattr(separator_regex, "match"):
         separator_regex = re.compile(separator_regex)
     for line in iterator:
-        line = line.rstrip('\r\n')
-        if line.startswith((' ', '\t')):
+        line = line.rstrip("\r\n")
+        if line.startswith((" ", "\t")):
             begun = True
             if name is not None:
-                value += '\n' + line
+                value += "\n" + line
             else:
                 raise UnexpectedFoldingError(line)
         else:
@@ -147,9 +153,9 @@ def _scan_next_stanza(
                 begun = True
                 if name is not None:
                     yield (name, value)
-                name = line[:m.start()]
-                value = line[m.end():]
-            elif line == '':
+                name = line[: m.start()]
+                value = line[m.end() :]
+            elif line == "":
                 if skip_leading_newlines and not begun:
                     continue
                 else:
@@ -160,6 +166,7 @@ def _scan_next_stanza(
     if name is not None:
         yield (name, value)
     yield (None, more_left)
+
 
 def scan_next_stanza_string(s, **kwargs):
     """
@@ -180,8 +187,9 @@ def scan_next_stanza_string(s, **kwargs):
     """
     lineiter = iter(ascii_splitlines(s))
     fields = list(scan_next_stanza(lineiter, **kwargs))
-    body = ''.join(lineiter)
+    body = "".join(lineiter)
     return (fields, body)
+
 
 def scan_stanzas(iterable, **kwargs):
     """
@@ -211,6 +219,7 @@ def scan_stanzas(iterable, **kwargs):
         else:
             break
         kwargs["skip_leading_newlines"] = True
+
 
 def scan_stanzas_string(s, **kwargs):
     """

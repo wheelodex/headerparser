@@ -1,7 +1,8 @@
 import re
 
-TRUTHY = {'yes', 'y', 'on',  'true',  '1'}
-FALSEY = {'no',  'n', 'off', 'false', '0'}
+TRUTHY = {"yes", "y", "on", "true", "1"}
+FALSEY = {"no", "n", "off", "false", "0"}
+
 
 def BOOL(s):
     """
@@ -22,7 +23,8 @@ def BOOL(s):
     elif b in FALSEY:
         return False
     else:
-        raise ValueError('invalid boolean: ' + repr(s))
+        raise ValueError("invalid boolean: " + repr(s))
+
 
 def lower(s):
     """
@@ -35,6 +37,7 @@ def lower(s):
         return s.lower()
     except (TypeError, AttributeError):
         return s
+
 
 def unfold(s):
     r"""
@@ -50,4 +53,4 @@ def unfold(s):
     :param string s: a string to unfold
     :rtype: string
     """
-    return re.sub(r'[ \t]*[\r\n][ \t\r\n]*', ' ', s).strip(' ')
+    return re.sub(r"[ \t]*[\r\n][ \t\r\n]*", " ", s).strip(" ")

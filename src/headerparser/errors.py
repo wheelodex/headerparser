@@ -1,10 +1,12 @@
 class Error(Exception):
-    """ Superclass for all custom exceptions raised by the package """
+    """Superclass for all custom exceptions raised by the package"""
+
     pass
 
 
 class ParserError(Error, ValueError):
-    """ Superclass for all custom exceptions related to errors in parsing """
+    """Superclass for all custom exceptions related to errors in parsing"""
+
     pass
 
 
@@ -18,7 +20,7 @@ class MissingFieldError(ParserError):
         self.name = name
 
     def __str__(self):
-        return f'Required header field {self.name!r} is not present'
+        return f"Required header field {self.name!r} is not present"
 
 
 class UnknownFieldError(ParserError):
@@ -32,7 +34,7 @@ class UnknownFieldError(ParserError):
         self.name = name
 
     def __str__(self):
-        return f'Unknown header field {self.name!r}'
+        return f"Unknown header field {self.name!r}"
 
 
 class DuplicateFieldError(ParserError):
@@ -46,11 +48,11 @@ class DuplicateFieldError(ParserError):
         self.name = name
 
     def __str__(self):
-        return f'Header field {self.name!r} occurs more than once'
+        return f"Header field {self.name!r} occurs more than once"
 
 
 class FieldTypeError(ParserError):
-    """ Raised when a ``type`` callable raises an exception """
+    """Raised when a ``type`` callable raises an exception"""
 
     def __init__(self, name, value, exc_value):
         #: The name of the header field for which the ``type`` callable was
@@ -63,8 +65,8 @@ class FieldTypeError(ParserError):
 
     def __str__(self):
         return (
-            f'Error while parsing {self.name!r}: {self.value!r}:'
-            f' {self.exc_value.__class__.__name__}: {self.exc_value}'
+            f"Error while parsing {self.name!r}: {self.value!r}:"
+            f" {self.exc_value.__class__.__name__}: {self.exc_value}"
         )
 
 
@@ -81,25 +83,26 @@ class InvalidChoiceError(ParserError):
         self.value = value
 
     def __str__(self):
-        return f'{self.value!r} is not a valid choice for {self.name!r}'
+        return f"{self.value!r} is not a valid choice for {self.name!r}"
 
 
 class MissingBodyError(ParserError):
-    """ Raised when ``body=True`` but there is no message body in the input """
+    """Raised when ``body=True`` but there is no message body in the input"""
 
     def __str__(self):
-        return 'Message body is required but missing'
+        return "Message body is required but missing"
 
 
 class BodyNotAllowedError(ParserError):
-    """ Raised when ``body=False`` and the parser encounters a message body """
+    """Raised when ``body=False`` and the parser encounters a message body"""
 
     def __str__(self):
-        return 'Message body is present but not allowed'
+        return "Message body is present but not allowed"
 
 
 class ScannerError(Error, ValueError):
-    """ Superclass for all custom exceptions related to errors in scanning """
+    """Superclass for all custom exceptions related to errors in scanning"""
+
     pass
 
 
@@ -114,7 +117,7 @@ class MalformedHeaderError(ScannerError):
         self.line = line
 
     def __str__(self):
-        return f'Invalid header line encountered: {self.line!r}'
+        return f"Invalid header line encountered: {self.line!r}"
 
 
 class UnexpectedFoldingError(ScannerError):
@@ -129,6 +132,5 @@ class UnexpectedFoldingError(ScannerError):
 
     def __str__(self):
         return (
-            'Indented line without preceding header line encountered:'
-            f' {self.line!r}'
+            "Indented line without preceding header line encountered:" f" {self.line!r}"
         )
