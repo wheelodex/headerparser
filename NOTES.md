@@ -40,4 +40,4 @@ Additional relevant RFCs:
     - <https://tools.ietf.org/html/rfc2183> — The Content-Disposition Header
       Field
 
-See also: <http://www.iana.org/assignments/message-headers/message-headers.xml>
+See also: <http://www.iana.org/assignments/message-headers/message-headers.xhtml>
