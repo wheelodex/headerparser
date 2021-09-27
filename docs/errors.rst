@@ -2,33 +2,33 @@
 
 Exceptions
 ==========
-.. autoexception:: headerparser.errors.Error
+.. autoexception:: Error
     :show-inheritance:
 
 Parser Errors
 -------------
-.. autoexception:: headerparser.errors.ParserError
+.. autoexception:: ParserError
     :show-inheritance:
-.. autoexception:: headerparser.errors.BodyNotAllowedError
+.. autoexception:: BodyNotAllowedError
     :show-inheritance:
-.. autoexception:: headerparser.errors.DuplicateFieldError
+.. autoexception:: DuplicateFieldError
     :show-inheritance:
-.. autoexception:: headerparser.errors.FieldTypeError
+.. autoexception:: FieldTypeError
     :show-inheritance:
-.. autoexception:: headerparser.errors.InvalidChoiceError
+.. autoexception:: InvalidChoiceError
     :show-inheritance:
-.. autoexception:: headerparser.errors.MissingBodyError
+.. autoexception:: MissingBodyError
     :show-inheritance:
-.. autoexception:: headerparser.errors.MissingFieldError
+.. autoexception:: MissingFieldError
     :show-inheritance:
-.. autoexception:: headerparser.errors.UnknownFieldError
+.. autoexception:: UnknownFieldError
     :show-inheritance:
 
 Scanner Errors
 --------------
-.. autoexception:: headerparser.errors.ScannerError
+.. autoexception:: ScannerError
     :show-inheritance:
-.. autoexception:: headerparser.errors.MalformedHeaderError
+.. autoexception:: MalformedHeaderError
     :show-inheritance:
-.. autoexception:: headerparser.errors.UnexpectedFoldingError
+.. autoexception:: UnexpectedFoldingError
     :show-inheritance:
