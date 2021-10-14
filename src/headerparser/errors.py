@@ -50,7 +50,7 @@ class DuplicateFieldError(ParserError):
         #: The name of the duplicated header field
         self.name: str = name
 
-    def __str__(self) -> None:
+    def __str__(self) -> str:
         return f"Header field {self.name!r} occurs more than once"
 
 
@@ -119,7 +119,7 @@ class MalformedHeaderError(ScannerError):
         #: The invalid header line
         self.line: str = line
 
-    def __str__(self) -> None:
+    def __str__(self) -> str:
         return f"Invalid header line encountered: {self.line!r}"
 
 

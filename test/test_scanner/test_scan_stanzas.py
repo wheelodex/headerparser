@@ -1,9 +1,10 @@
 from io import StringIO
-from typing import Callable, Iterator, List, Tuple
+from typing import Callable, Iterator, List, Tuple, cast
+from _pytest.fixtures import FixtureRequest
 import pytest
 from headerparser import MalformedHeaderError, scan_stanzas, scan_stanzas_string
 
-ScannerType = Callable[[str, bool], Iterator[List[Tuple[str, str]]]]
+ScannerType = Callable[..., Iterator[List[Tuple[str, str]]]]
 
 
 def scan_stanzas_string_as_file(
@@ -12,7 +13,9 @@ def scan_stanzas_string_as_file(
     return scan_stanzas(StringIO(s), skip_leading_newlines=skip_leading_newlines)
 
 
-def scan_stanzas_string_as_list(s: str, skip_leading_newlines: bool = False):
+def scan_stanzas_string_as_list(
+    s: str, skip_leading_newlines: bool = False
+) -> Iterator[List[Tuple[str, str]]]:
     return scan_stanzas(s.splitlines(True), skip_leading_newlines=skip_leading_newlines)
 
 
@@ -23,8 +26,8 @@ def scan_stanzas_string_as_list(s: str, skip_leading_newlines: bool = False):
         scan_stanzas_string,
     ]
 )
-def scanner(request) -> ScannerType:
-    return request.param
+def scanner(request: FixtureRequest) -> ScannerType:
+    return cast(ScannerType, request.param)  # type: ignore[attr-defined]
 
 
 @pytest.mark.parametrize(

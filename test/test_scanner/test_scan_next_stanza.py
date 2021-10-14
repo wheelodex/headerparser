@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 import pytest
 from headerparser import scan_next_stanza, scan_next_stanza_string
 
@@ -110,7 +110,10 @@ from headerparser import scan_next_stanza, scan_next_stanza_string
     ],
 )
 def test_scan_next_stanza(
-    lines: List[str], fields: List[str], trailer: List[str], skip_leading_newlines: bool
+    lines: List[str],
+    fields: List[Tuple[str, str]],
+    trailer: List[str],
+    skip_leading_newlines: bool,
 ) -> None:
     liter = iter(lines)
     assert (

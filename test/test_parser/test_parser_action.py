@@ -1,16 +1,16 @@
-from unittest.mock import Mock
+from unittest.mock import ANY, Mock
 import pytest
 from pytest_mock import MockerFixture
 import headerparser
-from headerparser import BOOL, HeaderParser
+from headerparser import BOOL, HeaderParser, NormalizedDict
 
 
 @pytest.fixture
-def use_as_body(mocker: MockerFixture) -> Mock:
-    def _use(nd, name, value):
+def use_as_body() -> Mock:
+    def _use(nd: NormalizedDict, name: str, value: str) -> None:
         nd.body = value
 
-    return mocker.Mock(side_effect=_use)
+    return Mock(side_effect=_use)
 
 
 def test_action(mocker: MockerFixture) -> None:
@@ -179,7 +179,7 @@ def test_action_multiple(mocker: MockerFixture) -> None:
     parser.add_field("Bar")
     parser.add_field("Baz")
     msg = parser.parse_string(
-        "Foo: red\n" "Bar: green\n" "FOO: purple\n" "Baz: blue\n" "foo: orange\n"
+        "Foo: red\nBar: green\nFOO: purple\nBaz: blue\nfoo: orange\n"
     )
     assert dict(msg) == {"Bar": "green", "Baz": "blue"}
     assert msg.body is None
@@ -228,7 +228,7 @@ def test_action_multiple_additional(mocker: MockerFixture) -> None:
     parser.add_field("Foo")
     parser.add_additional(action=stub, multiple=True)
     msg = parser.parse_string(
-        "Bar: green\n" "Foo: red\n" "Baz: blue\n" "baz: mauve\n" "BAR: taupe\n"
+        "Bar: green\nFoo: red\nBaz: blue\nbaz: mauve\nBAR: taupe\n"
     )
     assert dict(msg) == {"Foo": "red"}
     assert msg.body is None
@@ -241,7 +241,7 @@ def test_action_multiple_additional(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.parametrize("body", [True, None])
-def test_action_set_body_overwritten(body, use_as_body) -> None:
+def test_action_set_body_overwritten(body: bool, use_as_body: Mock) -> None:
     parser = HeaderParser(body=body)
     parser.add_field("Foo", action=use_as_body)
     parser.add_field("Bar")
@@ -251,17 +251,17 @@ def test_action_set_body_overwritten(body, use_as_body) -> None:
     use_as_body.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_set_body_forbidden(use_as_body, mocker) -> None:
+def test_action_set_body_forbidden(use_as_body: Mock) -> None:
     parser = HeaderParser(body=False)
     parser.add_field("Foo", action=use_as_body)
     parser.add_field("Bar")
     with pytest.raises(headerparser.BodyNotAllowedError):
         parser.parse_string("Foo: red\nBar: green\n\nThis is the body.\n")
-    use_as_body.assert_called_once_with(mocker.ANY, "Foo", "red")
+    use_as_body.assert_called_once_with(ANY, "Foo", "red")
 
 
 @pytest.mark.parametrize("body", [False, None])
-def test_action_set_body(body, use_as_body) -> None:
+def test_action_set_body(body: bool, use_as_body: Mock) -> None:
     parser = HeaderParser(body=body)
     parser.add_field("Foo", action=use_as_body)
     parser.add_field("Bar")
@@ -271,10 +271,10 @@ def test_action_set_body(body, use_as_body) -> None:
     use_as_body.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_set_body_missing(use_as_body, mocker) -> None:
+def test_action_set_body_missing(use_as_body: Mock) -> None:
     parser = HeaderParser(body=True)
     parser.add_field("Foo", action=use_as_body)
     parser.add_field("Bar")
     with pytest.raises(headerparser.MissingBodyError):
         parser.parse_string("Foo: red\nBar: green\n")
-    use_as_body.assert_called_once_with(mocker.ANY, "Foo", "red")
+    use_as_body.assert_called_once_with(ANY, "Foo", "red")

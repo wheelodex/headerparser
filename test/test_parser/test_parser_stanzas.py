@@ -1,27 +1,22 @@
 from io import StringIO
-from typing import Any, Callable, Iterator
+from typing import Callable, Iterator, cast
+from _pytest.fixtures import FixtureRequest
 import pytest
 import headerparser
 from headerparser import HeaderParser, NormalizedDict, scan_stanzas_string
 
-PMethod = Callable[[HeaderParser[str], str], Iterator[NormalizedDict[str, Any]]]
+PMethod = Callable[[HeaderParser, str], Iterator[NormalizedDict]]
 
 
-def parse_stanzas_string(
-    p: HeaderParser[str], s: str
-) -> Iterator[NormalizedDict[str, Any]]:
+def parse_stanzas_string(p: HeaderParser, s: str) -> Iterator[NormalizedDict]:
     return p.parse_stanzas_string(s)
 
 
-def parse_stanzas_string_as_file(
-    p: HeaderParser[str], s: str
-) -> Iterator[NormalizedDict[str, Any]]:
+def parse_stanzas_string_as_file(p: HeaderParser, s: str) -> Iterator[NormalizedDict]:
     return p.parse_stanzas(StringIO(s))
 
 
-def parse_stanzas_string_as_stream(
-    p: HeaderParser[str], s: str
-) -> Iterator[NormalizedDict[str, Any]]:
+def parse_stanzas_string_as_stream(p: HeaderParser, s: str) -> Iterator[NormalizedDict]:
     return p.parse_stanzas_stream(scan_stanzas_string(s))
 
 
@@ -32,8 +27,8 @@ def parse_stanzas_string_as_stream(
         parse_stanzas_string_as_stream,
     ]
 )
-def pmethod(request) -> PMethod:
-    return request.param
+def pmethod(request: FixtureRequest) -> PMethod:
+    return cast(PMethod, request.param)  # type: ignore[attr-defined]
 
 
 def test_simple(pmethod: PMethod) -> None:
@@ -108,7 +103,7 @@ def test_disjoint_keys(pmethod: PMethod) -> None:
     parser.add_field("Foo")
     parser.add_field("Bar")
     parser.add_field("Baz")
-    m1, m2, m3 = pmethod(parser, "Foo: red\n\n" "Bar: green\n\n" "Baz: blue\n\n")
+    m1, m2, m3 = pmethod(parser, "Foo: red\n\nBar: green\n\nBaz: blue\n\n")
     assert dict(m1) == {"Foo": "red"}
     assert m1.body is None
     assert dict(m2) == {"Bar": "green"}
@@ -123,7 +118,7 @@ def test_overlapping_keys(pmethod: PMethod) -> None:
     parser.add_field("Bar")
     parser.add_field("Baz")
     m1, m2, m3 = pmethod(
-        parser, "Foo: red\n\n" "Bar: green\nFoo: yellow\n\n" "Foo: white\nBaz: blue\n\n"
+        parser, "Foo: red\n\nBar: green\nFoo: yellow\n\nFoo: white\nBaz: blue\n\n"
     )
     assert dict(m1) == {"Foo": "red"}
     assert m1.body is None

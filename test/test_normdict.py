@@ -227,6 +227,8 @@ def test_repr(
     body: Optional[str],
 ) -> None:
     nd = NormalizedDict(data, body=body, normalizer=normalizer)
+    if normalizer is None:
+        normalizer = lower
     assert repr(nd) == (
         f"headerparser.normdict.NormalizedDict({data!r},"
         f" normalizer={normalizer!r}, body={body!r})"

@@ -109,7 +109,7 @@ def test_bad_native_type() -> None:
 
 
 def fieldtypeerror_raiser(_: Any) -> None:
-    raise FieldTypeError("name", "value", None)
+    raise FieldTypeError("name", "value", ValueError("foobar"))
 
 
 def test_fieldtypeerror_raiser() -> None:
@@ -117,7 +117,10 @@ def test_fieldtypeerror_raiser() -> None:
     parser.add_field("Foo", type=fieldtypeerror_raiser)
     with pytest.raises(FieldTypeError) as excinfo:
         parser.parse_string("Foo: Bar\n")
-    assert str(excinfo.value) == ("Error while parsing 'name': 'value': NoneType: None")
+    assert str(excinfo.value) == (
+        "Error while parsing 'name': 'value': ValueError: foobar"
+    )
     assert excinfo.value.name == "name"
     assert excinfo.value.value == "value"
-    assert excinfo.value.exc_value is None
+    assert isinstance(excinfo.value.exc_value, ValueError)
+    assert str(excinfo.value.exc_value) == "foobar"

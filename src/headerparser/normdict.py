@@ -1,12 +1,9 @@
 from collections.abc import Mapping, MutableMapping
-from typing import Any, Callable, Dict, Iterator, Optional, Tuple, TypeVar
+from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Tuple, Union
 from .types import lower
 
-K = TypeVar("K")
-V = TypeVar("V")
 
-
-class NormalizedDict(MutableMapping[K, V]):
+class NormalizedDict(MutableMapping[Any, Any]):
     """
     A generalization of a case-insensitive dictionary.  `NormalizedDict` takes
     a callable (the "normalizer") that is applied to any key passed to its
@@ -38,12 +35,12 @@ class NormalizedDict(MutableMapping[K, V]):
 
     def __init__(
         self,
-        data: Optional[Mapping[K, V]] = None,
-        normalizer: Optional[Callable[[K], K]] = None,
+        data: Union[None, Mapping, Iterable[Tuple[Any, Any]]] = None,
+        normalizer: Optional[Callable[[Any], Any]] = None,
         body: Optional[str] = None,
     ) -> None:
-        self._data: Dict[K, Tuple[K, V]] = {}
-        self.normalizer: Callable[[K], K] = (
+        self._data: Dict[Any, Tuple[Any, Any]] = {}
+        self.normalizer: Callable[[Any], Any] = (
             normalizer if normalizer is not None else lower
         )
         #: This is where `HeaderParser` stores the message body (if any)
@@ -53,16 +50,16 @@ class NormalizedDict(MutableMapping[K, V]):
             # Don't call `update` until after `normalizer` is set.
             self.update(data)
 
-    def __getitem__(self, key: K) -> V:
+    def __getitem__(self, key: Any) -> Any:
         return self._data[self.normalizer(key)][1]
 
-    def __setitem__(self, key: K, value: V) -> None:
+    def __setitem__(self, key: Any, value: Any) -> None:
         self._data[self.normalizer(key)] = (key, value)
 
-    def __delitem__(self, key: K) -> None:
+    def __delitem__(self, key: Any) -> None:
         del self._data[self.normalizer(key)]
 
-    def __iter__(self) -> Iterator[K]:
+    def __iter__(self) -> Iterator:
         return (key for key, _ in self._data.values())
 
     def __len__(self) -> int:
@@ -88,7 +85,7 @@ class NormalizedDict(MutableMapping[K, V]):
             )
         )
 
-    def normalized(self) -> "NormalizedDict[K,V]":
+    def normalized(self) -> "NormalizedDict":
         """
         Return a copy of the instance such that iterating over it will return
         normalized keys instead of the keys passed to `~object.__setitem__`
@@ -109,7 +106,7 @@ class NormalizedDict(MutableMapping[K, V]):
             body=self.body,
         )
 
-    def normalized_dict(self) -> Dict[K, V]:
+    def normalized_dict(self) -> dict:
         """
         Convert to a `dict` with all keys normalized.  (A `dict` with
         non-normalized keys can be obtained with ``dict(normdict)``.)
@@ -118,7 +115,7 @@ class NormalizedDict(MutableMapping[K, V]):
         """
         return {key: value for key, (_, value) in self._data.items()}
 
-    def copy(self) -> "NormalizedDict[K, V]":
+    def copy(self) -> "NormalizedDict":
         """Create a shallow copy of the mapping"""
         dup = type(self)()
         dup._data = self._data.copy()

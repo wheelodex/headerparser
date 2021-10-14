@@ -1,5 +1,5 @@
 import re
-from typing import Iterable, Iterator, List, Optional, Pattern, Tuple, Union
+from typing import Iterable, Iterator, List, Optional, Pattern, Tuple, Union, cast
 from .errors import MalformedHeaderError, UnexpectedFoldingError
 from .util import ascii_splitlines
 
@@ -109,21 +109,21 @@ def _scan_next_stanza(
     iterator: Iterable[str],
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
-):
+) -> Iterator[FieldType]:
     """
     .. versionadded:: 0.4.0
 
     Like `scan_next_stanza()`, except it additionally yields as its last item a
-    ``(None, flag)`` pair where ``flag`` is `True` iff the stanza was
+    ``(None, flag)`` pair where ``flag`` is nonempty iff the stanza was
     terminated by a blank line (thereby suggesting there is more input left to
-    process), `False` iff the stanza was terminated by EOF.
+    process), empty iff the stanza was terminated by EOF.
 
     This is the core function that all other scanners ultimately call.
     """
-    name = None
+    name: Optional[str] = None
     value = ""
     begun = False
-    more_left = False
+    more_left = ""
     if separator_regex is None:
         sep = DEFAULT_SEPARATOR_REGEX
     else:
@@ -148,7 +148,7 @@ def _scan_next_stanza(
                 if skip_leading_newlines and not begun:
                     continue
                 else:
-                    more_left = True
+                    more_left = "1"
                     break
             else:
                 raise MalformedHeaderError(line)
@@ -224,7 +224,7 @@ def scan_stanzas(
         )
         more_left = fields.pop()[1]
         if fields or more_left:
-            yield fields
+            yield cast(List[Tuple[str, str]], fields)
         else:
             break
         skip_leading_newlines = True

@@ -335,8 +335,8 @@ def test_space_in_name() -> None:
 
 def test_scan_opts_passed(mocker: MockerFixture) -> None:
     m = mocker.patch(
-        "headerparser.parser.scan_string",
-        wraps=headerparser.parser.scan_string,
+        "headerparser.scanner.scan_string",
+        wraps=headerparser.scanner.scan_string,
     )
     parser = HeaderParser(
         separator_regex=r"\s*:\s*",

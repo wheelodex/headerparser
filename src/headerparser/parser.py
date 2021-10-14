@@ -1,16 +1,5 @@
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Generic,
-    Iterable,
-    Iterator,
-    Optional,
-    Set,
-    Tuple,
-    TypeVar,
-)
-from . import errors
+from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Set, Tuple
+from . import errors, scanner
 from .normdict import NormalizedDict
 from .scanner import (
     scan,
@@ -18,14 +7,11 @@ from .scanner import (
     scan_next_stanza_string,
     scan_stanzas,
     scan_stanzas_string,
-    scan_string,
 )
 from .types import lower, unfold
 
-K = TypeVar("K")
 
-
-class HeaderParser(Generic[K]):
+class HeaderParser:
     """
     A parser for RFC 822-style header sections.  Define the fields the parser
     should recognize with the `add_field()` method, configure handling of
@@ -49,7 +35,7 @@ class HeaderParser(Generic[K]):
 
     def __init__(
         self,
-        normalizer: Optional[Callable[[str], K]] = None,
+        normalizer: Optional[Callable[[str], Any]] = None,
         body: Optional[bool] = None,
         **kwargs: Any,
     ) -> None:
@@ -61,13 +47,13 @@ class HeaderParser(Generic[K]):
         #: Scanner options
         self._scan_opts = kwargs
         #: A mapping from normalized field names to `NamedField` instances
-        self._fielddefs: Dict[K, NamedField[K]] = {}
+        self._fielddefs: Dict[Any, NamedField] = {}
         #: The set of all normalized ``dest`` values for all named fields
         #: defined so far
-        self._dests: Set[K] = set()
+        self._dests: set = set()
         #: If additional fields are enabled, this is the `FieldDef` instance
         #: used to process them; otherwise, it is `None`.
-        self._additional: Optional[FieldDef[K]] = None
+        self._additional: Optional[FieldDef] = None
         #: Whether any fields with custom ``dest`` values have been defined,
         #: thereby precluding `add_additional()`
         self._custom_dests: bool = False
@@ -159,7 +145,7 @@ class HeaderParser(Generic[K]):
         if "type" in kwargs:
             kwargs["type_"] = kwargs.pop("type")
         hd = NamedField(name=name, **kwargs)
-        normed: Set[K] = set(map(self._normalizer, (name,) + altnames))
+        normed: set = set(map(self._normalizer, (name,) + altnames))
         # Error before modifying anything:
         redefs = [n for n in self._fielddefs if n in normed]
         if redefs:
@@ -247,7 +233,7 @@ class HeaderParser(Generic[K]):
 
     def parse_stream(
         self, fields: Iterable[Tuple[Optional[str], str]]
-    ) -> NormalizedDict[K, Any]:
+    ) -> NormalizedDict:
         """
         Process a sequence of ``(name, value)`` pairs as returned by `scan()`
         or `scan_string()` and return a dictionary of header fields (possibly
@@ -262,7 +248,7 @@ class HeaderParser(Generic[K]):
             definitions declared with `add_field` and `add_additional`
         :raises ValueError: if the input contains more than one body pair
         """
-        data = NormalizedDict(normalizer=self._normalizer)
+        data: NormalizedDict = NormalizedDict(normalizer=self._normalizer)
         fields_seen: Set[str] = set()
         body_seen = False
         for k, v in fields:
@@ -274,6 +260,7 @@ class HeaderParser(Generic[K]):
                 data.body = v
                 body_seen = True
             else:
+                hd: FieldDef
                 try:
                     hd = self._fielddefs[self._normalizer(k)]
                 except KeyError:
@@ -294,7 +281,7 @@ class HeaderParser(Generic[K]):
             raise errors.MissingBodyError()
         return data
 
-    def parse(self, iterable: Iterable[str]) -> NormalizedDict[K, Any]:
+    def parse(self, iterable: Iterable[str]) -> NormalizedDict:
         """
         .. versionadded:: 0.4.0
 
@@ -313,7 +300,7 @@ class HeaderParser(Generic[K]):
         """
         return self.parse_stream(scan(iterable, **self._scan_opts))
 
-    def parse_string(self, s: str) -> NormalizedDict[K, Any]:
+    def parse_string(self, s: str) -> NormalizedDict:
         """
         Parse an RFC 822-style header field section (possibly followed by a
         message body) from the given string and return a dictionary of the
@@ -325,11 +312,9 @@ class HeaderParser(Generic[K]):
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scan_string(s, **self._scan_opts))
+        return self.parse_stream(scanner.scan_string(s, **self._scan_opts))
 
-    def parse_stanzas(
-        self, iterable: Iterable[str]
-    ) -> Iterator[NormalizedDict[K, Any]]:
+    def parse_stanzas(self, iterable: Iterable[str]) -> Iterator[NormalizedDict]:
         """
         .. versionadded:: 0.4.0
 
@@ -349,7 +334,7 @@ class HeaderParser(Generic[K]):
         """
         return self.parse_stanzas_stream(scan_stanzas(iterable, **self._scan_opts))
 
-    def parse_stanzas_string(self, s: str) -> Iterator[NormalizedDict[K, Any]]:
+    def parse_stanzas_string(self, s: str) -> Iterator[NormalizedDict]:
         """
         .. versionadded:: 0.4.0
 
@@ -369,8 +354,8 @@ class HeaderParser(Generic[K]):
         return self.parse_stanzas_stream(scan_stanzas_string(s, **self._scan_opts))
 
     def parse_stanzas_stream(
-        self, fields: Iterable[Tuple[Optional[str], str]]
-    ) -> Iterator[NormalizedDict[K, Any]]:
+        self, fields: Iterable[Iterable[Tuple[Optional[str], str]]]
+    ) -> Iterator[NormalizedDict]:
         """
         .. versionadded:: 0.4.0
 
@@ -388,7 +373,7 @@ class HeaderParser(Generic[K]):
         for stanza in fields:
             yield self.parse_stream(stanza)
 
-    def parse_next_stanza(self, iterator: Iterable[str]) -> NormalizedDict[K, Any]:
+    def parse_next_stanza(self, iterator: Iterable[str]) -> NormalizedDict:
         """
         .. versionadded:: 0.4.0
 
@@ -407,7 +392,7 @@ class HeaderParser(Generic[K]):
         """
         return self.parse_stream(scan_next_stanza(iterator, **self._scan_opts))
 
-    def parse_next_stanza_string(self, s: str) -> Tuple[NormalizedDict[K, Any], str]:
+    def parse_next_stanza_string(self, s: str) -> Tuple[NormalizedDict, str]:
         """
         .. versionadded:: 0.4.0
 
@@ -426,14 +411,14 @@ class HeaderParser(Generic[K]):
         return (self.parse_stream(fields), extra)
 
 
-class FieldDef(Generic[K]):
+class FieldDef:
     def __init__(
         self,
-        type_: Callable[Optional[[str], Any]] = None,
+        type_: Optional[Callable[[str], Any]] = None,
         multiple: bool = False,
         unfold: bool = False,
         choices: Optional[Iterable] = None,
-        action: Optional[Callable[[NormalizedDict[K, Any], str, Any], Any]] = None,
+        action: Optional[Callable[[NormalizedDict, str, Any], Any]] = None,
     ):
         self.type_ = type_
         self.multiple = multiple
@@ -451,9 +436,7 @@ class FieldDef(Generic[K]):
         else:  # pragma: no cover
             return NotImplemented
 
-    def _process(
-        self, data: NormalizedDict[K, Any], name: str, dest: K, value: str
-    ) -> None:
+    def _process(self, data: NormalizedDict, name: str, dest: Any, value: str) -> None:
         if self.unfold:
             value = unfold(value)
         if self.type_ is not None:
@@ -474,13 +457,13 @@ class FieldDef(Generic[K]):
         else:
             data[dest] = value
 
-    def process(self, data: str, name: str, value: str) -> None:
+    def process(self, data: NormalizedDict, name: str, value: str) -> None:
         self._process(data, name, name, value)
 
 
 class NamedField(FieldDef):
     def __init__(
-        self, name: str, dest: K, required: bool = False, **kwargs: Any
+        self, name: str, dest: Any, required: bool = False, **kwargs: Any
     ) -> None:
         if not isinstance(name, str):
             raise TypeError("field names must be strings")
@@ -493,5 +476,5 @@ class NamedField(FieldDef):
             self.default = kwargs.pop("default")
         super(NamedField, self).__init__(**kwargs)
 
-    def process(self, data: NormalizedDict[K, Any], _: str, value: str) -> None:
+    def process(self, data: NormalizedDict, _: str, value: str) -> None:
         self._process(data, self.name, self.dest, value)

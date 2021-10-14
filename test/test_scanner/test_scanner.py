@@ -1,6 +1,6 @@
 from io import StringIO
 import re
-from typing import Any, Callable, Iterator, List
+from typing import Any, Callable, Iterator, List, cast
 from _pytest.fixtures import FixtureRequest
 import pytest
 import headerparser
@@ -20,7 +20,7 @@ def scan_string_as_list(s: str, **kwargs: Any) -> Iterator[FieldType]:
 
 @pytest.fixture(params=[scan_string_as_file, scan_string_as_list, scan_string])
 def scanner(request: FixtureRequest) -> ScannerType:
-    return request.param
+    return cast(ScannerType, request.param)  # type: ignore[attr-defined]
 
 
 @pytest.mark.parametrize(
@@ -40,7 +40,7 @@ def scanner(request: FixtureRequest) -> ScannerType:
             [("Foo", "red"), ("Bar", "green"), ("Baz", "blue"), (None, "\n")],
         ),
         (
-            "Foo: red\n" "Bar: green\n" "Baz: blue\n" "\n" "This is a test.",
+            "Foo: red\nBar: green\nBaz: blue\n\nThis is a test.",
             [
                 ("Foo", "red"),
                 ("Bar", "green"),
@@ -49,7 +49,7 @@ def scanner(request: FixtureRequest) -> ScannerType:
             ],
         ),
         (
-            "Foo: red\n" "Bar: green\n" "Baz: blue\n" "\n" "\n" "This is a test.",
+            "Foo: red\nBar: green\nBaz: blue\n\n\nThis is a test.",
             [
                 ("Foo", "red"),
                 ("Bar", "green"),
@@ -73,7 +73,7 @@ def scanner(request: FixtureRequest) -> ScannerType:
             ],
         ),
         (
-            "Key1: Value1\n" "Key2 :Value2\n" "Key3 : Value3\n" "Key4:Value4\n",
+            "Key1: Value1\nKey2 :Value2\nKey3 : Value3\nKey4:Value4\n",
             [
                 ("Key1", "Value1"),
                 ("Key2", "Value2"),
