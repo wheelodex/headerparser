@@ -31,8 +31,6 @@ from .normdict import NormalizedDict
 from .parser import HeaderParser
 from .scanner import (
     scan,
-    scan_file,
-    scan_lines,
     scan_next_stanza,
     scan_next_stanza_string,
     scan_stanzas,
@@ -65,8 +63,6 @@ __all__ = [
     "UnknownFieldError",
     "lower",
     "scan",
-    "scan_file",
-    "scan_lines",
     "scan_next_stanza",
     "scan_next_stanza_string",
     "scan_stanzas",

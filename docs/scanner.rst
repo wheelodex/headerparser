@@ -54,11 +54,6 @@ LF, and CR LF boundaries and then processed as a list of strings.
 .. autofunction:: scan_stanzas
 .. autofunction:: scan_stanzas_string
 
-Deprecated Functions
---------------------
-.. autofunction:: scan_file
-.. autofunction:: scan_lines
-
 .. _scan_opts:
 
 Scanner Options

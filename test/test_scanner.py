@@ -2,7 +2,7 @@ from io import StringIO
 import re
 import pytest
 import headerparser
-from headerparser import scan, scan_file, scan_lines, scan_string
+from headerparser import scan, scan_string
 
 
 def scan_string_as_file(s, **kwargs):
@@ -363,25 +363,3 @@ def test_separator_regex_default_separator(scanner):
         list(scanner("Foo = red\nBar: green\n", separator_regex=r"\s*=\s*"))
     assert str(excinfo.value) == "Invalid header line encountered: 'Bar: green'"
     assert excinfo.value.line == "Bar: green"
-
-
-def test_deprecated_scan_lines(mocker):
-    mockscan = mocker.patch(
-        "headerparser.scanner.scan",
-        return_value=mocker.sentinel.OUTPUT,
-    )
-    with pytest.warns(DeprecationWarning):
-        r = scan_lines(mocker.sentinel.INPUT)
-    mockscan.assert_called_once_with(mocker.sentinel.INPUT)
-    assert r is mocker.sentinel.OUTPUT
-
-
-def test_deprecated_scan_file(mocker):
-    mockscan = mocker.patch(
-        "headerparser.scanner.scan",
-        return_value=mocker.sentinel.OUTPUT,
-    )
-    with pytest.warns(DeprecationWarning):
-        r = scan_file(mocker.sentinel.INPUT)
-    mockscan.assert_called_once_with(mocker.sentinel.INPUT)
-    assert r is mocker.sentinel.OUTPUT

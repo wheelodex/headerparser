@@ -1,5 +1,4 @@
 import re
-from warnings import warn
 from .errors import MalformedHeaderError, UnexpectedFoldingError
 from .util import ascii_splitlines
 
@@ -19,49 +18,6 @@ def scan_string(s, **kwargs):
     :raises ScannerError: if the header section is malformed
     """
     return scan(ascii_splitlines(s), **kwargs)
-
-
-def scan_file(fp, **kwargs):
-    """
-    Scan a file for RFC 822-style header fields and return a generator of
-    ``(name, value)`` pairs for each header field in the input, plus a ``(None,
-    body)`` pair representing the body (if any) after the header section.
-
-    See `scan()` for more information on the exact behavior of the scanner.
-
-    .. deprecated:: 0.4.0
-        Use `scan()` instead.
-
-    :param fp: A file-like object than can be iterated over to produce lines to
-        pass to `scan()`.  Opening the file in universal newlines mode is
-        recommended.
-    :param kwargs: :ref:`scanner options <scan_opts>`
-    :rtype: generator of pairs of strings
-    :raises ScannerError: if the header section is malformed
-    """
-    warn("scan_file() is deprecated.  Use scan() instead.", DeprecationWarning)
-    return scan(fp, **kwargs)
-
-
-def scan_lines(fp, **kwargs):
-    """
-    Scan an iterable of lines for RFC 822-style header fields and return a
-    generator of ``(name, value)`` pairs for each header field in the input,
-    plus a ``(None, body)`` pair representing the body (if any) after the
-    header section.
-
-    See `scan()` for more information on the exact behavior of the scanner.
-
-    .. deprecated:: 0.4.0
-        Use `scan()` instead.
-
-    :param iterable: an iterable of strings representing lines of input
-    :param kwargs: :ref:`scanner options <scan_opts>`
-    :rtype: generator of pairs of strings
-    :raises ScannerError: if the header section is malformed
-    """
-    warn("scan_lines() is deprecated.  Use scan() instead.", DeprecationWarning)
-    return scan(fp, **kwargs)
 
 
 def scan(iterable, **kwargs):

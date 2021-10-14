@@ -5,16 +5,18 @@ Changelog
 
 v0.5.0 (in development)
 -----------------------
-- Support Python 3.8 and 3.9
+- Support Python 3.8, 3.9, and 3.10
 - Drop support for Python 2.7, 3.4, and 3.5
+- Removed ``scan_file()``, ``scan_lines()``, ``HeaderParser.parse_file()``, and
+  ``HeaderParser.parse_lines()`` (all deprecated in v0.4.0)
+
 
 v0.4.0 (2019-05-29)
 -------------------
-- Added a `scan()` function combining the behavior of `scan_file()` and
-  `scan_lines()`, which are now deprecated
+- Added a `scan()` function combining the behavior of ``scan_file()`` and
+  ``scan_lines()``, which are now deprecated
 - Gave `HeaderParser` a `~HeaderParser.parse()` method combining the behavior
-  of `~HeaderParser.parse_file()` and `~HeaderParser.parse_lines()`, which are
-  now deprecated
+  of ``parse_file()`` and ``parse_lines()``, which are now deprecated
 - Added `scan_next_stanza()` and `scan_next_stanza_string()` functions for
   scanning & consuming input only up to the end of the first header section
 - Added `scan_stanzas()` and `scan_stanzas_string()` functions for scanning

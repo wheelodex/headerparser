@@ -1,4 +1,3 @@
-from warnings import warn
 from . import errors
 from .normdict import NormalizedDict
 from .scanner import (
@@ -287,54 +286,6 @@ class HeaderParser:
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scan(iterable, **self._scan_opts))
-
-    def parse_file(self, fp):
-        """
-        Parse an RFC 822-style header field section (possibly followed by a
-        message body) from the contents of the given filehandle and return a
-        dictionary of the header fields (possibly with body attached)
-
-        .. deprecated:: 0.4.0
-            Use `parse()` instead.
-
-        :param fp: the file to parse
-        :type fp: file-like object
-        :rtype: NormalizedDict
-        :raises ParserError: if the input fields do not conform to the field
-            definitions declared with `add_field` and `add_additional`
-        :raises ScannerError: if the header section is malformed
-        """
-        warn(
-            "HeaderParser.parse_file() is deprecated."
-            "  Use the parse() method instead.",
-            DeprecationWarning,
-        )
-        return self.parse_stream(scan(fp, **self._scan_opts))
-
-    def parse_lines(self, iterable):
-        """
-        Parse an RFC 822-style header field section (possibly followed by a
-        message body) from the given sequence of lines and return a dictionary
-        of the header fields (possibly with body attached).  Newlines will be
-        inserted where not already present in multiline header fields but will
-        not be inserted inside the body.
-
-        .. deprecated:: 0.4.0
-            Use `parse()` instead.
-
-        :param iterable: a sequence of lines comprising the text to parse
-        :type iterable: iterable of strings
-        :rtype: NormalizedDict
-        :raises ParserError: if the input fields do not conform to the field
-            definitions declared with `add_field` and `add_additional`
-        :raises ScannerError: if the header section is malformed
-        """
-        warn(
-            "HeaderParser.parse_lines() is deprecated."
-            "  Use the parse() method instead.",
-            DeprecationWarning,
-        )
         return self.parse_stream(scan(iterable, **self._scan_opts))
 
     def parse_string(self, s):
