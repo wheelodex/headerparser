@@ -1,10 +1,11 @@
 import re
+from typing import Any
 
 TRUTHY = {"yes", "y", "on", "true", "1"}
 FALSEY = {"no", "n", "off", "false", "0"}
 
 
-def BOOL(s):
+def BOOL(s: str) -> bool:
     """
     Convert boolean-like strings to `bool` values.  The strings ``'yes'``,
     ``'y'``, ``'on'``, ``'true'``, and ``'1'`` are converted to `True`, and the
@@ -23,10 +24,10 @@ def BOOL(s):
     elif b in FALSEY:
         return False
     else:
-        raise ValueError("invalid boolean: " + repr(s))
+        raise ValueError(f"invalid boolean: {s!r}")
 
 
-def lower(s):
+def lower(s: Any) -> Any:
     """
     .. versionadded:: 0.2.0
 
@@ -39,7 +40,7 @@ def lower(s):
         return s
 
 
-def unfold(s):
+def unfold(s: str) -> str:
     r"""
     .. versionadded:: 0.2.0
 

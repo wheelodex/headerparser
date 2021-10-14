@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class Error(Exception):
     """Superclass for all custom exceptions raised by the package"""
 
@@ -15,11 +18,11 @@ class MissingFieldError(ParserError):
     Raised when a header field marked as required is not present in the input
     """
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         #: The name of the missing header field
-        self.name = name
+        self.name: str = name
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Required header field {self.name!r} is not present"
 
 
@@ -29,11 +32,11 @@ class UnknownFieldError(ParserError):
     fields are not enabled
     """
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         #: The name of the unknown header field
-        self.name = name
+        self.name: str = name
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Unknown header field {self.name!r}"
 
 
@@ -43,27 +46,27 @@ class DuplicateFieldError(ParserError):
     in the input
     """
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         #: The name of the duplicated header field
-        self.name = name
+        self.name: str = name
 
-    def __str__(self):
+    def __str__(self) -> None:
         return f"Header field {self.name!r} occurs more than once"
 
 
 class FieldTypeError(ParserError):
     """Raised when a ``type`` callable raises an exception"""
 
-    def __init__(self, name, value, exc_value):
+    def __init__(self, name: str, value: str, exc_value: BaseException) -> None:
         #: The name of the header field for which the ``type`` callable was
         #: called
-        self.name = name
+        self.name: str = name
         #: The value on which the ``type`` callable was called
-        self.value = value
+        self.value: str = value
         #: The exception raised by the ``type`` callable
-        self.exc_value = exc_value
+        self.exc_value: BaseException = exc_value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"Error while parsing {self.name!r}: {self.value!r}:"
             f" {self.exc_value.__class__.__name__}: {self.exc_value}"
@@ -76,27 +79,27 @@ class InvalidChoiceError(ParserError):
     choices
     """
 
-    def __init__(self, name, value):
+    def __init__(self, name: str, value: Any) -> None:
         #: The name of the header field
-        self.name = name
+        self.name: str = name
         #: The invalid value
-        self.value = value
+        self.value: Any = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.value!r} is not a valid choice for {self.name!r}"
 
 
 class MissingBodyError(ParserError):
     """Raised when ``body=True`` but there is no message body in the input"""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Message body is required but missing"
 
 
 class BodyNotAllowedError(ParserError):
     """Raised when ``body=False`` and the parser encounters a message body"""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Message body is present but not allowed"
 
 
@@ -112,11 +115,11 @@ class MalformedHeaderError(ScannerError):
     without either a colon or leading whitespace
     """
 
-    def __init__(self, line):
+    def __init__(self, line: str) -> None:
         #: The invalid header line
-        self.line = line
+        self.line: str = line
 
-    def __str__(self):
+    def __str__(self) -> None:
         return f"Invalid header line encountered: {self.line!r}"
 
 
@@ -126,11 +129,9 @@ class UnexpectedFoldingError(ScannerError):
     preceded by a valid header line
     """
 
-    def __init__(self, line):
+    def __init__(self, line: str) -> None:
         #: The line containing the unexpected folding (indentation)
-        self.line = line
+        self.line: str = line
 
-    def __str__(self):
-        return (
-            "Indented line without preceding header line encountered:" f" {self.line!r}"
-        )
+    def __str__(self) -> str:
+        return f"Indented line without preceding header line encountered: {self.line!r}"

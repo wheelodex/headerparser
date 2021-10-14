@@ -1,9 +1,20 @@
 import re
+from typing import Iterable, Iterator, List, Optional, Pattern, Tuple, Union
 from .errors import MalformedHeaderError, UnexpectedFoldingError
 from .util import ascii_splitlines
 
+RgxType = Union[str, "Pattern[str]"]
 
-def scan_string(s, **kwargs):
+FieldType = Tuple[Optional[str], str]
+
+DEFAULT_SEPARATOR_REGEX = re.compile(r"[ \t]*:[ \t]*")
+
+
+def scan_string(
+    s: str,
+    separator_regex: Optional[RgxType] = None,
+    skip_leading_newlines: bool = False,
+) -> Iterator[FieldType]:
     """
     Scan a string for RFC 822-style header fields and return a generator of
     ``(name, value)`` pairs for each header field in the input, plus a ``(None,
@@ -17,10 +28,18 @@ def scan_string(s, **kwargs):
     :rtype: generator of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    return scan(ascii_splitlines(s), **kwargs)
+    return scan(
+        ascii_splitlines(s),
+        separator_regex=separator_regex,
+        skip_leading_newlines=skip_leading_newlines,
+    )
 
 
-def scan(iterable, **kwargs):
+def scan(
+    iterable: Iterable[str],
+    separator_regex: Optional[RgxType] = None,
+    skip_leading_newlines: bool = False,
+) -> Iterator[FieldType]:
     """
     .. versionadded:: 0.4.0
 
@@ -45,14 +64,22 @@ def scan(iterable, **kwargs):
     :raises ScannerError: if the header section is malformed
     """
     lineiter = iter(iterable)
-    for name, value in _scan_next_stanza(lineiter, **kwargs):
+    for name, value in _scan_next_stanza(
+        lineiter,
+        separator_regex=separator_regex,
+        skip_leading_newlines=skip_leading_newlines,
+    ):
         if name is not None:
             yield (name, value)
         elif value:
             yield (None, "".join(lineiter))
 
 
-def scan_next_stanza(iterator, **kwargs):
+def scan_next_stanza(
+    iterator: Iterable[str],
+    separator_regex: Optional[RgxType] = None,
+    skip_leading_newlines: bool = False,
+) -> Iterator[Tuple[str, str]]:
     """
     .. versionadded:: 0.4.0
 
@@ -69,15 +96,19 @@ def scan_next_stanza(iterator, **kwargs):
     :rtype: generator of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    for name, value in _scan_next_stanza(iterator, **kwargs):
+    for name, value in _scan_next_stanza(
+        iterator,
+        separator_regex=separator_regex,
+        skip_leading_newlines=skip_leading_newlines,
+    ):
         if name is not None:
             yield (name, value)
 
 
 def _scan_next_stanza(
-    iterator,
-    separator_regex=re.compile(r"[ \t]*:[ \t]*"),  # noqa: B008
-    skip_leading_newlines=False,
+    iterator: Iterable[str],
+    separator_regex: Optional[RgxType] = None,
+    skip_leading_newlines: bool = False,
 ):
     """
     .. versionadded:: 0.4.0
@@ -93,8 +124,10 @@ def _scan_next_stanza(
     value = ""
     begun = False
     more_left = False
-    if not hasattr(separator_regex, "match"):
-        separator_regex = re.compile(separator_regex)
+    if separator_regex is None:
+        sep = DEFAULT_SEPARATOR_REGEX
+    else:
+        sep = re.compile(separator_regex)
     for line in iterator:
         line = line.rstrip("\r\n")
         if line.startswith((" ", "\t")):
@@ -104,7 +137,7 @@ def _scan_next_stanza(
             else:
                 raise UnexpectedFoldingError(line)
         else:
-            m = separator_regex.search(line)
+            m = sep.search(line)
             if m:
                 begun = True
                 if name is not None:
@@ -124,7 +157,11 @@ def _scan_next_stanza(
     yield (None, more_left)
 
 
-def scan_next_stanza_string(s, **kwargs):
+def scan_next_stanza_string(
+    s: str,
+    separator_regex: Optional[RgxType] = None,
+    skip_leading_newlines: bool = False,
+) -> Tuple[List[Tuple[str, str]], str]:
     """
     .. versionadded:: 0.4.0
 
@@ -142,12 +179,22 @@ def scan_next_stanza_string(s, **kwargs):
     :raises ScannerError: if the header section is malformed
     """
     lineiter = iter(ascii_splitlines(s))
-    fields = list(scan_next_stanza(lineiter, **kwargs))
+    fields = list(
+        scan_next_stanza(
+            lineiter,
+            separator_regex=separator_regex,
+            skip_leading_newlines=skip_leading_newlines,
+        )
+    )
     body = "".join(lineiter)
     return (fields, body)
 
 
-def scan_stanzas(iterable, **kwargs):
+def scan_stanzas(
+    iterable: Iterable[str],
+    separator_regex: Optional[RgxType] = None,
+    skip_leading_newlines: bool = False,
+) -> Iterator[List[Tuple[str, str]]]:
     """
     .. versionadded:: 0.4.0
 
@@ -168,16 +215,26 @@ def scan_stanzas(iterable, **kwargs):
     """
     lineiter = iter(iterable)
     while True:
-        fields = list(_scan_next_stanza(lineiter, **kwargs))
+        fields = list(
+            _scan_next_stanza(
+                lineiter,
+                separator_regex=separator_regex,
+                skip_leading_newlines=skip_leading_newlines,
+            )
+        )
         more_left = fields.pop()[1]
         if fields or more_left:
             yield fields
         else:
             break
-        kwargs["skip_leading_newlines"] = True
+        skip_leading_newlines = True
 
 
-def scan_stanzas_string(s, **kwargs):
+def scan_stanzas_string(
+    s: str,
+    separator_regex: Optional[RgxType] = None,
+    skip_leading_newlines: bool = False,
+) -> Iterator[List[Tuple[str, str]]]:
     """
     .. versionadded:: 0.4.0
 
@@ -195,4 +252,8 @@ def scan_stanzas_string(s, **kwargs):
     :rtype: generator of lists of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    return scan_stanzas(ascii_splitlines(s), **kwargs)
+    return scan_stanzas(
+        ascii_splitlines(s),
+        separator_regex=separator_regex,
+        skip_leading_newlines=skip_leading_newlines,
+    )
