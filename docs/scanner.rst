@@ -76,3 +76,6 @@ functions in order to configure scanning behavior:
 
 .. versionadded:: 0.3.0
     ``separator_regex``, ``skip_leading_newlines``
+
+.. versionchanged:: 0.5.0
+    The scanner options are now keyword-only.

@@ -12,6 +12,7 @@ DEFAULT_SEPARATOR_REGEX = re.compile(r"[ \t]*:[ \t]*")
 
 def scan_string(
     s: str,
+    *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
 ) -> Iterator[FieldType]:
@@ -37,6 +38,7 @@ def scan_string(
 
 def scan(
     iterable: Iterable[str],
+    *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
 ) -> Iterator[FieldType]:
@@ -77,6 +79,7 @@ def scan(
 
 def scan_next_stanza(
     iterator: Iterable[str],
+    *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
 ) -> Iterator[Tuple[str, str]]:
@@ -107,6 +110,7 @@ def scan_next_stanza(
 
 def _scan_next_stanza(
     iterator: Iterable[str],
+    *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
 ) -> Iterator[FieldType]:
@@ -159,6 +163,7 @@ def _scan_next_stanza(
 
 def scan_next_stanza_string(
     s: str,
+    *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
 ) -> Tuple[List[Tuple[str, str]], str]:
@@ -192,6 +197,7 @@ def scan_next_stanza_string(
 
 def scan_stanzas(
     iterable: Iterable[str],
+    *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
 ) -> Iterator[List[Tuple[str, str]]]:
@@ -232,6 +238,7 @@ def scan_stanzas(
 
 def scan_stanzas_string(
     s: str,
+    *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
 ) -> Iterator[List[Tuple[str, str]]]:
