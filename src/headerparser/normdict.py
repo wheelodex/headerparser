@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Tuple, Uni
 from .types import lower
 
 
-class NormalizedDict(MutableMapping[Any, Any]):
+class NormalizedDict(MutableMapping):
     """
     A generalization of a case-insensitive dictionary.  `NormalizedDict` takes
     a callable (the "normalizer") that is applied to any key passed to its
