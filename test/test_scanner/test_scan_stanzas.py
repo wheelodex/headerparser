@@ -22,9 +22,14 @@ def scanner(request):
     return request.param
 
 
-def test_simple(scanner):
-    assert list(
-        scanner(
+@pytest.mark.parametrize(
+    "lines,fields,skip_leading_newlines",
+    [
+        ("", [], True),
+        ("", [], False),
+        ("\n\n", [], True),
+        ("\n\n", [[]], False),
+        (
             "Foo: red\n"
             "Bar: green\n"
             "Baz: blue\n"
@@ -35,19 +40,34 @@ def test_simple(scanner):
             "\n"
             "Blue: foo\n"
             "Red: bar\n"
-            "Green: baz\n"
-        )
-    ) == [
-        [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
-        [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
-        [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
-    ]
-
-
-@pytest.mark.parametrize("skip_leading_newlines", [True, False])
-def test_extra_interstitial_blanks(scanner, skip_leading_newlines):
-    assert list(
-        scanner(
+            "Green: baz\n",
+            [
+                [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
+                [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
+                [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
+            ],
+            True,
+        ),
+        (
+            "Foo: red\n"
+            "Bar: green\n"
+            "Baz: blue\n"
+            "\n"
+            "Quux: ruby\n"
+            "Glarch: sapphire\n"
+            "Cleesh: garnet\n"
+            "\n"
+            "Blue: foo\n"
+            "Red: bar\n"
+            "Green: baz\n",
+            [
+                [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
+                [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
+                [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
+            ],
+            False,
+        ),
+        (
             "Foo: red\n"
             "Bar: green\n"
             "Baz: blue\n"
@@ -62,19 +82,36 @@ def test_extra_interstitial_blanks(scanner, skip_leading_newlines):
             "Blue: foo\n"
             "Red: bar\n"
             "Green: baz\n",
-            skip_leading_newlines=skip_leading_newlines,
-        )
-    ) == [
-        [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
-        [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
-        [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
-    ]
-
-
-@pytest.mark.parametrize("skip_leading_newlines", [True, False])
-def test_trailing_blanks(scanner, skip_leading_newlines):
-    assert list(
-        scanner(
+            [
+                [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
+                [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
+                [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
+            ],
+            True,
+        ),
+        (
+            "Foo: red\n"
+            "Bar: green\n"
+            "Baz: blue\n"
+            "\n"
+            "\n"
+            "Quux: ruby\n"
+            "Glarch: sapphire\n"
+            "Cleesh: garnet\n"
+            "\n"
+            "\n"
+            "\n"
+            "Blue: foo\n"
+            "Red: bar\n"
+            "Green: baz\n",
+            [
+                [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
+                [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
+                [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
+            ],
+            False,
+        ),
+        (
             "Foo: red\n"
             "Bar: green\n"
             "Baz: blue\n"
@@ -88,18 +125,35 @@ def test_trailing_blanks(scanner, skip_leading_newlines):
             "Green: baz\n"
             "\n"
             "\n",
-            skip_leading_newlines=skip_leading_newlines,
-        )
-    ) == [
-        [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
-        [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
-        [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
-    ]
-
-
-def test_leading_blanks_skip(scanner):
-    assert list(
-        scanner(
+            [
+                [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
+                [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
+                [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
+            ],
+            True,
+        ),
+        (
+            "Foo: red\n"
+            "Bar: green\n"
+            "Baz: blue\n"
+            "\n"
+            "Quux: ruby\n"
+            "Glarch: sapphire\n"
+            "Cleesh: garnet\n"
+            "\n"
+            "Blue: foo\n"
+            "Red: bar\n"
+            "Green: baz\n"
+            "\n"
+            "\n",
+            [
+                [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
+                [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
+                [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
+            ],
+            False,
+        ),
+        (
             "\n"
             "\n"
             "Foo: red\n"
@@ -113,18 +167,14 @@ def test_leading_blanks_skip(scanner):
             "Blue: foo\n"
             "Red: bar\n"
             "Green: baz\n",
-            skip_leading_newlines=True,
-        )
-    ) == [
-        [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
-        [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
-        [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
-    ]
-
-
-def test_leading_blanks_no_skip(scanner):
-    assert list(
-        scanner(
+            [
+                [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
+                [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
+                [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
+            ],
+            True,
+        ),
+        (
             "\n"
             "\n"
             "Foo: red\n"
@@ -138,14 +188,18 @@ def test_leading_blanks_no_skip(scanner):
             "Blue: foo\n"
             "Red: bar\n"
             "Green: baz\n",
-            skip_leading_newlines=False,
-        )
-    ) == [
-        [],
-        [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
-        [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
-        [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
-    ]
+            [
+                [],
+                [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")],
+                [("Quux", "ruby"), ("Glarch", "sapphire"), ("Cleesh", "garnet")],
+                [("Blue", "foo"), ("Red", "bar"), ("Green", "baz")],
+            ],
+            False,
+        ),
+    ],
+)
+def test_scan_stanzas(lines, fields, skip_leading_newlines, scanner):
+    assert list(scanner(lines, skip_leading_newlines=skip_leading_newlines)) == fields
 
 
 def test_invalid_stanza(scanner):
@@ -173,16 +227,3 @@ def test_invalid_stanza(scanner):
     assert str(excinfo.value) == (
         'Invalid header line encountered: "Wait, this isn\'t a header."'
     )
-
-
-@pytest.mark.parametrize("skip_leading_newlines", [True, False])
-def test_empty(scanner, skip_leading_newlines):
-    assert list(scanner("", skip_leading_newlines=skip_leading_newlines)) == []
-
-
-def test_all_blanks_skip(scanner):
-    assert list(scanner("\n\n", skip_leading_newlines=True)) == []
-
-
-def test_all_blanks_no_skip(scanner):
-    assert list(scanner("\n\n", skip_leading_newlines=False)) == [[]]
