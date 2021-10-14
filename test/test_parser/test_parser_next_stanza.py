@@ -3,7 +3,7 @@ import pytest
 from headerparser import HeaderParser, MissingBodyError
 
 
-def test_simple():
+def test_simple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -17,7 +17,7 @@ def test_simple():
     assert fp.read() == "This body is not consumed.\n"
 
 
-def test_simple_string():
+def test_simple_string() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -30,7 +30,7 @@ def test_simple_string():
     assert rest == "This body is not consumed.\n"
 
 
-def test_body_true():
+def test_body_true() -> None:
     parser = HeaderParser(body=True)
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -42,7 +42,7 @@ def test_body_true():
         parser.parse_next_stanza(fp)
 
 
-def test_body_true_string():
+def test_body_true_string() -> None:
     parser = HeaderParser(body=True)
     parser.add_field("Foo")
     parser.add_field("Bar")

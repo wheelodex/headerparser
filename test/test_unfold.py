@@ -35,5 +35,5 @@ from headerparser import unfold
         ("some\nsort\rof\r\nvalue", "some sort of value"),
     ],
 )
-def test_unfold_single_line(sin, sout):
+def test_unfold_single_line(sin: str, sout: str) -> None:
     assert unfold(sin) == sout

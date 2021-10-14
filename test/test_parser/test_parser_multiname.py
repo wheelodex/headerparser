@@ -3,7 +3,7 @@ import headerparser
 from headerparser import HeaderParser
 
 
-def test_multiname_use_first():
+def test_multiname_use_first() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", "Bar")
     msg = parser.parse_string("Foo: red")
@@ -11,7 +11,7 @@ def test_multiname_use_first():
     assert msg.body is None
 
 
-def test_multiname_use_second():
+def test_multiname_use_second() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", "Bar")
     msg = parser.parse_string("Bar: red")
@@ -19,7 +19,7 @@ def test_multiname_use_second():
     assert msg.body is None
 
 
-def test_multiname_multiple():
+def test_multiname_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", "Bar", multiple=True)
     parser.add_field("Baz")
@@ -28,7 +28,7 @@ def test_multiname_multiple():
     assert msg.body is None
 
 
-def test_multiname_bad_multiple():
+def test_multiname_bad_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", "Bar")
     parser.add_field("Baz")
@@ -38,7 +38,7 @@ def test_multiname_bad_multiple():
     assert excinfo.value.name == "Foo"
 
 
-def test_multiname_conflict():
+def test_multiname_conflict() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", "Bar", multiple=True)
     with pytest.raises(ValueError) as excinfo:
@@ -46,7 +46,7 @@ def test_multiname_conflict():
     assert "field defined more than once" in str(excinfo.value)
 
 
-def test_multiname_dest():
+def test_multiname_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", "Bar", dest="Baz")
     msg = parser.parse_string("Bar: red")

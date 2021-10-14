@@ -3,11 +3,11 @@ import pytest
 from headerparser import NormalizedDict
 
 
-def normdash(s):
+def normdash(s: str) -> str:
     return re.sub(r"[-_\s]+", "-", s.lower())
 
 
-def test_empty():
+def test_empty() -> None:
     nd = NormalizedDict(normalizer=normdash)
     assert dict(nd) == {}
     assert nd.body is None
@@ -16,7 +16,7 @@ def test_empty():
     assert nd.normalizer is normdash
 
 
-def test_one():
+def test_one() -> None:
     nd = NormalizedDict({"A Key": "bar"}, normalizer=normdash)
     assert dict(nd) == {"A Key": "bar"}
     assert nd.body is None
@@ -25,13 +25,13 @@ def test_one():
     assert nd.normalizer is normdash
 
 
-def test_get_cases():
+def test_get_cases() -> None:
     nd = NormalizedDict({"A Key": "bar"}, normalizer=normdash)
     assert nd["A Key"] == "bar"
     assert nd["A Key"] == nd["a_key"] == nd["A-KEY"] == nd["A - key"]
 
 
-def test_set():
+def test_set() -> None:
     nd = NormalizedDict(normalizer=normdash)
     assert dict(nd) == {}
     nd["A Key"] = "bar"
@@ -44,7 +44,7 @@ def test_set():
     assert nd["A Key"] == nd["a_key"] == nd["A-KEY"] == nd["A - key"]
 
 
-def test_del():
+def test_del() -> None:
     nd = NormalizedDict(
         {"A Key": "bar", "Another-Key": "FOO"},
         normalizer=normdash,
@@ -55,7 +55,7 @@ def test_del():
     assert dict(nd) == {}
 
 
-def test_del_nexists():
+def test_del_nexists() -> None:
     nd = NormalizedDict(
         {"A Key": "bar", "Another-Key": "FOO"},
         normalizer=normdash,
@@ -64,31 +64,31 @@ def test_del_nexists():
         del nd["AKey"]
 
 
-def test_eq_empty():
+def test_eq_empty() -> None:
     nd = NormalizedDict(normalizer=normdash)
     nd2 = NormalizedDict(normalizer=normdash)
     assert nd == nd2
 
 
-def test_eq_nonempty():
+def test_eq_nonempty() -> None:
     nd = NormalizedDict({"Foo": "bar"}, normalizer=normdash)
     nd2 = NormalizedDict({"Foo": "bar"}, normalizer=normdash)
     assert nd == nd2
 
 
-def test_eq_cases():
+def test_eq_cases() -> None:
     nd = NormalizedDict({"A Key": "bar"}, normalizer=normdash)
     nd2 = NormalizedDict({"a_key": "bar"}, normalizer=normdash)
     assert nd == nd2
 
 
-def test_neq():
+def test_neq() -> None:
     assert NormalizedDict({"A Key": "A Value"}, normalizer=normdash) != NormalizedDict(
         {"A Key": "a_value"}, normalizer=normdash
     )
 
 
-def test_normalized():
+def test_normalized() -> None:
     nd = NormalizedDict({"A Key": "BAR"}, normalizer=normdash)
     nd2 = nd.normalized()
     assert isinstance(nd2, NormalizedDict)
@@ -98,7 +98,7 @@ def test_normalized():
     assert nd == nd2
 
 
-def test_normalized_with_body():
+def test_normalized_with_body() -> None:
     nd = NormalizedDict({"A Key": "BAR"}, body="Foo Baz", normalizer=normdash)
     nd2 = nd.normalized()
     assert isinstance(nd2, NormalizedDict)
@@ -108,14 +108,14 @@ def test_normalized_with_body():
     assert nd == nd2
 
 
-def test_normalized_dict():
+def test_normalized_dict() -> None:
     nd = NormalizedDict({"A Key": "BAR"}, normalizer=normdash)
     nd2 = nd.normalized_dict()
     assert isinstance(nd2, dict)
     assert nd2 == {"a-key": "BAR"}
 
 
-def test_eq_dict():
+def test_eq_dict() -> None:
     nd = NormalizedDict({"A Key": "BAR"}, normalizer=normdash)
     assert nd == {"A Key": "BAR"}
     assert {"A Key": "BAR"} == nd
@@ -127,25 +127,25 @@ def test_eq_dict():
     assert {"A Key": "bar"} != nd
 
 
-def test_body_neq_dict():
+def test_body_neq_dict() -> None:
     nd = NormalizedDict({"A Key": "BAR"}, body="", normalizer=normdash)
     assert nd != {"A Key": "BAR"}
     assert {"A Key": "BAR"} != nd
 
 
-def test_eq_body():
+def test_eq_body() -> None:
     nd = NormalizedDict({"A Key": "bar"}, body="", normalizer=normdash)
     nd2 = NormalizedDict({"a_KEY": "bar"}, body="", normalizer=normdash)
     assert nd == nd2
 
 
-def test_neq_body():
+def test_neq_body() -> None:
     nd = NormalizedDict({"A Key": "bar"}, body="yes", normalizer=normdash)
     nd2 = NormalizedDict({"a_KEY": "bar"}, body="no", normalizer=normdash)
     assert nd != nd2
 
 
-def test_init_list():
+def test_init_list() -> None:
     nd = NormalizedDict(
         [("A Key", "bar"), ("Another-Key", "baz"), ("A_KEY", "quux")],
         normalizer=normdash,
@@ -153,7 +153,7 @@ def test_init_list():
     assert dict(nd) == {"A_KEY": "quux", "Another-Key": "baz"}
 
 
-def test_copy():
+def test_copy() -> None:
     nd = NormalizedDict({"A Key": "bar"}, normalizer=normdash)
     nd2 = nd.copy()
     assert isinstance(nd2, NormalizedDict)
@@ -175,7 +175,7 @@ def test_copy():
     assert nd != nd2
 
 
-def test_copy_with_body():
+def test_copy_with_body() -> None:
     nd = NormalizedDict({"A Key": "bar"}, body="Glarch.", normalizer=normdash)
     nd2 = nd.copy()
     assert isinstance(nd2, NormalizedDict)

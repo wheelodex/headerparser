@@ -1,9 +1,11 @@
+from typing import Any
 import pytest
+from pytest_mock import MockerFixture
 import headerparser
 from headerparser import HeaderParser
 
 
-def test_simple():
+def test_simple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -13,7 +15,7 @@ def test_simple():
     assert msg.body is None
 
 
-def test_out_of_order():
+def test_out_of_order() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -23,7 +25,7 @@ def test_out_of_order():
     assert msg.body is None
 
 
-def test_different_cases():
+def test_different_cases() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -33,7 +35,7 @@ def test_different_cases():
     assert msg.body is None
 
 
-def test_empty_body():
+def test_empty_body() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -43,7 +45,7 @@ def test_empty_body():
     assert msg.body == ""
 
 
-def test_blank_body():
+def test_blank_body() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -53,7 +55,7 @@ def test_blank_body():
     assert msg.body == "\n"
 
 
-def test_body():
+def test_body() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -63,27 +65,25 @@ def test_body():
     assert msg.body == "This is a test."
 
 
-def test_headerlike_body():
+def test_headerlike_body() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
     parser.add_field("Baz")
     msg = parser.parse_string(
-        """\
-Foo: red
-Bar: green
-Baz: blue
-
-Foo: quux
-Bar: glarch
-Baz: cleesh
-"""
+        "Foo: red\n"
+        "Bar: green\n"
+        "Baz: blue\n"
+        "\n"
+        "Foo: quux\n"
+        "Bar: glarch\n"
+        "Baz: cleesh\n"
     )
     assert dict(msg) == {"Foo": "red", "Bar": "green", "Baz": "blue"}
     assert msg.body == "Foo: quux\nBar: glarch\nBaz: cleesh\n"
 
 
-def test_missing():
+def test_missing() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -93,7 +93,7 @@ def test_missing():
     assert msg.body is None
 
 
-def test_required():
+def test_required() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -103,14 +103,14 @@ def test_required():
     assert msg.body is None
 
 
-def test_required_default():
+def test_required_default() -> None:
     parser = HeaderParser()
     with pytest.raises(ValueError) as excinfo:
         parser.add_field("Foo", required=True, default="Why?")
     assert "required and default are mutually exclusive" in str(excinfo.value)
 
 
-def test_required_none():
+def test_required_none() -> None:
     parser = HeaderParser()
     parser.add_field("None", required=True, type=lambda _: None)
     msg = parser.parse_string("None: whatever")
@@ -118,7 +118,7 @@ def test_required_none():
     assert msg.body is None
 
 
-def test_missing_required():
+def test_missing_required() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -129,7 +129,7 @@ def test_missing_required():
     assert excinfo.value.name == "Baz"
 
 
-def test_present_default():
+def test_present_default() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -139,7 +139,7 @@ def test_present_default():
     assert msg.body is None
 
 
-def test_missing_default():
+def test_missing_default() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -149,7 +149,7 @@ def test_missing_default():
     assert msg.body is None
 
 
-def test_missing_None_default():
+def test_missing_None_default() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -159,7 +159,7 @@ def test_missing_None_default():
     assert msg.body is None
 
 
-def test_multiple():
+def test_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True)
     parser.add_field("Bar")
@@ -168,7 +168,7 @@ def test_multiple():
     assert msg.body is None
 
 
-def test_one_multiple():
+def test_one_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True)
     parser.add_field("Bar")
@@ -177,7 +177,7 @@ def test_one_multiple():
     assert msg.body is None
 
 
-def test_no_multiple():
+def test_no_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True)
     parser.add_field("Bar")
@@ -186,7 +186,7 @@ def test_no_multiple():
     assert msg.body is None
 
 
-def test_bad_multiple():
+def test_bad_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True)
     parser.add_field("Bar")
@@ -196,7 +196,7 @@ def test_bad_multiple():
     assert excinfo.value.name == "Bar"
 
 
-def test_default_multiple():
+def test_default_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True, default=42)
     parser.add_field("Bar")
@@ -205,7 +205,7 @@ def test_default_multiple():
     assert msg.body is None
 
 
-def test_present_default_multiple():
+def test_present_default_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True, default=42)
     parser.add_field("Bar")
@@ -214,7 +214,7 @@ def test_present_default_multiple():
     assert msg.body is None
 
 
-def test_present_default_many_multiple():
+def test_present_default_many_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True, default=42)
     parser.add_field("Bar")
@@ -223,7 +223,7 @@ def test_present_default_many_multiple():
     assert msg.body is None
 
 
-def test_required_multiple():
+def test_required_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True, required=True)
     parser.add_field("Bar")
@@ -232,7 +232,7 @@ def test_required_multiple():
     assert msg.body is None
 
 
-def test_required_many_multiple():
+def test_required_many_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True, required=True)
     parser.add_field("Bar")
@@ -241,7 +241,7 @@ def test_required_many_multiple():
     assert msg.body is None
 
 
-def test_missing_required_multiple():
+def test_missing_required_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True, required=True)
     parser.add_field("Bar")
@@ -251,7 +251,7 @@ def test_missing_required_multiple():
     assert excinfo.value.name == "Foo"
 
 
-def test_unknown():
+def test_unknown() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -262,7 +262,7 @@ def test_unknown():
     assert excinfo.value.name == "Quux"
 
 
-def test_empty_input():
+def test_empty_input() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -272,7 +272,7 @@ def test_empty_input():
     assert msg.body is None
 
 
-def test_trailing_whitespace():
+def test_trailing_whitespace() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -286,7 +286,7 @@ def test_trailing_whitespace():
     assert msg.body is None
 
 
-def test_redefinition():
+def test_redefinition() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     with pytest.raises(ValueError) as excinfo:
@@ -294,7 +294,7 @@ def test_redefinition():
     assert "field defined more than once" in str(excinfo.value)
 
 
-def test_many_missing_required():
+def test_many_missing_required() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", required=True)
     parser.add_field("Bar", required=True)
@@ -304,7 +304,7 @@ def test_many_missing_required():
     assert excinfo.value.name in ("Foo", "Bar", "Baz")
 
 
-def test_unfold():
+def test_unfold() -> None:
     parser = HeaderParser()
     parser.add_field("Folded")
     parser.add_field("Unfolded", unfold=True)
@@ -323,7 +323,7 @@ def test_unfold():
     assert msg.body is None
 
 
-def test_space_in_name():
+def test_space_in_name() -> None:
     parser = HeaderParser()
     parser.add_field("Key Name")
     parser.add_field("Bar")
@@ -333,10 +333,8 @@ def test_space_in_name():
     assert msg.body is None
 
 
-def test_scan_opts_passed(mocker):
-    import headerparser.parser
-
-    mocker.patch(
+def test_scan_opts_passed(mocker: MockerFixture) -> None:
+    m = mocker.patch(
         "headerparser.parser.scan_string",
         wraps=headerparser.parser.scan_string,
     )
@@ -348,14 +346,14 @@ def test_scan_opts_passed(mocker):
     parser.add_field("Bar")
     parser.add_field("Baz")
     parser.parse_string("Foo: red\nBar: green\nBaz: blue\n")
-    headerparser.parser.scan_string.assert_called_with(
+    m.assert_called_with(
         "Foo: red\nBar: green\nBaz: blue\n",
         separator_regex=r"\s*:\s*",
         skip_leading_newlines=True,
     )
 
 
-def test_body_twice():
+def test_body_twice() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -374,7 +372,7 @@ def test_body_twice():
 
 
 @pytest.mark.parametrize("name", [42, None, 3.14, True, ["B", "a", "r"]])
-def test_nonstr_field_name(name):
+def test_nonstr_field_name(name: Any) -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     with pytest.raises(TypeError) as excinfo:

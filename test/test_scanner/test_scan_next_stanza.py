@@ -1,3 +1,4 @@
+from typing import List
 import pytest
 from headerparser import scan_next_stanza, scan_next_stanza_string
 
@@ -108,7 +109,9 @@ from headerparser import scan_next_stanza, scan_next_stanza_string
         ),
     ],
 )
-def test_scan_next_stanza(lines, fields, trailer, skip_leading_newlines):
+def test_scan_next_stanza(
+    lines: List[str], fields: List[str], trailer: List[str], skip_leading_newlines: bool
+) -> None:
     liter = iter(lines)
     assert (
         list(scan_next_stanza(liter, skip_leading_newlines=skip_leading_newlines))

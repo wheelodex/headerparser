@@ -3,7 +3,7 @@ import headerparser
 from headerparser import HeaderParser
 
 
-def test_dest():
+def test_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="notfoo")
     parser.add_field("Bar", dest="notbar")
@@ -13,7 +13,7 @@ def test_dest():
     assert msg.body is None
 
 
-def test_dest_conflict():
+def test_dest_conflict() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="quux")
     with pytest.raises(ValueError) as excinfo:
@@ -21,7 +21,7 @@ def test_dest_conflict():
     assert "destination defined more than once" in str(excinfo.value)
 
 
-def test_header_vs_eq_dest():
+def test_header_vs_eq_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     with pytest.raises(ValueError) as excinfo:
@@ -29,7 +29,7 @@ def test_header_vs_eq_dest():
     assert "destination defined more than once" in str(excinfo.value)
 
 
-def test_header_vs_like_dest():
+def test_header_vs_like_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     with pytest.raises(ValueError) as excinfo:
@@ -37,7 +37,7 @@ def test_header_vs_like_dest():
     assert "destination defined more than once" in str(excinfo.value)
 
 
-def test_dest_vs_eq_header():
+def test_dest_vs_eq_header() -> None:
     parser = HeaderParser()
     parser.add_field("Bar", dest="Foo")
     with pytest.raises(ValueError) as excinfo:
@@ -45,7 +45,7 @@ def test_dest_vs_eq_header():
     assert "destination defined more than once" in str(excinfo.value)
 
 
-def test_header_eq_dest():
+def test_header_eq_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="Foo")
     msg = parser.parse_string("foo: red")
@@ -53,7 +53,7 @@ def test_header_eq_dest():
     assert msg.body is None
 
 
-def test_header_like_dest():
+def test_header_like_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="FOO")
     msg = parser.parse_string("foo: red")
@@ -61,7 +61,7 @@ def test_header_like_dest():
     assert msg.body is None
 
 
-def test_header_missing_default_dest():
+def test_header_missing_default_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="FOO", default=42)
     msg = parser.parse_string("")
@@ -69,7 +69,7 @@ def test_header_missing_default_dest():
     assert msg.body is None
 
 
-def test_switched_dest():
+def test_switched_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="Bar")
     parser.add_field("Bar", dest="Foo")
@@ -78,7 +78,7 @@ def test_switched_dest():
     assert msg.body is None
 
 
-def test_one_missing_required_switched_dest():
+def test_one_missing_required_switched_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="Bar", required=True)
     parser.add_field("Bar", dest="Foo", required=True)
@@ -88,7 +88,7 @@ def test_one_missing_required_switched_dest():
     assert excinfo.value.name == "Bar"
 
 
-def test_missing_default_switched_dest():
+def test_missing_default_switched_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="Bar", default=42)
     parser.add_field("Bar", dest="Foo", default="17")
@@ -97,7 +97,7 @@ def test_missing_default_switched_dest():
     assert msg.body is None
 
 
-def test_one_missing_default_switched_dest():
+def test_one_missing_default_switched_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="Bar", default=42)
     parser.add_field("Bar", dest="Foo", default="17")
@@ -106,7 +106,7 @@ def test_one_missing_default_switched_dest():
     assert msg.body is None
 
 
-def test_dest_multiple():
+def test_dest_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="list", multiple=True)
     msg = parser.parse_string("Foo: red\nFoo: green\nFoo: blue")
@@ -114,7 +114,7 @@ def test_dest_multiple():
     assert msg.body is None
 
 
-def test_dest_as_unknown_header():
+def test_dest_as_unknown_header() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="Bar")
     with pytest.raises(headerparser.UnknownFieldError) as excinfo:

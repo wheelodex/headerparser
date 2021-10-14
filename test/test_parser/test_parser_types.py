@@ -1,8 +1,9 @@
+from typing import Any
 import pytest
 from headerparser import BOOL, FieldTypeError, HeaderParser
 
 
-def test_bool():
+def test_bool() -> None:
     parser = HeaderParser()
     parser.add_field("Boolean", type=BOOL)
     msg = parser.parse_string("Boolean: yes\n")
@@ -10,32 +11,30 @@ def test_bool():
     assert msg.body is None
 
 
-def test_multiple_bool():
+def test_multiple_bool() -> None:
     parser = HeaderParser()
     parser.add_field("Boolean", type=BOOL, multiple=True)
     msg = parser.parse_string(
-        """\
-Boolean: yes
-Boolean: y
-Boolean: on
-Boolean: true
-Boolean: 1
-Boolean: YES
-Boolean: TRUE
-Boolean: no
-Boolean: n
-Boolean: off
-Boolean: false
-Boolean: 0
-Boolean: NO
-Boolean: FALSE
-"""
+        "Boolean: yes\n"
+        "Boolean: y\n"
+        "Boolean: on\n"
+        "Boolean: true\n"
+        "Boolean: 1\n"
+        "Boolean: YES\n"
+        "Boolean: TRUE\n"
+        "Boolean: no\n"
+        "Boolean: n\n"
+        "Boolean: off\n"
+        "Boolean: false\n"
+        "Boolean: 0\n"
+        "Boolean: NO\n"
+        "Boolean: FALSE\n"
     )
     assert dict(msg) == {"Boolean": [True] * 7 + [False] * 7}
     assert msg.body is None
 
 
-def test_default_bool():
+def test_default_bool() -> None:
     parser = HeaderParser()
     parser.add_field("Boolean", type=BOOL, default="foo")
     msg = parser.parse_string("Boolean: Off")
@@ -43,7 +42,7 @@ def test_default_bool():
     assert msg.body is None
 
 
-def test_missing_default_bool():
+def test_missing_default_bool() -> None:
     parser = HeaderParser()
     parser.add_field("Boolean", type=BOOL, default="foo")
     msg = parser.parse_string("")
@@ -51,20 +50,20 @@ def test_missing_default_bool():
     assert msg.body is None
 
 
-def test_invalid_bool():
+def test_invalid_bool() -> None:
     parser = HeaderParser()
     parser.add_field("Boolean", type=BOOL)
     with pytest.raises(FieldTypeError) as excinfo:
         parser.parse_string("Boolean: One\n")
     assert str(excinfo.value) == (
-        "Error while parsing 'Boolean': 'One': ValueError: invalid boolean:" " 'One'"
+        "Error while parsing 'Boolean': 'One': ValueError: invalid boolean: 'One'"
     )
     assert excinfo.value.name == "Boolean"
     assert excinfo.value.value == "One"
     assert isinstance(excinfo.value.exc_value, ValueError)
 
 
-def test_bool_and_not_bool():
+def test_bool_and_not_bool() -> None:
     parser = HeaderParser()
     parser.add_field("Boolean", type=BOOL)
     parser.add_field("String")
@@ -73,13 +72,13 @@ def test_bool_and_not_bool():
     assert msg.body is None
 
 
-def test_bool_choices_bad_type():
+def test_bool_choices_bad_type() -> None:
     parser = HeaderParser()
     parser.add_field("Boolean", type=BOOL, choices=(False, "foo"))
     with pytest.raises(FieldTypeError) as excinfo:
         parser.parse_string("BOOLEAN: foo\n")
     assert str(excinfo.value) == (
-        "Error while parsing 'Boolean': 'foo': ValueError: invalid boolean:" " 'foo'"
+        "Error while parsing 'Boolean': 'foo': ValueError: invalid boolean: 'foo'"
     )
     assert excinfo.value.name == "Boolean"
     assert excinfo.value.value == "foo"
@@ -87,7 +86,7 @@ def test_bool_choices_bad_type():
     assert "invalid boolean" in str(excinfo.value.exc_value)
 
 
-def test_native_type():
+def test_native_type() -> None:
     parser = HeaderParser()
     parser.add_field("Number", "No.", type=int, dest="#")
     msg = parser.parse_string("Number: 42")
@@ -95,7 +94,7 @@ def test_native_type():
     assert msg.body is None
 
 
-def test_bad_native_type():
+def test_bad_native_type() -> None:
     parser = HeaderParser()
     parser.add_field("Number", "No.", type=int, dest="#")
     with pytest.raises(FieldTypeError) as excinfo:
@@ -109,11 +108,11 @@ def test_bad_native_type():
     assert isinstance(excinfo.value.exc_value, ValueError)
 
 
-def fieldtypeerror_raiser(_):
+def fieldtypeerror_raiser(_: Any) -> None:
     raise FieldTypeError("name", "value", None)
 
 
-def test_fieldtypeerror_raiser():
+def test_fieldtypeerror_raiser() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", type=fieldtypeerror_raiser)
     with pytest.raises(FieldTypeError) as excinfo:

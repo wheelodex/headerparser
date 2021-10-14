@@ -1,17 +1,19 @@
+from unittest.mock import Mock
 import pytest
+from pytest_mock import MockerFixture
 import headerparser
 from headerparser import BOOL, HeaderParser
 
 
 @pytest.fixture
-def use_as_body(mocker):
+def use_as_body(mocker: MockerFixture) -> Mock:
     def _use(nd, name, value):
         nd.body = value
 
     return mocker.Mock(side_effect=_use)
 
 
-def test_action(mocker):
+def test_action(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub)
@@ -23,7 +25,7 @@ def test_action(mocker):
     stub.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_missing(mocker):
+def test_action_missing(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub)
@@ -35,7 +37,7 @@ def test_action_missing(mocker):
     assert not stub.called
 
 
-def test_action_type(mocker):
+def test_action_type(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, type=BOOL)
@@ -46,7 +48,7 @@ def test_action_type(mocker):
     stub.assert_called_once_with(msg, "Foo", True)
 
 
-def test_action_type_error(mocker):
+def test_action_type_error(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, type=BOOL)
@@ -56,7 +58,7 @@ def test_action_type_error(mocker):
     assert not stub.called
 
 
-def test_action_required(mocker):
+def test_action_required(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, required=True)
@@ -68,7 +70,7 @@ def test_action_required(mocker):
     stub.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_required_missing(mocker):
+def test_action_required_missing(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, required=True)
@@ -79,7 +81,7 @@ def test_action_required_missing(mocker):
     assert not stub.called
 
 
-def test_action_choices(mocker):
+def test_action_choices(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, choices=["red", "green", "blue"])
@@ -90,7 +92,7 @@ def test_action_choices(mocker):
     stub.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_bad_choice(mocker):
+def test_action_bad_choice(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, choices=["red", "green", "blue"])
@@ -100,7 +102,7 @@ def test_action_bad_choice(mocker):
     assert not stub.called
 
 
-def test_action_unfold(mocker):
+def test_action_unfold(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, unfold=True)
@@ -111,7 +113,7 @@ def test_action_unfold(mocker):
     stub.assert_called_once_with(msg, "Foo", "folded text")
 
 
-def test_action_no_unfold(mocker):
+def test_action_no_unfold(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub)
@@ -122,7 +124,7 @@ def test_action_no_unfold(mocker):
     stub.assert_called_once_with(msg, "Foo", "folded\n  text ")
 
 
-def test_action_default(mocker):
+def test_action_default(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, default="orange")
@@ -134,7 +136,7 @@ def test_action_default(mocker):
     stub.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_default_missing(mocker):
+def test_action_default_missing(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, default="orange")
@@ -146,7 +148,7 @@ def test_action_default_missing(mocker):
     assert not stub.called
 
 
-def test_action_different_case(mocker):
+def test_action_different_case(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub)
@@ -158,7 +160,7 @@ def test_action_different_case(mocker):
     stub.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_multiname(mocker):
+def test_action_multiname(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", "Quux", action=stub)
@@ -170,7 +172,7 @@ def test_action_multiname(mocker):
     stub.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_multiple(mocker):
+def test_action_multiple(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo", action=stub, multiple=True)
@@ -188,7 +190,7 @@ def test_action_multiple(mocker):
     ]
 
 
-def test_action_dest(mocker):
+def test_action_dest(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     with pytest.raises(ValueError) as excinfo:
@@ -197,7 +199,7 @@ def test_action_dest(mocker):
     assert not stub.called
 
 
-def test_action_normalized_dest(mocker):
+def test_action_normalized_dest(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     with pytest.raises(ValueError) as excinfo:
@@ -206,7 +208,7 @@ def test_action_normalized_dest(mocker):
     assert not stub.called
 
 
-def test_action_additional(mocker):
+def test_action_additional(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo")
@@ -220,7 +222,7 @@ def test_action_additional(mocker):
     ]
 
 
-def test_action_multiple_additional(mocker):
+def test_action_multiple_additional(mocker: MockerFixture) -> None:
     stub = mocker.stub()
     parser = HeaderParser()
     parser.add_field("Foo")
@@ -239,7 +241,7 @@ def test_action_multiple_additional(mocker):
 
 
 @pytest.mark.parametrize("body", [True, None])
-def test_action_set_body_overwritten(body, use_as_body):
+def test_action_set_body_overwritten(body, use_as_body) -> None:
     parser = HeaderParser(body=body)
     parser.add_field("Foo", action=use_as_body)
     parser.add_field("Bar")
@@ -249,7 +251,7 @@ def test_action_set_body_overwritten(body, use_as_body):
     use_as_body.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_set_body_forbidden(use_as_body, mocker):
+def test_action_set_body_forbidden(use_as_body, mocker) -> None:
     parser = HeaderParser(body=False)
     parser.add_field("Foo", action=use_as_body)
     parser.add_field("Bar")
@@ -259,7 +261,7 @@ def test_action_set_body_forbidden(use_as_body, mocker):
 
 
 @pytest.mark.parametrize("body", [False, None])
-def test_action_set_body(body, use_as_body):
+def test_action_set_body(body, use_as_body) -> None:
     parser = HeaderParser(body=body)
     parser.add_field("Foo", action=use_as_body)
     parser.add_field("Bar")
@@ -269,7 +271,7 @@ def test_action_set_body(body, use_as_body):
     use_as_body.assert_called_once_with(msg, "Foo", "red")
 
 
-def test_action_set_body_missing(use_as_body, mocker):
+def test_action_set_body_missing(use_as_body, mocker) -> None:
     parser = HeaderParser(body=True)
     parser.add_field("Foo", action=use_as_body)
     parser.add_field("Bar")

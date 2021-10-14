@@ -3,7 +3,7 @@ import headerparser
 from headerparser import HeaderParser
 
 
-def test_additional():
+def test_additional() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -13,7 +13,7 @@ def test_additional():
     assert msg.body is None
 
 
-def test_many_additional():
+def test_many_additional() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -31,7 +31,7 @@ def test_many_additional():
     assert msg.body is None
 
 
-def test_intermixed_additional():
+def test_intermixed_additional() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -49,7 +49,7 @@ def test_intermixed_additional():
     assert msg.body is None
 
 
-def test_additional_only():
+def test_additional_only() -> None:
     parser = HeaderParser()
     parser.add_additional()
     msg = parser.parse_string("Foo: red\nBar: green\nBaz: blue\n")
@@ -57,7 +57,7 @@ def test_additional_only():
     assert msg.body is None
 
 
-def test_dest_additional():
+def test_dest_additional() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", dest="dest")
     parser.add_field("Bar")
@@ -66,7 +66,7 @@ def test_dest_additional():
     assert "add_additional and `dest` are mutually exclusive" in str(excinfo.value)
 
 
-def test_additional_dest():
+def test_additional_dest() -> None:
     parser = HeaderParser()
     parser.add_additional()
     parser.add_field("Foo")
@@ -75,7 +75,7 @@ def test_additional_dest():
     assert "add_additional and `dest` are mutually exclusive" in str(excinfo.value)
 
 
-def test_additional_bad_named_multiple():
+def test_additional_bad_named_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_additional()
@@ -85,7 +85,7 @@ def test_additional_bad_named_multiple():
     assert excinfo.value.name == "Foo"
 
 
-def test_additional_named_multiple():
+def test_additional_named_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True)
     parser.add_additional()
@@ -94,7 +94,7 @@ def test_additional_named_multiple():
     assert msg.body is None
 
 
-def test_additional_bad_multiple():
+def test_additional_bad_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_additional()
@@ -104,7 +104,7 @@ def test_additional_bad_multiple():
     assert excinfo.value.name == "Bar"
 
 
-def test_additional_bad_multiple_cases():
+def test_additional_bad_multiple_cases() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_additional()
@@ -114,7 +114,7 @@ def test_additional_bad_multiple_cases():
     assert excinfo.value.name == "BAR"
 
 
-def test_multiple_additional():
+def test_multiple_additional() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_additional(multiple=True)
@@ -123,7 +123,7 @@ def test_multiple_additional():
     assert msg.body is None
 
 
-def test_one_multiple_additional():
+def test_one_multiple_additional() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_additional(multiple=True)
@@ -132,7 +132,7 @@ def test_one_multiple_additional():
     assert msg.body is None
 
 
-def test_multiple_additional_bad_named_multiple():
+def test_multiple_additional_bad_named_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -143,7 +143,7 @@ def test_multiple_additional_bad_named_multiple():
     assert excinfo.value.name == "Foo"
 
 
-def test_additional_missing_named():
+def test_additional_missing_named() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -153,7 +153,7 @@ def test_additional_missing_named():
     assert msg.body is None
 
 
-def test_additional_missing_required_named():
+def test_additional_missing_required_named() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", required=True)
     parser.add_field("Bar")
@@ -164,7 +164,7 @@ def test_additional_missing_required_named():
     assert excinfo.value.name == "Foo"
 
 
-def test_missing_additional():
+def test_missing_additional() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -174,7 +174,7 @@ def test_missing_additional():
     assert msg.body is None
 
 
-def test_additional_type():
+def test_additional_type() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -184,7 +184,7 @@ def test_additional_type():
     assert msg.body is None
 
 
-def test_additional_bad_type():
+def test_additional_bad_type() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -200,7 +200,7 @@ def test_additional_bad_type():
     assert isinstance(excinfo.value.exc_value, ValueError)
 
 
-def test_additional_choices():
+def test_additional_choices() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -215,7 +215,7 @@ def test_additional_choices():
     assert msg.body is None
 
 
-def test_additional_bad_choices():
+def test_additional_bad_choices() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -227,7 +227,7 @@ def test_additional_bad_choices():
     assert excinfo.value.value == "taupe"
 
 
-def test_additional_unfold():
+def test_additional_unfold() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_additional(unfold=True)
@@ -246,7 +246,7 @@ def test_additional_unfold():
     assert msg.body is None
 
 
-def test_bad_additional_dest():
+def test_bad_additional_dest() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -254,7 +254,7 @@ def test_bad_additional_dest():
         parser.add_additional(dest="somewhere")
 
 
-def test_bad_additional_required():
+def test_bad_additional_required() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -262,7 +262,7 @@ def test_bad_additional_required():
         parser.add_additional(required=True)
 
 
-def test_bad_additional_default():
+def test_bad_additional_default() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -270,7 +270,7 @@ def test_bad_additional_default():
         parser.add_additional(default="")
 
 
-def test_additional_multiname():
+def test_additional_multiname() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", "Oof")
     parser.add_field("Bar", "Baz")
@@ -280,7 +280,7 @@ def test_additional_multiname():
     assert msg.body is None
 
 
-def test_additional_off():
+def test_additional_off() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")

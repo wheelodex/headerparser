@@ -1,14 +1,19 @@
 from io import StringIO
+from typing import Callable, Iterator, List, Tuple
 import pytest
 from headerparser import MalformedHeaderError, scan_stanzas, scan_stanzas_string
 
-
-def scan_stanzas_string_as_file(s, **kwargs):
-    return scan_stanzas(StringIO(s), **kwargs)
+ScannerType = Callable[[str, bool], Iterator[List[Tuple[str, str]]]]
 
 
-def scan_stanzas_string_as_list(s, **kwargs):
-    return scan_stanzas(s.splitlines(True), **kwargs)
+def scan_stanzas_string_as_file(
+    s: str, skip_leading_newlines: bool = False
+) -> Iterator[List[Tuple[str, str]]]:
+    return scan_stanzas(StringIO(s), skip_leading_newlines=skip_leading_newlines)
+
+
+def scan_stanzas_string_as_list(s: str, skip_leading_newlines: bool = False):
+    return scan_stanzas(s.splitlines(True), skip_leading_newlines=skip_leading_newlines)
 
 
 @pytest.fixture(
@@ -18,7 +23,7 @@ def scan_stanzas_string_as_list(s, **kwargs):
         scan_stanzas_string,
     ]
 )
-def scanner(request):
+def scanner(request) -> ScannerType:
     return request.param
 
 
@@ -198,11 +203,16 @@ def scanner(request):
         ),
     ],
 )
-def test_scan_stanzas(lines, fields, skip_leading_newlines, scanner):
+def test_scan_stanzas(
+    lines: str,
+    fields: List[List[Tuple[str, str]]],
+    skip_leading_newlines: bool,
+    scanner: ScannerType,
+) -> None:
     assert list(scanner(lines, skip_leading_newlines=skip_leading_newlines)) == fields
 
 
-def test_invalid_stanza(scanner):
+def test_invalid_stanza(scanner: ScannerType) -> None:
     stanzas = scanner(
         "Foo: red\n"
         "Bar: green\n"
@@ -214,7 +224,8 @@ def test_invalid_stanza(scanner):
         "\n"
         "Blue: foo\n"
         "Wait, this isn't a header.\n"
-        "Green: baz\n"
+        "Green: baz\n",
+        skip_leading_newlines=True,
     )
     assert next(stanzas) == [("Foo", "red"), ("Bar", "green"), ("Baz", "blue")]
     assert next(stanzas) == [

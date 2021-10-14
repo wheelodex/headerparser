@@ -2,7 +2,7 @@ import pytest
 from headerparser import BOOL, HeaderParser, InvalidChoiceError
 
 
-def test_choices():
+def test_choices() -> None:
     parser = HeaderParser()
     parser.add_field("Color", choices=["red", "green", "blue"])
     msg = parser.parse_string("Color: green")
@@ -10,7 +10,7 @@ def test_choices():
     assert msg.body is None
 
 
-def test_invalid_choice():
+def test_invalid_choice() -> None:
     parser = HeaderParser()
     parser.add_field("Color", choices=["red", "green", "blue"])
     with pytest.raises(InvalidChoiceError) as excinfo:
@@ -20,14 +20,14 @@ def test_invalid_choice():
     assert excinfo.value.value == "taupe"
 
 
-def test_no_choice():
+def test_no_choice() -> None:
     parser = HeaderParser()
     with pytest.raises(ValueError) as excinfo:
         parser.add_field("Unicorn", choices=[])
     assert str(excinfo.value) == "empty list supplied for choices"
 
 
-def test_default_choice():
+def test_default_choice() -> None:
     parser = HeaderParser()
     parser.add_field("Color", choices=["red", "green", "blue"], default="beige")
     msg = parser.parse_string("Color: blue")
@@ -35,7 +35,7 @@ def test_default_choice():
     assert msg.body is None
 
 
-def test_missing_default_choice():
+def test_missing_default_choice() -> None:
     parser = HeaderParser()
     parser.add_field("Color", choices=["red", "green", "blue"], default="beige")
     msg = parser.parse_string("")
@@ -43,7 +43,7 @@ def test_missing_default_choice():
     assert msg.body is None
 
 
-def test_unfold_multiple_choices():
+def test_unfold_multiple_choices() -> None:
     parser = HeaderParser()
     parser.add_field(
         "Corner",
@@ -56,7 +56,7 @@ def test_unfold_multiple_choices():
     assert msg.body is None
 
 
-def test_unfold_indented_choices():
+def test_unfold_indented_choices() -> None:
     parser = HeaderParser()
     parser.add_field(
         "Corner",
@@ -68,7 +68,7 @@ def test_unfold_indented_choices():
     assert msg.body is None
 
 
-def test_lower_choices():
+def test_lower_choices() -> None:
     parser = HeaderParser()
     parser.add_field("Color", choices=["red", "green", "blue"], type=str.lower)
     msg = parser.parse_string("Color: RED")
@@ -76,7 +76,7 @@ def test_lower_choices():
     assert msg.body is None
 
 
-def test_lower_invalid_choice():
+def test_lower_invalid_choice() -> None:
     parser = HeaderParser()
     parser.add_field("Color", choices=["red", "green", "blue"], type=str.lower)
     with pytest.raises(InvalidChoiceError) as excinfo:
@@ -86,7 +86,7 @@ def test_lower_invalid_choice():
     assert excinfo.value.value == "mauve"
 
 
-def test_bool_choices():
+def test_bool_choices() -> None:
     parser = HeaderParser()
     parser.add_field("Boolean", type=BOOL, choices=(False, "foo"))
     msg = parser.parse_string("Boolean: N\n")
@@ -94,7 +94,7 @@ def test_bool_choices():
     assert msg.body is None
 
 
-def test_bool_choices_invalid_choice():
+def test_bool_choices_invalid_choice() -> None:
     parser = HeaderParser()
     parser.add_field("Boolean", type=BOOL, choices=(False, "foo"))
     with pytest.raises(InvalidChoiceError) as excinfo:

@@ -1,20 +1,25 @@
 from io import StringIO
 import re
+from typing import Any, Callable, Iterator, List
+from _pytest.fixtures import FixtureRequest
 import pytest
 import headerparser
 from headerparser import scan, scan_string
+from headerparser.scanner import FieldType
+
+ScannerType = Callable[..., Iterator[FieldType]]
 
 
-def scan_string_as_file(s, **kwargs):
+def scan_string_as_file(s: str, **kwargs: Any) -> Iterator[FieldType]:
     return scan(StringIO(s), **kwargs)
 
 
-def scan_string_as_list(s, **kwargs):
+def scan_string_as_list(s: str, **kwargs: Any) -> Iterator[FieldType]:
     return scan(s.splitlines(True), **kwargs)
 
 
 @pytest.fixture(params=[scan_string_as_file, scan_string_as_list, scan_string])
-def scanner(request):
+def scanner(request: FixtureRequest) -> ScannerType:
     return request.param
 
 
@@ -133,7 +138,12 @@ def scanner(request):
     ],
 )
 @pytest.mark.parametrize("skip_leading_newlines", [True, False])
-def test_scan(lines, fields, skip_leading_newlines, scanner):
+def test_scan(
+    lines: str,
+    fields: List[FieldType],
+    skip_leading_newlines: bool,
+    scanner: ScannerType,
+) -> None:
     assert list(scanner(lines, skip_leading_newlines=skip_leading_newlines)) == fields
 
 
@@ -156,7 +166,12 @@ def test_scan(lines, fields, skip_leading_newlines, scanner):
         ("\n\n", [], True),
     ],
 )
-def test_scan_skip(lines, fields, skip_leading_newlines, scanner):
+def test_scan_skip(
+    lines: str,
+    fields: List[FieldType],
+    skip_leading_newlines: bool,
+    scanner: ScannerType,
+) -> None:
     assert list(scanner(lines, skip_leading_newlines=skip_leading_newlines)) == fields
 
 
@@ -195,7 +210,9 @@ def test_scan_skip(lines, fields, skip_leading_newlines, scanner):
         ),
     ],
 )
-def test_scan_separator_regex(lines, fields, separator_regex, scanner):
+def test_scan_separator_regex(
+    lines: str, fields: List[FieldType], separator_regex: bool, scanner: ScannerType
+) -> None:
     assert list(scanner(lines, separator_regex=separator_regex)) == fields
 
 
@@ -226,13 +243,15 @@ def test_scan_separator_regex(lines, fields, separator_regex, scanner):
     ],
 )
 @pytest.mark.parametrize("skip_leading_newlines", [True, False])
-def test_scan_string(lines, fields, skip_leading_newlines):
+def test_scan_string(
+    lines: str, fields: List[FieldType], skip_leading_newlines: bool
+) -> None:
     assert (
         list(scan_string(lines, skip_leading_newlines=skip_leading_newlines)) == fields
     )
 
 
-def test_lines_no_ends():
+def test_lines_no_ends() -> None:
     assert list(
         scan(
             [
@@ -253,14 +272,14 @@ def test_lines_no_ends():
     ]
 
 
-def test_malformed_header(scanner):
+def test_malformed_header(scanner: ScannerType) -> None:
     with pytest.raises(headerparser.MalformedHeaderError) as excinfo:
         list(scanner("Foo: red\nBar green\nBaz: blue\n"))
     assert str(excinfo.value) == "Invalid header line encountered: 'Bar green'"
     assert excinfo.value.line == "Bar green"
 
 
-def test_unexpected_folding(scanner):
+def test_unexpected_folding(scanner: ScannerType) -> None:
     with pytest.raises(headerparser.UnexpectedFoldingError) as excinfo:
         list(scanner(" Foo: red\nBar green\nBaz: blue\n"))
     assert str(excinfo.value) == (
@@ -269,7 +288,7 @@ def test_unexpected_folding(scanner):
     assert excinfo.value.line == " Foo: red"
 
 
-def test_separator_regex_default_separator(scanner):
+def test_separator_regex_default_separator(scanner: ScannerType) -> None:
     with pytest.raises(headerparser.MalformedHeaderError) as excinfo:
         list(scanner("Foo = red\nBar: green\n", separator_regex=r"\s*=\s*"))
     assert str(excinfo.value) == "Invalid header line encountered: 'Bar: green'"

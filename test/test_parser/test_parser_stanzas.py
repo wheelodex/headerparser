@@ -1,18 +1,27 @@
 from io import StringIO
+from typing import Any, Callable, Iterator
 import pytest
 import headerparser
-from headerparser import HeaderParser, scan_stanzas_string
+from headerparser import HeaderParser, NormalizedDict, scan_stanzas_string
+
+PMethod = Callable[[HeaderParser[str], str], Iterator[NormalizedDict[str, Any]]]
 
 
-def parse_stanzas_string(p, s):
+def parse_stanzas_string(
+    p: HeaderParser[str], s: str
+) -> Iterator[NormalizedDict[str, Any]]:
     return p.parse_stanzas_string(s)
 
 
-def parse_stanzas_string_as_file(p, s):
+def parse_stanzas_string_as_file(
+    p: HeaderParser[str], s: str
+) -> Iterator[NormalizedDict[str, Any]]:
     return p.parse_stanzas(StringIO(s))
 
 
-def parse_stanzas_string_as_stream(p, s):
+def parse_stanzas_string_as_stream(
+    p: HeaderParser[str], s: str
+) -> Iterator[NormalizedDict[str, Any]]:
     return p.parse_stanzas_stream(scan_stanzas_string(s))
 
 
@@ -23,11 +32,11 @@ def parse_stanzas_string_as_stream(p, s):
         parse_stanzas_string_as_stream,
     ]
 )
-def pmethod(request):
+def pmethod(request) -> PMethod:
     return request.param
 
 
-def test_simple(pmethod):
+def test_simple(pmethod: PMethod) -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -46,7 +55,7 @@ def test_simple(pmethod):
     assert m3.body is None
 
 
-def test_invalid_stanza(pmethod):
+def test_invalid_stanza(pmethod: PMethod) -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -70,7 +79,7 @@ def test_invalid_stanza(pmethod):
     assert excinfo.value.name == "Quux"
 
 
-def test_some_required(pmethod):
+def test_some_required(pmethod: PMethod) -> None:
     parser = HeaderParser()
     parser.add_field("Foo", required=True)
     parser.add_field("Bar")
@@ -94,7 +103,7 @@ def test_some_required(pmethod):
     assert excinfo.value.name == "Foo"
 
 
-def test_disjoint_keys(pmethod):
+def test_disjoint_keys(pmethod: PMethod) -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -108,7 +117,7 @@ def test_disjoint_keys(pmethod):
     assert m3.body is None
 
 
-def test_overlapping_keys(pmethod):
+def test_overlapping_keys(pmethod: PMethod) -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -124,7 +133,7 @@ def test_overlapping_keys(pmethod):
     assert m3.body is None
 
 
-def test_multiple(pmethod):
+def test_multiple(pmethod: PMethod) -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar", multiple=True)
@@ -151,7 +160,7 @@ def test_multiple(pmethod):
     assert m3.body is None
 
 
-def test_default(pmethod):
+def test_default(pmethod: PMethod) -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -170,7 +179,7 @@ def test_default(pmethod):
     assert m3.body is None
 
 
-def test_default_inverted(pmethod):
+def test_default_inverted(pmethod: PMethod) -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_field("Bar")
@@ -189,7 +198,7 @@ def test_default_inverted(pmethod):
     assert m3.body is None
 
 
-def test_body_true(pmethod):
+def test_body_true(pmethod: PMethod) -> None:
     parser = HeaderParser(body=True)
     parser.add_field("Foo")
     parser.add_field("Bar")
