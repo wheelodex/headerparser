@@ -354,7 +354,7 @@ class HeaderParser:
         return self.parse_stanzas_stream(scan_stanzas_string(s, **self._scan_opts))
 
     def parse_stanzas_stream(
-        self, fields: Iterable[Iterable[Tuple[Optional[str], str]]]
+        self, fields: Iterable[Iterable[Tuple[str, str]]]
     ) -> Iterator[NormalizedDict]:
         """
         .. versionadded:: 0.4.0
