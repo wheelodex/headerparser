@@ -78,7 +78,7 @@ def scan(
 
 
 def scan_next_stanza(
-    iterator: Iterable[str],
+    iterator: Iterator[str],
     *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
@@ -109,7 +109,7 @@ def scan_next_stanza(
 
 
 def _scan_next_stanza(
-    iterator: Iterable[str],
+    iterator: Iterator[str],
     *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,

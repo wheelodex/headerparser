@@ -373,7 +373,7 @@ class HeaderParser:
         for stanza in fields:
             yield self.parse_stream(stanza)
 
-    def parse_next_stanza(self, iterator: Iterable[str]) -> NormalizedDict:
+    def parse_next_stanza(self, iterator: Iterator[str]) -> NormalizedDict:
         """
         .. versionadded:: 0.4.0
 
