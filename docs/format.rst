@@ -52,7 +52,7 @@ An example::
     What happens now: It depends on whether the `multiple` option for the "Foo"
       field was set in the HeaderParser.
     If multiple=True: The "Foo" key in the dictionary returned by
-      HeaderParser.parse_string() would map to a list of all of Foo's values
+      HeaderParser.parse() would map to a list of all of Foo's values
     If multiple=False: A ParserError is raised
     If multiple=False but there's only one "Foo" anyway:
       The "Foo" key in the result dictionary would map to just a single string.

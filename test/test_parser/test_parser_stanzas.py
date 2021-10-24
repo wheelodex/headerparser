@@ -9,7 +9,7 @@ PMethod = Callable[[HeaderParser, str], Iterator[NormalizedDict]]
 
 
 def parse_stanzas_string(p: HeaderParser, s: str) -> Iterator[NormalizedDict]:
-    return p.parse_stanzas_string(s)
+    return p.parse_stanzas(s)
 
 
 def parse_stanzas_string_as_file(p: HeaderParser, s: str) -> Iterator[NormalizedDict]:

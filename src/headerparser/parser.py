@@ -1,7 +1,7 @@
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Set, Tuple
+from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Set, Tuple, Union
 from . import errors, scanner
 from .normdict import NormalizedDict
-from .scanner import scan, scan_next_stanza, scan_next_stanza_string, scan_stanzas
+from .scanner import scan_next_stanza, scan_next_stanza_string, scan_stanzas
 from .types import lower, unfold
 
 
@@ -274,24 +274,28 @@ class HeaderParser:
             raise errors.MissingBodyError()
         return data
 
-    def parse(self, iterable: Iterable[str]) -> NormalizedDict:
+    def parse(self, data: Union[str, Iterable[str]]) -> NormalizedDict:
         """
         .. versionadded:: 0.4.0
 
         Parse an RFC 822-style header field section (possibly followed by a
-        message body) from the contents of the given filehandle or sequence of
-        lines and return a dictionary of the header fields (possibly with body
-        attached).  If ``iterable`` is an iterable of `str`, newlines will be
-        appended to lines in multiline header fields where not already present
-        but will not be inserted where missing inside the body.
+        message body) from the contents of the given string, filehandle, or
+        sequence of lines and return a dictionary of the header fields
+        (possibly with body attached).  If ``data`` is an iterable of `str`,
+        newlines will be appended to lines in multiline header fields where not
+        already present but will not be inserted where missing inside the body.
 
-        :param iterable: a text-file-like object or iterable of lines to parse
+        .. versionchanged:: 0.5.0
+            ``data`` can now be a string.
+
+        :param iterable: a string, text-file-like object, or iterable of lines
+            to parse
         :rtype: NormalizedDict
         :raises ParserError: if the input fields do not conform to the field
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scan(iterable, **self._scan_opts))
+        return self.parse_stream(scanner.scan(data, **self._scan_opts))
 
     def parse_string(self, s: str) -> NormalizedDict:
         """
@@ -307,25 +311,31 @@ class HeaderParser:
         """
         return self.parse_stream(scanner.scan(s, **self._scan_opts))
 
-    def parse_stanzas(self, iterable: Iterable[str]) -> Iterator[NormalizedDict]:
+    def parse_stanzas(
+        self, data: Union[str, Iterable[str]]
+    ) -> Iterator[NormalizedDict]:
         """
         .. versionadded:: 0.4.0
 
         Parse zero or more stanzas of RFC 822-style header fields from the
-        given filehandle or sequence of lines and return a generator of
-        dictionaries of header fields.
+        given string, filehandle, or sequence of lines and return a generator
+        of dictionaries of header fields.
 
         All of the input is treated as header sections, not message bodies; as
         a result, calling this method when ``body`` is true will produce a
         `MissingBodyError`.
 
-        :param iterable: a text-file-like object or iterable of lines to parse
+        .. versionchanged:: 0.5.0
+            ``data`` can now be a string.
+
+        :param data: a string, text-file-like object, or iterable of lines to
+            parse
         :rtype: generator of `NormalizedDict`
         :raises ParserError: if the input fields do not conform to the field
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if a header section is malformed
         """
-        return self.parse_stanzas_stream(scan_stanzas(iterable, **self._scan_opts))
+        return self.parse_stanzas_stream(scan_stanzas(data, **self._scan_opts))
 
     def parse_stanzas_string(self, s: str) -> Iterator[NormalizedDict]:
         """

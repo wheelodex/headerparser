@@ -76,7 +76,7 @@ Define a parser:
 
 Parse some headers and inspect the results:
 
->>> msg = parser.parse_string('''\
+>>> msg = parser.parse('''\
 ... Name: Sample Input
 ... Public: yes
 ... tag: doctest, examples,
@@ -104,15 +104,15 @@ KeyError: 'data'
 
 Fail to parse headers that don't meet your requirements:
 
->>> parser.parse_string('Type: demonstration')
+>>> parser.parse('Type: demonstration')
 Traceback (most recent call last):
     ...
 headerparser.errors.MissingFieldError: Required header field 'Name' is not present
->>> parser.parse_string('Name: Bad type\nType: other')
+>>> parser.parse('Name: Bad type\nType: other')
 Traceback (most recent call last):
     ...
 headerparser.errors.InvalidChoiceError: 'other' is not a valid choice for 'Type'
->>> parser.parse_string('Name: unknown field\nField: Value')
+>>> parser.parse('Name: unknown field\nField: Value')
 Traceback (most recent call last):
     ...
 headerparser.errors.UnknownFieldError: Unknown header field 'Field'
@@ -120,7 +120,7 @@ headerparser.errors.UnknownFieldError: Unknown header field 'Field'
 Allow fields you didn't even think of:
 
 >>> parser.add_additional()
->>> msg = parser.parse_string('Name: unknown field\nField: Value')
+>>> msg = parser.parse('Name: unknown field\nField: Value')
 >>> msg['Field']
 'Value'
 

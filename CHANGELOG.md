@@ -8,6 +8,8 @@ v0.5.0 (in development)
 - The scanner options to the scanner functions are now keyword-only
 - `scan()` and `scan_stanzas()` can now parse strings directly.  As a result,
   `scan_string()` and `scan_stanzas_string()` are now deprecated.
+- The `HeaderParser` methods `parse()` and `parse_stanzas()` can now parse
+  strings directly.
 
 v0.4.0 (2019-05-29)
 -------------------

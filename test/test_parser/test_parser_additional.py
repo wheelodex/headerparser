@@ -8,7 +8,7 @@ def test_additional() -> None:
     parser.add_field("Foo")
     parser.add_field("Bar")
     parser.add_additional()
-    msg = parser.parse_string("Foo: red\nBar: green\nBaz: blue\n")
+    msg = parser.parse("Foo: red\nBar: green\nBaz: blue\n")
     assert dict(msg) == {"Foo": "red", "Bar": "green", "Baz": "blue"}
     assert msg.body is None
 
@@ -18,7 +18,7 @@ def test_many_additional() -> None:
     parser.add_field("Foo")
     parser.add_field("Bar")
     parser.add_additional()
-    msg = parser.parse_string(
+    msg = parser.parse(
         "Foo: red\nBar: green\nBaz: blue\nQUUX: purple\nglarch: orange\n"
     )
     assert dict(msg) == {
@@ -36,7 +36,7 @@ def test_intermixed_additional() -> None:
     parser.add_field("Foo")
     parser.add_field("Bar")
     parser.add_additional()
-    msg = parser.parse_string(
+    msg = parser.parse(
         "QUUX: purple\nBar: green\nglarch: orange\nFoo: red\nBaz: blue\n"
     )
     assert dict(msg) == {
@@ -52,7 +52,7 @@ def test_intermixed_additional() -> None:
 def test_additional_only() -> None:
     parser = HeaderParser()
     parser.add_additional()
-    msg = parser.parse_string("Foo: red\nBar: green\nBaz: blue\n")
+    msg = parser.parse("Foo: red\nBar: green\nBaz: blue\n")
     assert dict(msg) == {"Foo": "red", "Bar": "green", "Baz": "blue"}
     assert msg.body is None
 
@@ -80,7 +80,7 @@ def test_additional_bad_named_multiple() -> None:
     parser.add_field("Foo")
     parser.add_additional()
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
-        parser.parse_string("Foo: red\nFOO: magenta\nBar: green\n")
+        parser.parse("Foo: red\nFOO: magenta\nBar: green\n")
     assert str(excinfo.value) == "Header field 'Foo' occurs more than once"
     assert excinfo.value.name == "Foo"
 
@@ -89,7 +89,7 @@ def test_additional_named_multiple() -> None:
     parser = HeaderParser()
     parser.add_field("Foo", multiple=True)
     parser.add_additional()
-    msg = parser.parse_string("Foo: red\nFOO: magenta\nBar: green\n")
+    msg = parser.parse("Foo: red\nFOO: magenta\nBar: green\n")
     assert dict(msg) == {"Foo": ["red", "magenta"], "Bar": "green"}
     assert msg.body is None
 
@@ -99,7 +99,7 @@ def test_additional_bad_multiple() -> None:
     parser.add_field("Foo")
     parser.add_additional()
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
-        parser.parse_string("Foo: red\nBar: green\nBar: lime\n")
+        parser.parse("Foo: red\nBar: green\nBar: lime\n")
     assert str(excinfo.value) == "Header field 'Bar' occurs more than once"
     assert excinfo.value.name == "Bar"
 
@@ -109,7 +109,7 @@ def test_additional_bad_multiple_cases() -> None:
     parser.add_field("Foo")
     parser.add_additional()
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
-        parser.parse_string("Foo: red\nBar: green\nBAR: lime\n")
+        parser.parse("Foo: red\nBar: green\nBAR: lime\n")
     assert str(excinfo.value) == "Header field 'BAR' occurs more than once"
     assert excinfo.value.name == "BAR"
 
@@ -118,7 +118,7 @@ def test_multiple_additional() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_additional(multiple=True)
-    msg = parser.parse_string("Foo: red\nBar: green\nBAR: lime\n")
+    msg = parser.parse("Foo: red\nBar: green\nBAR: lime\n")
     assert dict(msg) == {"Foo": "red", "Bar": ["green", "lime"]}
     assert msg.body is None
 
@@ -127,7 +127,7 @@ def test_one_multiple_additional() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_additional(multiple=True)
-    msg = parser.parse_string("Foo: red\nBAR: lime\n")
+    msg = parser.parse("Foo: red\nBAR: lime\n")
     assert dict(msg) == {"Foo": "red", "BAR": ["lime"]}
     assert msg.body is None
 
@@ -138,7 +138,7 @@ def test_multiple_additional_bad_named_multiple() -> None:
     parser.add_field("Bar")
     parser.add_additional(multiple=True)
     with pytest.raises(headerparser.DuplicateFieldError) as excinfo:
-        parser.parse_string("Foo: red\nBar: green\nBaz: blue\nFOO: magenta\n")
+        parser.parse("Foo: red\nBar: green\nBaz: blue\nFOO: magenta\n")
     assert str(excinfo.value) == "Header field 'Foo' occurs more than once"
     assert excinfo.value.name == "Foo"
 
@@ -148,7 +148,7 @@ def test_additional_missing_named() -> None:
     parser.add_field("Foo")
     parser.add_field("Bar")
     parser.add_additional()
-    msg = parser.parse_string("Baz: blue\nQUUX: purple\nglarch: orange\n")
+    msg = parser.parse("Baz: blue\nQUUX: purple\nglarch: orange\n")
     assert dict(msg) == {"Baz": "blue", "QUUX": "purple", "glarch": "orange"}
     assert msg.body is None
 
@@ -159,7 +159,7 @@ def test_additional_missing_required_named() -> None:
     parser.add_field("Bar")
     parser.add_additional()
     with pytest.raises(headerparser.MissingFieldError) as excinfo:
-        parser.parse_string("Baz: blue\nQUUX: purple\nglarch: orange\n")
+        parser.parse("Baz: blue\nQUUX: purple\nglarch: orange\n")
     assert str(excinfo.value) == "Required header field 'Foo' is not present"
     assert excinfo.value.name == "Foo"
 
@@ -169,7 +169,7 @@ def test_missing_additional() -> None:
     parser.add_field("Foo")
     parser.add_field("Bar")
     parser.add_additional()
-    msg = parser.parse_string("Foo: red\nBar: green\n")
+    msg = parser.parse("Foo: red\nBar: green\n")
     assert dict(msg) == {"Foo": "red", "Bar": "green"}
     assert msg.body is None
 
@@ -179,7 +179,7 @@ def test_additional_type() -> None:
     parser.add_field("Foo")
     parser.add_field("Bar")
     parser.add_additional(type=int)
-    msg = parser.parse_string("Foo: 1\nBar: 2\nBaz: 3\n")
+    msg = parser.parse("Foo: 1\nBar: 2\nBaz: 3\n")
     assert dict(msg) == {"Foo": "1", "Bar": "2", "Baz": 3}
     assert msg.body is None
 
@@ -190,7 +190,7 @@ def test_additional_bad_type() -> None:
     parser.add_field("Bar")
     parser.add_additional(type=int)
     with pytest.raises(headerparser.FieldTypeError) as excinfo:
-        parser.parse_string("Foo: 1\nBar: 2\nBaz: three\n")
+        parser.parse("Foo: 1\nBar: 2\nBaz: three\n")
     assert str(excinfo.value) == (
         "Error while parsing 'Baz': 'three': ValueError: "
         + str(excinfo.value.exc_value)
@@ -205,7 +205,7 @@ def test_additional_choices() -> None:
     parser.add_field("Foo")
     parser.add_field("Bar")
     parser.add_additional(choices=["red", "green", "blue"])
-    msg = parser.parse_string("Foo: mauve\nBar: red\nBaz: green\nQuux: blue\n")
+    msg = parser.parse("Foo: mauve\nBar: red\nBaz: green\nQuux: blue\n")
     assert dict(msg) == {
         "Foo": "mauve",
         "Bar": "red",
@@ -221,7 +221,7 @@ def test_additional_bad_choices() -> None:
     parser.add_field("Bar")
     parser.add_additional(choices=["red", "green", "blue"])
     with pytest.raises(headerparser.InvalidChoiceError) as excinfo:
-        parser.parse_string("Foo: mauve\nBar: red\nBaz: green\nQuux: taupe\n")
+        parser.parse("Foo: mauve\nBar: red\nBaz: green\nQuux: taupe\n")
     assert str(excinfo.value) == "'taupe' is not a valid choice for 'Quux'"
     assert excinfo.value.name == "Quux"
     assert excinfo.value.value == "taupe"
@@ -231,7 +231,7 @@ def test_additional_unfold() -> None:
     parser = HeaderParser()
     parser.add_field("Foo")
     parser.add_additional(unfold=True)
-    msg = parser.parse_string(
+    msg = parser.parse(
         "Foo: This is\n"
         "   test\n"
         "  text.\n"
@@ -275,7 +275,7 @@ def test_additional_multiname() -> None:
     parser.add_field("Foo", "Oof")
     parser.add_field("Bar", "Baz")
     parser.add_additional()
-    msg = parser.parse_string("Oof: red\nBar: green\nQuux: blue\n")
+    msg = parser.parse("Oof: red\nBar: green\nQuux: blue\n")
     assert dict(msg) == {"Foo": "red", "Bar": "green", "Quux": "blue"}
     assert msg.body is None
 
@@ -286,6 +286,6 @@ def test_additional_off() -> None:
     parser.add_field("Bar")
     parser.add_additional(False)
     with pytest.raises(headerparser.UnknownFieldError) as excinfo:
-        parser.parse_string("Foo: red\nBar: green\nBaz: blue\n")
+        parser.parse("Foo: red\nBar: green\nBaz: blue\n")
     assert str(excinfo.value) == "Unknown header field 'Baz'"
     assert excinfo.value.name == "Baz"
