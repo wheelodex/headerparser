@@ -309,7 +309,7 @@ class HeaderParser:
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scanner.scan(s, **self._scan_opts))
+        return self.parse_stream(scanner.scan(s, **self._scan_opts))  # pragma: no cover
 
     def parse_stanzas(
         self, data: Union[str, Iterable[str]]
@@ -354,7 +354,9 @@ class HeaderParser:
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if a header section is malformed
         """
-        return self.parse_stanzas_stream(scan_stanzas(s, **self._scan_opts))
+        return self.parse_stanzas_stream(  # pragma: no cover
+            scan_stanzas(s, **self._scan_opts)
+        )
 
     def parse_stanzas_stream(
         self, fields: Iterable[Iterable[Tuple[str, str]]]

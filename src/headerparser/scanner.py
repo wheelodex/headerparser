@@ -34,7 +34,7 @@ def scan_string(
     :rtype: generator of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    return scan(
+    return scan(  # pragma: no cover
         s,
         separator_regex=separator_regex,
         skip_leading_newlines=skip_leading_newlines,
@@ -284,7 +284,7 @@ def scan_stanzas_string(
     :rtype: generator of lists of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    return scan_stanzas(
+    return scan_stanzas(  # pragma: no cover
         s,
         separator_regex=separator_regex,
         skip_leading_newlines=skip_leading_newlines,
