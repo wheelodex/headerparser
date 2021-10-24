@@ -1,5 +1,6 @@
 import re
 from typing import Iterable, Iterator, List, Optional, Pattern, Tuple, Union, cast
+from deprecated import deprecated
 from .errors import MalformedHeaderError, UnexpectedFoldingError
 from .util import ascii_splitlines
 
@@ -10,6 +11,7 @@ FieldType = Tuple[Optional[str], str]
 DEFAULT_SEPARATOR_REGEX = re.compile(r"[ \t]*:[ \t]*")
 
 
+@deprecated(version="0.5.0", reason="use scan() instead")
 def scan_string(
     s: str,
     *,
@@ -23,6 +25,9 @@ def scan_string(
 
     See `scan()` for more information on the exact behavior of the scanner.
 
+    .. deprecated:: 0.5.0
+        Use `scan()` instead.
+
     :param s: a string which will be broken into lines on CR, LF, and CR LF
         boundaries and passed to `scan()`
     :param kwargs: :ref:`scanner options <scan_opts>`
@@ -30,14 +35,14 @@ def scan_string(
     :raises ScannerError: if the header section is malformed
     """
     return scan(
-        ascii_splitlines(s),
+        s,
         separator_regex=separator_regex,
         skip_leading_newlines=skip_leading_newlines,
     )
 
 
 def scan(
-    iterable: Iterable[str],
+    data: Union[str, Iterable[str]],
     *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
@@ -45,27 +50,35 @@ def scan(
     """
     .. versionadded:: 0.4.0
 
-    Scan a text-file-like object or iterable of lines for RFC 822-style header
-    fields and return a generator of ``(name, value)`` pairs for each header
-    field in the input, plus a ``(None, body)`` pair representing the body (if
-    any) after the header section.
+    Scan a string, text-file-like object, or iterable of lines for RFC
+    822-style header fields and return a generator of ``(name, value)`` pairs
+    for each header field in the input, plus a ``(None, body)`` pair
+    representing the body (if any) after the header section.
+
+    If ``data`` is a string, it will will be broken into lines on CR, LF, and
+    CR LF boundaries.
 
     All lines after the first blank line are concatenated & yielded as-is in a
     ``(None, body)`` pair.  (Note that body lines which do not end with a line
     terminator will not have one appended.)  If there is no empty line in
-    ``iterable``, then no body pair is yielded.  If the empty line is the last
-    line in ``iterable``, the body will be the empty string.  If the empty line
-    is the *first* line in ``iterable`` and the ``skip_leading_newlines``
-    option is false (the default), then all other lines will be treated as part
-    of the body and will not be scanned for header fields.
+    ``data``, then no body pair is yielded.  If the empty line is the last line
+    in ``data``, the body will be the empty string.  If the empty line is the
+    *first* line in ``data`` and the ``skip_leading_newlines`` option is false
+    (the default), then all other lines will be treated as part of the body and
+    will not be scanned for header fields.
 
-    :param iterable: a text-file-like object or iterable of strings
+    .. versionchanged:: 0.5.0
+        ``data`` can now be a string.
+
+    :param data: a string, text-file-like object, or iterable of strings
         representing lines of input
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    lineiter = iter(iterable)
+    if isinstance(data, str):
+        data = ascii_splitlines(data)
+    lineiter = iter(data)
     for name, value in _scan_next_stanza(
         lineiter,
         separator_regex=separator_regex,
@@ -196,7 +209,7 @@ def scan_next_stanza_string(
 
 
 def scan_stanzas(
-    iterable: Iterable[str],
+    data: Union[str, Iterable[str]],
     *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
@@ -204,22 +217,30 @@ def scan_stanzas(
     """
     .. versionadded:: 0.4.0
 
-    Scan a text-file-like object or iterable of lines for zero or more stanzas
-    of RFC 822-style header fields and return a generator of lists of ``(name,
-    value)`` pairs, where each list represents a stanza of header fields in the
-    input.
+    Scan a string, text-file-like object, or iterable of lines for zero or more
+    stanzas of RFC 822-style header fields and return a generator of lists of
+    ``(name, value)`` pairs, where each list represents a stanza of header
+    fields in the input.
+
+    If ``data`` is a string, it will will be broken into lines on CR, LF, and
+    CR LF boundaries.
 
     The stanzas are terminated by blank lines.  Consecutive blank lines between
     stanzas are treated as a single blank line.  Blank lines at the end of the
     input are discarded without creating a new stanza.
 
-    :param iterable: a text-file-like object or iterable of strings
+    .. versionchanged:: 0.5.0
+        ``data`` can now be a string.
+
+    :param data: a string, text-file-like object, or iterable of strings
         representing lines of input
     :param kwargs: :ref:`scanner options <scan_opts>`
     :rtype: generator of lists of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    lineiter = iter(iterable)
+    if isinstance(data, str):
+        data = ascii_splitlines(data)
+    lineiter = iter(data)
     while True:
         fields = list(
             _scan_next_stanza(
@@ -236,6 +257,7 @@ def scan_stanzas(
         skip_leading_newlines = True
 
 
+@deprecated(version="0.5.0", reason="use scan_stanzas() instead")
 def scan_stanzas_string(
     s: str,
     *,
@@ -253,6 +275,9 @@ def scan_stanzas_string(
     stanzas are treated as a single blank line.  Blank lines at the end of the
     input are discarded without creating a new stanza.
 
+    .. deprecated:: 0.5.0
+        Use `scan_stanzas()` instead
+
     :param s: a string which will be broken into lines on CR, LF, and CR LF
         boundaries and passed to `scan_stanzas()`
     :param kwargs: :ref:`scanner options <scan_opts>`
@@ -260,7 +285,7 @@ def scan_stanzas_string(
     :raises ScannerError: if the header section is malformed
     """
     return scan_stanzas(
-        ascii_splitlines(s),
+        s,
         separator_regex=separator_regex,
         skip_leading_newlines=skip_leading_newlines,
     )

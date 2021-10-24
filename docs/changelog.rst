@@ -11,6 +11,8 @@ v0.5.0 (in development)
   ``HeaderParser.parse_lines()`` (all deprecated in v0.4.0)
 - Type annotations added
 - The scanner options to the scanner functions are now keyword-only
+- `scan()` and `scan_stanzas()` can now parse strings directly.  As a result,
+  `scan_string()` and `scan_stanzas_string()` are now deprecated.
 
 
 v0.4.0 (2019-05-29)

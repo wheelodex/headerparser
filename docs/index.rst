@@ -102,7 +102,7 @@ Allow fields you didn't even think of:
 
 Just split some headers into names & values and worry about validity later:
 
->>> for field in headerparser.scan_string('''\
+>>> for field in headerparser.scan('''\
 ... Name: Scanner Sample
 ... Unknown headers: no problem
 ... Unparsed-Boolean: yes

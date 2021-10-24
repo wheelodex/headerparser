@@ -3,7 +3,7 @@ from typing import Callable, Iterator, cast
 from _pytest.fixtures import FixtureRequest
 import pytest
 import headerparser
-from headerparser import HeaderParser, NormalizedDict, scan_stanzas_string
+from headerparser import HeaderParser, NormalizedDict, scan_stanzas
 
 PMethod = Callable[[HeaderParser, str], Iterator[NormalizedDict]]
 
@@ -17,7 +17,7 @@ def parse_stanzas_string_as_file(p: HeaderParser, s: str) -> Iterator[Normalized
 
 
 def parse_stanzas_string_as_stream(p: HeaderParser, s: str) -> Iterator[NormalizedDict]:
-    return p.parse_stanzas_stream(scan_stanzas_string(s))
+    return p.parse_stanzas_stream(scan_stanzas(s))
 
 
 @pytest.fixture(

@@ -2,7 +2,7 @@ from io import StringIO
 from typing import Callable, Iterator, List, Tuple, cast
 from _pytest.fixtures import FixtureRequest
 import pytest
-from headerparser import MalformedHeaderError, scan_stanzas, scan_stanzas_string
+from headerparser import MalformedHeaderError, scan_stanzas
 
 ScannerType = Callable[..., Iterator[List[Tuple[str, str]]]]
 
@@ -17,6 +17,12 @@ def scan_stanzas_string_as_list(
     s: str, skip_leading_newlines: bool = False
 ) -> Iterator[List[Tuple[str, str]]]:
     return scan_stanzas(s.splitlines(True), skip_leading_newlines=skip_leading_newlines)
+
+
+def scan_stanzas_string(
+    s: str, skip_leading_newlines: bool = False
+) -> Iterator[List[Tuple[str, str]]]:
+    return scan_stanzas(s, skip_leading_newlines=skip_leading_newlines)
 
 
 @pytest.fixture(

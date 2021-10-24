@@ -26,32 +26,37 @@ value has its trailing line ending (if any) removed.
 The various functions differ in how they behave once the end of the header
 section is encountered:
 
-- `scan()` and `scan_string()` gather up everything after the header section
-  and (if there is anything) yield it as a ``(None, body)`` pair
+- `scan()` gathers up everything after the header section and, if there is
+  anything, yields it as a ``(None, body)`` pair
 
 - `scan_next_stanza()` and `scan_next_stanza_string()` stop processing input at
   the end of the header section; `scan_next_stanza()` leaves the unprocessed
   input in the iterator, while `scan_next_stanza_string()` returns the rest of
   the input alongside the header fields
 
-- `scan_stanzas()` and `scan_stanzas_string()` expect their input to consist
-  entirely of multiple blank-line-terminated header sections, all of which are
-  processed
+- `scan_stanzas()` expects its input to consist entirely of multiple
+  blank-line-terminated header sections, all of which are processed
 
-The `scan()`, `scan_next_stanza()`, and `scan_stanzas()` functions take as
-input an iterable of strings (e.g., a text file object) and treat each string
-as a single line, regardless of whether it ends with a line ending or not (or
-even whether it contains a line ending in the middle of the string).
+The input to `scan()` and `scan_stanzas()` can be either:
 
-The `scan_string()`, `scan_next_stanza_string()`, and `scan_stanzas_string()`
-functions take as input a single string which is then broken into lines on CR,
-LF, and CR LF boundaries and then processed as a list of strings.
+- a string, which is then broken into lines on CR, LF, and CR LF boundaries; or
+
+- an iterable of strings (e.g., a text file object) in which each string is
+  treated as a single line, regardless of whether it ends with a line ending or
+  not (or even whether it contains a line ending in the middle of the string).
+
+The input to `scan_next_stanzs()` can only be an iterable of strings.
+
+The input to `scan_next_stanza_string()` can only be a single string.
 
 .. autofunction:: scan
-.. autofunction:: scan_string
 .. autofunction:: scan_next_stanza
 .. autofunction:: scan_next_stanza_string
 .. autofunction:: scan_stanzas
+
+Deprecated Functions
+--------------------
+.. autofunction:: scan_string
 .. autofunction:: scan_stanzas_string
 
 .. _scan_opts:

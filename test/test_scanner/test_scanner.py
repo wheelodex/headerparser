@@ -4,7 +4,7 @@ from typing import Any, Callable, Iterator, List, cast
 from _pytest.fixtures import FixtureRequest
 import pytest
 import headerparser
-from headerparser import scan, scan_string
+from headerparser import scan
 from headerparser.scanner import FieldType
 
 ScannerType = Callable[..., Iterator[FieldType]]
@@ -16,6 +16,10 @@ def scan_string_as_file(s: str, **kwargs: Any) -> Iterator[FieldType]:
 
 def scan_string_as_list(s: str, **kwargs: Any) -> Iterator[FieldType]:
     return scan(s.splitlines(True), **kwargs)
+
+
+def scan_string(s: str, **kwargs: Any) -> Iterator[FieldType]:
+    return scan(s, **kwargs)
 
 
 @pytest.fixture(params=[scan_string_as_file, scan_string_as_list, scan_string])
@@ -246,9 +250,7 @@ def test_scan_separator_regex(
 def test_scan_string(
     lines: str, fields: List[FieldType], skip_leading_newlines: bool
 ) -> None:
-    assert (
-        list(scan_string(lines, skip_leading_newlines=skip_leading_newlines)) == fields
-    )
+    assert list(scan(lines, skip_leading_newlines=skip_leading_newlines)) == fields
 
 
 def test_lines_no_ends() -> None:

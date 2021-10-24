@@ -1,13 +1,7 @@
 from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Set, Tuple
 from . import errors, scanner
 from .normdict import NormalizedDict
-from .scanner import (
-    scan,
-    scan_next_stanza,
-    scan_next_stanza_string,
-    scan_stanzas,
-    scan_stanzas_string,
-)
+from .scanner import scan, scan_next_stanza, scan_next_stanza_string, scan_stanzas
 from .types import lower, unfold
 
 
@@ -236,9 +230,8 @@ class HeaderParser:
     ) -> NormalizedDict:
         """
         Process a sequence of ``(name, value)`` pairs as returned by `scan()`
-        or `scan_string()` and return a dictionary of header fields (possibly
-        with body attached).  This is a low-level method that you will usually
-        not need to call.
+        and return a dictionary of header fields (possibly with body attached).
+        This is a low-level method that you will usually not need to call.
 
         :param fields: a sequence of ``(name, value)`` pairs representing the
             input fields
@@ -312,7 +305,7 @@ class HeaderParser:
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if the header section is malformed
         """
-        return self.parse_stream(scanner.scan_string(s, **self._scan_opts))
+        return self.parse_stream(scanner.scan(s, **self._scan_opts))
 
     def parse_stanzas(self, iterable: Iterable[str]) -> Iterator[NormalizedDict]:
         """
@@ -351,7 +344,7 @@ class HeaderParser:
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if a header section is malformed
         """
-        return self.parse_stanzas_stream(scan_stanzas_string(s, **self._scan_opts))
+        return self.parse_stanzas_stream(scan_stanzas(s, **self._scan_opts))
 
     def parse_stanzas_stream(
         self, fields: Iterable[Iterable[Tuple[str, str]]]
@@ -360,9 +353,9 @@ class HeaderParser:
         .. versionadded:: 0.4.0
 
         Parse an iterable of iterables of ``(name, value)`` pairs as returned
-        by `scan_stanzas()` or `scan_stanzas_string()` and return a generator
-        of dictionaries of header fields.  This is a low-level method that you
-        will usually not need to call.
+        by `scan_stanzas()` and return a generator of dictionaries of header
+        fields.  This is a low-level method that you will usually not need to
+        call.
 
         :param fields: an iterable of iterables of pairs of strings
         :rtype: generator of `NormalizedDict`
