@@ -1,4 +1,5 @@
 from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Set, Tuple, Union
+from deprecated import deprecated
 from . import errors, scanner
 from .normdict import NormalizedDict
 from .scanner import scan_next_stanza, scan_next_stanza_string, scan_stanzas
@@ -297,11 +298,15 @@ class HeaderParser:
         """
         return self.parse_stream(scanner.scan(data, **self._scan_opts))
 
+    @deprecated(version="0.5.0", reason="use parse() instead")
     def parse_string(self, s: str) -> NormalizedDict:
         """
         Parse an RFC 822-style header field section (possibly followed by a
         message body) from the given string and return a dictionary of the
         header fields (possibly with body attached)
+
+        .. deprecated:: 0.5.0
+            Use `parse()` instead.
 
         :param string s: the text to parse
         :rtype: NormalizedDict
@@ -337,6 +342,7 @@ class HeaderParser:
         """
         return self.parse_stanzas_stream(scan_stanzas(data, **self._scan_opts))
 
+    @deprecated(version="0.5.0", reason="use parse_stanzas() instead")
     def parse_stanzas_string(self, s: str) -> Iterator[NormalizedDict]:
         """
         .. versionadded:: 0.4.0
@@ -347,6 +353,9 @@ class HeaderParser:
         All of the input is treated as header sections, not message bodies; as
         a result, calling this method when ``body`` is true will produce a
         `MissingBodyError`.
+
+        .. deprecated:: 0.5.0
+            Use `parse_stanzas()` instead.
 
         :param string s: the text to parse
         :rtype: generator of `NormalizedDict`

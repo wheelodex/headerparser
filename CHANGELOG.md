@@ -9,7 +9,8 @@ v0.5.0 (in development)
 - `scan()` and `scan_stanzas()` can now parse strings directly.  As a result,
   `scan_string()` and `scan_stanzas_string()` are now deprecated.
 - The `HeaderParser` methods `parse()` and `parse_stanzas()` can now parse
-  strings directly.
+  strings directly.  As a result, the `parse_string()` and
+  `parse_stanzas_string()` methods are now deprecated.
 
 v0.4.0 (2019-05-29)
 -------------------
