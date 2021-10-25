@@ -1,5 +1,9 @@
 import re
-from typing import Any
+from typing import Any, Callable, Dict, Iterable, List, Tuple, TypeVar
+
+T = TypeVar("T")
+K = TypeVar("K")
+V = TypeVar("V")
 
 TRUTHY = {"yes", "y", "on", "true", "1"}
 FALSEY = {"no", "n", "off", "false", "0"}
@@ -55,3 +59,25 @@ def unfold(s: str) -> str:
     :rtype: string
     """
     return re.sub(r"[ \t]*[\r\n][ \t\r\n]*", " ", s).strip(" ")
+
+
+def decode_bool(_: str, value: str) -> bool:
+    return BOOL(value)
+
+
+def decode_value(func: Callable[[str], T]) -> Callable[[str, str], T]:
+    def decoder(_: str, value: str) -> bool:
+        return func(value)
+
+    return decoder
+
+
+def multidict(values: Iterable[Tuple[K, V]]) -> Dict[K, List[V]]:
+    data: Dict[K, List[V]] = {}
+    for k, v in values:
+        data.setdefault(k, []).append(v)
+    return data
+
+
+def decode_name(name: str) -> str:
+    return re.sub(r"\W", "_", name.lower())

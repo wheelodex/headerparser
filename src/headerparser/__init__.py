@@ -15,6 +15,7 @@ Visit <https://github.com/jwodder/headerparser> or
 
 from .errors import (
     BodyNotAllowedError,
+    DuplicateBodyError,
     DuplicateFieldError,
     Error,
     FieldTypeError,
@@ -29,6 +30,15 @@ from .errors import (
     UnknownFieldError,
 )
 from .normdict import NormalizedDict
+from .parscls import (
+    BodyField,
+    ExtraFields,
+    Field,
+    MultiExtraFields,
+    MultiField,
+    parsable,
+    parse,
+)
 from .parser import HeaderParser
 from .scanner import (
     Scanner,
@@ -39,7 +49,7 @@ from .scanner import (
     scan_stanzas_string,
     scan_string,
 )
-from .types import BOOL, lower, unfold
+from .types import BOOL, decode_bool, decode_value, lower, multidict, unfold
 
 __version__ = "0.5.1"
 __author__ = "John Thorvald Wodder II"
@@ -49,15 +59,21 @@ __url__ = "https://github.com/jwodder/headerparser"
 
 __all__ = [
     "BOOL",
+    "BodyField",
     "BodyNotAllowedError",
+    "DuplicateBodyError",
     "DuplicateFieldError",
     "Error",
-    "HeaderParser",
+    "ExtraFields",
+    "Field",
     "FieldTypeError",
+    "HeaderParser",
     "InvalidChoiceError",
     "MalformedHeaderError",
     "MissingBodyError",
     "MissingFieldError",
+    "MultiExtraFields",
+    "MultiField",
     "NormalizedDict",
     "ParserError",
     "Scanner",
@@ -65,7 +81,12 @@ __all__ = [
     "ScannerError",
     "UnexpectedFoldingError",
     "UnknownFieldError",
+    "decode_bool",
+    "decode_value",
     "lower",
+    "multidict",
+    "parsable",
+    "parse",
     "scan",
     "scan_next_stanza",
     "scan_next_stanza_string",

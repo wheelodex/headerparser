@@ -54,6 +54,13 @@ class DuplicateFieldError(ParserError):
         return f"Header field {self.name!r} occurs more than once"
 
 
+class DuplicateBodyError(ParserError):
+    """Raised when a body field occurs two or more times in the input"""
+
+    def __str__(self) -> str:
+        return "Body field occurs more than once"
+
+
 class FieldTypeError(ParserError):
     """Raised when a ``type`` callable raises an exception"""
 

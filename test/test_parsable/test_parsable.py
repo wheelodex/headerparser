@@ -22,16 +22,16 @@ class Simple:
     simple: str
     optional: Optional[str] = None
     aliased: Optional[str] = Field(alias="alias", default=None)
-    multi: List[str] = MultiField()
-    extra: List[Tuple[str, str]] = ExtraFields()
-    body: Optional[str] = BodyField()
+    multi: List[str] = MultiField(factory=list)
+    extra: List[Tuple[str, str]] = ExtraFields(factory=list)
+    body: Optional[str] = BodyField(default=None)
 
 
 @parsable
 class MultiExtra:
     foo: int = Field(decoder=decode_value(int))
     bar: bool = Field(decoder=decode_bool)
-    extra: Dict[str, List[str]] = MultiExtraFields(decoder=multidict)
+    extra: Dict[str, List[str]] = MultiExtraFields(decoder=multidict, factory=dict)
 
 
 @parsable
@@ -41,7 +41,7 @@ class CrissCross:
 
 
 @pytest.mark.parametrize(
-    "data,obj",
+    "cls,data,obj",
     [
         (
             Simple,
@@ -68,7 +68,7 @@ class CrissCross:
                 extra=[
                     ("aliased", "extra"),
                     ("extra", "overflow"),
-                    ("hyphen-ated", "Hyphen-Ated"),
+                    ("hyphen_ated", "Hyphen-Ated"),
                 ],
                 body="This is the body.\n",
             ),
@@ -95,50 +95,49 @@ def test_parse(cls: type, data: str, obj: Any) -> None:
 
 
 @pytest.mark.parametrize(
-    "data,exc_type,exc_str",
+    "cls,data,exc_type,exc_match",
     [
         (
             Simple,
             "Simple: one\nSimple: two\n",
             DuplicateFieldError,
-            "Header field 'simple' occurs more than once",
+            "^Header field 'simple' occurs more than once$",
         ),
         (
             Simple,
             "Simple: foobar\nExtra: one\nExtra: two\n",
             DuplicateFieldError,
-            "Header field 'extra' occurs more than once",
+            "^Header field 'extra' occurs more than once$",
         ),
         (
             Simple,
             "",
             TypeError,
-            "__init__() missing 1 required positional argument: 'simple'",
+            "missing 1 required positional argument: 'simple'$",
         ),
         (
             MultiExtra,
             "Foo: forty-two\n",
             ValueError,
-            "invalid literal for int() with base 10: 'forty-two'",
+            r"^invalid literal for int\(\) with base 10: 'forty-two'$",
         ),
         (MultiExtra, "Bar: maybe\n", ValueError, "invalid boolean: 'maybe'"),
         (
             MultiExtra,
             "Some: field\n\nSome: body\n",
             BodyNotAllowedError,
-            "Message body is present but not allowed",
+            "^Message body is present but not allowed$",
         ),
         (
             CrissCross,
             "Unknown: field\n",
             UnknownFieldError,
-            "Unknown header field 'unknown'",
+            "^Unknown header field 'unknown'$",
         ),
     ],
 )
 def test_parse_error(
-    cls: type, data: str, exc_type: Type[Exception], exc_str: str
+    cls: type, data: str, exc_type: Type[Exception], exc_match: str
 ) -> None:
-    with pytest.raises(exc_type) as excinfo:
+    with pytest.raises(exc_type, match=exc_match):
         parse(cls, data)
-    assert str(excinfo.value) == exc_str
