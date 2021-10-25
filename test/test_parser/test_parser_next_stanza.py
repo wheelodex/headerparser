@@ -2,6 +2,8 @@ from io import StringIO
 import pytest
 from headerparser import HeaderParser, MissingBodyError
 
+pytestmark = pytest.mark.filterwarnings("ignore:.*_next_stanza")
+
 
 def test_simple() -> None:
     parser = HeaderParser()

@@ -25,7 +25,7 @@ class HeaderParser:
         the header section; `True` means a body is required, `False` means a
         body is prohibited, and `None` (the default) means a body is optional
 
-    :param kwargs: :ref:`scanner options <scan_opts>`
+    :param kwargs: Passed to the `Scanner` constructor
     """
 
     def __init__(
@@ -387,6 +387,7 @@ class HeaderParser:
         for stanza in fields:
             yield self.parse_stream(stanza)
 
+    @deprecated(version="0.5.0")
     def parse_next_stanza(self, iterator: Iterator[str]) -> NormalizedDict:
         """
         .. versionadded:: 0.4.0
@@ -398,6 +399,9 @@ class HeaderParser:
         body is not consumed, calling this method when ``body`` is true will
         produce a `MissingBodyError`.
 
+        .. deprecated:: 0.5.0
+            Instead combine `Scanner.scan_next_stanza()` with `parse_stream()`
+
         :param iterator: a text-file-like object or iterator of lines to parse
         :rtype: NormalizedDict
         :raises ParserError: if the input fields do not conform to the field
@@ -406,6 +410,7 @@ class HeaderParser:
         """
         return self.parse_stream(scan_next_stanza(iterator, **self._scan_opts))
 
+    @deprecated(version="0.5.0")
     def parse_next_stanza_string(self, s: str) -> Tuple[NormalizedDict, str]:
         """
         .. versionadded:: 0.4.0
@@ -414,6 +419,9 @@ class HeaderParser:
         return a pair of a dictionary of the header fields and the rest of the
         string.  As a message body is not consumed, calling this method when
         ``body`` is true will produce a `MissingBodyError`.
+
+        .. deprecated:: 0.5.0
+            Instead combine `Scanner.scan_next_stanza()` with `parse_stream()`
 
         :param string s: the text to parse
         :rtype: pair of `NormalizedDict` and a string

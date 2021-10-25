@@ -1,5 +1,6 @@
 import re
 from typing import Iterable, Iterator, List, Optional, Pattern, Tuple, Union, cast
+import attr
 from deprecated import deprecated
 from .errors import MalformedHeaderError, UnexpectedFoldingError
 from .util import ascii_splitlines
@@ -9,6 +10,174 @@ RgxType = Union[str, "Pattern[str]"]
 FieldType = Tuple[Optional[str], str]
 
 DEFAULT_SEPARATOR_REGEX = re.compile(r"[ \t]*:[ \t]*")
+
+
+def data2iter(data: Union[str, Iterable[str]]) -> Iterator[str]:
+    if isinstance(data, str):
+        data = ascii_splitlines(data)
+    return iter(data)
+
+
+def convert_sep(v: Optional[RgxType]) -> "Pattern[str]":
+    if v is None:
+        return DEFAULT_SEPARATOR_REGEX
+    else:
+        return re.compile(v)
+
+
+def none2false(v: Optional[bool]) -> bool:
+    return False if v is None else v
+
+
+@attr.define
+class Scanner:
+    """
+    .. versionadded:: 0.5.0
+
+    A class for scanning text for RFC 822-style header fields.  Each method
+    processes some portion of the input yet unscanned; the `scan()`,
+    `scan_stanzas()`, and `get_unscanned()` methods process the entirety of the
+    remaining input, while the `scan_next_stanza()` method only processes up
+    through the first blank line.
+
+    :param data:
+        The text to scan.  This may be a string, a text-file-like object, or an
+        iterable of lines.  If it is a string, it will be broken into lines on
+        CR, LF, and CR LF boundaries.
+
+    :param separator_regex:
+        A regex (as a `str` or compiled regex object) defining the name-value
+        separator; defaults to ``r'[ \\t]*:[ \\t]*'``.  When the regex is found
+        in a line, everything before the matched substring becomes the field
+        name, and everything after becomes the first line of the field value.
+        Note that the regex must match any surrounding whitespace in order for
+        it to be trimmed from the key & value.
+
+    :param bool skip_leading_newlines:
+        If `True`, blank lines at the beginning of the input will be discarded.
+        If `False`, a blank line at the beginning of the input marks the end of
+        an empty header section.
+    """
+
+    _data: Iterator[str] = attr.field(converter=data2iter)
+    separator_regex: "Pattern[str]" = attr.field(
+        default=DEFAULT_SEPARATOR_REGEX,
+        converter=convert_sep,
+        kw_only=True,
+    )
+    skip_leading_newlines: bool = attr.field(
+        default=False, kw_only=True, converter=none2false
+    )
+
+    def scan(self) -> Iterator[FieldType]:
+        """
+        Scan the remaining input for RFC 822-style header fields and return a
+        generator of ``(name, value)`` pairs for each header field encountered,
+        plus a ``(None, body)`` pair representing the body (if any) after the
+        header section.
+
+        All lines after the first blank line are concatenated & yielded as-is
+        in a ``(None, body)`` pair.  (Note that body lines which do not end
+        with a line terminator will not have one appended.)  If there is no
+        empty line in the input, then no body pair is yielded.  If the empty
+        line is the last line in the input, the body will be the empty string.
+        If the empty line is the *first* line in the input and the
+        ``skip_leading_newlines`` option is false (the default), then all other
+        lines will be treated as part of the body and will not be scanned for
+        header fields.
+
+        :raises ScannerError: if the header section is malformed
+        """
+        for name, value in self._scan():
+            if name is not None:
+                yield (name, value)
+            elif value:
+                yield (None, self.get_unscanned())
+
+    def scan_next_stanza(self) -> Iterator[Tuple[str, str]]:
+        """
+        Scan the remaining input for RFC 822-style header fields and return a
+        generator of ``(name, value)`` pairs for each header field in the
+        input.  Input processing stops as soon as a blank line is encountered.
+        (If ``skip_leading_newlines`` is true, the function only stops on a
+        blank line after a non-blank line.)
+
+        :raises ScannerError: if the header section is malformed
+        """
+        for name, value in self._scan():
+            if name is not None:
+                yield (name, value)
+
+    def scan_stanzas(self) -> Iterator[List[Tuple[str, str]]]:
+        """
+        Scan the remaining input for zero or more stanzas of RFC 822-style
+        header fields and return a generator of lists of ``(name, value)``
+        pairs, where each list represents a stanza of header fields in the
+        input.
+
+        The stanzas are terminated by blank lines.  Consecutive blank lines
+        between stanzas are treated as a single blank line.  Blank lines at the
+        end of the input are discarded without creating a new stanza.
+
+        :raises ScannerError: if the header section is malformed
+        """
+        while True:
+            fields = list(self._scan())
+            more_left = fields.pop()[1]
+            if fields or more_left:
+                yield cast(List[Tuple[str, str]], fields)
+            else:
+                break
+            self.skip_leading_newlines = True
+
+    def get_unscanned(self) -> str:
+        """
+        Return all of the input that has not yet been processed.  After calling
+        this method, calling any method again on the same `Scanner` instance
+        will return an empty generator or string, as appropriate.
+        """
+        return "".join(self._data)
+
+    def _scan(self) -> Iterator[FieldType]:
+        """
+        Like `scan_next_stanza()`, except it additionally yields as its last
+        item a ``(None, flag)`` pair where ``flag`` is nonempty iff the stanza
+        was terminated by a blank line (thereby suggesting there is more input
+        left to process), empty iff the stanza was terminated by EOF.
+
+        This is the core function that all other scanners ultimately call.
+        """
+        name: Optional[str] = None
+        value = ""
+        begun = False
+        more_left = ""
+        for line in self._data:
+            line = line.rstrip("\r\n")
+            if line.startswith((" ", "\t")):
+                begun = True
+                if name is not None:
+                    value += "\n" + line
+                else:
+                    raise UnexpectedFoldingError(line)
+            else:
+                m = self.separator_regex.search(line)
+                if m:
+                    begun = True
+                    if name is not None:
+                        yield (name, value)
+                    name = line[: m.start()]
+                    value = line[m.end() :]
+                elif line == "":
+                    if self.skip_leading_newlines and not begun:
+                        continue
+                    else:
+                        more_left = "1"
+                        break
+                else:
+                    raise MalformedHeaderError(line)
+        if name is not None:
+            yield (name, value)
+        yield (None, more_left)
 
 
 @deprecated(version="0.5.0", reason="use scan() instead")
@@ -30,7 +199,7 @@ def scan_string(
 
     :param s: a string which will be broken into lines on CR, LF, and CR LF
         boundaries and passed to `scan()`
-    :param kwargs: :ref:`scanner options <scan_opts>`
+    :param kwargs: Passed to the `Scanner` constructor
     :rtype: generator of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
@@ -55,8 +224,8 @@ def scan(
     for each header field in the input, plus a ``(None, body)`` pair
     representing the body (if any) after the header section.
 
-    If ``data`` is a string, it will will be broken into lines on CR, LF, and
-    CR LF boundaries.
+    If ``data`` is a string, it will be broken into lines on CR, LF, and CR LF
+    boundaries.
 
     All lines after the first blank line are concatenated & yielded as-is in a
     ``(None, body)`` pair.  (Note that body lines which do not end with a line
@@ -72,24 +241,18 @@ def scan(
 
     :param data: a string, text-file-like object, or iterable of strings
         representing lines of input
-    :param kwargs: :ref:`scanner options <scan_opts>`
+    :param kwargs: Passed to the `Scanner` constructor
     :rtype: generator of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    if isinstance(data, str):
-        data = ascii_splitlines(data)
-    lineiter = iter(data)
-    for name, value in _scan_next_stanza(
-        lineiter,
+    return Scanner(
+        data,
         separator_regex=separator_regex,
         skip_leading_newlines=skip_leading_newlines,
-    ):
-        if name is not None:
-            yield (name, value)
-        elif value:
-            yield (None, "".join(lineiter))
+    ).scan()
 
 
+@deprecated(version="0.5.0", reason="use Scanner.scan_next_stanza() instead")
 def scan_next_stanza(
     iterator: Iterator[str],
     *,
@@ -106,74 +269,23 @@ def scan_next_stanza(
     ``skip_leading_newlines`` is true, the function only stops on a blank line
     after a non-blank line).
 
+    .. deprecated:: 0.5.0
+        Use `Scanner.scan_next_stanza()` instead
+
     :param iterator: a text-file-like object or iterator of strings
         representing lines of input
-    :param kwargs: :ref:`scanner options <scan_opts>`
+    :param kwargs: Passed to the `Scanner` constructor
     :rtype: generator of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    for name, value in _scan_next_stanza(
+    return Scanner(
         iterator,
         separator_regex=separator_regex,
         skip_leading_newlines=skip_leading_newlines,
-    ):
-        if name is not None:
-            yield (name, value)
+    ).scan_next_stanza()
 
 
-def _scan_next_stanza(
-    iterator: Iterator[str],
-    *,
-    separator_regex: Optional[RgxType] = None,
-    skip_leading_newlines: bool = False,
-) -> Iterator[FieldType]:
-    """
-    .. versionadded:: 0.4.0
-
-    Like `scan_next_stanza()`, except it additionally yields as its last item a
-    ``(None, flag)`` pair where ``flag`` is nonempty iff the stanza was
-    terminated by a blank line (thereby suggesting there is more input left to
-    process), empty iff the stanza was terminated by EOF.
-
-    This is the core function that all other scanners ultimately call.
-    """
-    name: Optional[str] = None
-    value = ""
-    begun = False
-    more_left = ""
-    if separator_regex is None:
-        sep = DEFAULT_SEPARATOR_REGEX
-    else:
-        sep = re.compile(separator_regex)
-    for line in iterator:
-        line = line.rstrip("\r\n")
-        if line.startswith((" ", "\t")):
-            begun = True
-            if name is not None:
-                value += "\n" + line
-            else:
-                raise UnexpectedFoldingError(line)
-        else:
-            m = sep.search(line)
-            if m:
-                begun = True
-                if name is not None:
-                    yield (name, value)
-                name = line[: m.start()]
-                value = line[m.end() :]
-            elif line == "":
-                if skip_leading_newlines and not begun:
-                    continue
-                else:
-                    more_left = "1"
-                    break
-            else:
-                raise MalformedHeaderError(line)
-    if name is not None:
-        yield (name, value)
-    yield (None, more_left)
-
-
+@deprecated(version="0.5.0", reason="use Scanner.scan_next_stanza() instead")
 def scan_next_stanza_string(
     s: str,
     *,
@@ -191,20 +303,21 @@ def scan_next_stanza_string(
     line); if there is no appropriate blank line in the input, ``extra`` is the
     empty string.
 
+    .. deprecated:: 0.5.0
+        Use `Scanner.scan_next_stanza()` instead
+
     :param s: a string to scan
-    :param kwargs: :ref:`scanner options <scan_opts>`
+    :param kwargs: Passed to the `Scanner` constructor
     :rtype: pair of a list of pairs of strings and a string
     :raises ScannerError: if the header section is malformed
     """
-    lineiter = iter(ascii_splitlines(s))
-    fields = list(
-        scan_next_stanza(
-            lineiter,
-            separator_regex=separator_regex,
-            skip_leading_newlines=skip_leading_newlines,
-        )
+    sc = Scanner(
+        s,
+        separator_regex=separator_regex,
+        skip_leading_newlines=skip_leading_newlines,
     )
-    body = "".join(lineiter)
+    fields = list(sc.scan_next_stanza())
+    body = sc.get_unscanned()
     return (fields, body)
 
 
@@ -222,8 +335,8 @@ def scan_stanzas(
     ``(name, value)`` pairs, where each list represents a stanza of header
     fields in the input.
 
-    If ``data`` is a string, it will will be broken into lines on CR, LF, and
-    CR LF boundaries.
+    If ``data`` is a string, it will be broken into lines on CR, LF, and CR LF
+    boundaries.
 
     The stanzas are terminated by blank lines.  Consecutive blank lines between
     stanzas are treated as a single blank line.  Blank lines at the end of the
@@ -234,27 +347,15 @@ def scan_stanzas(
 
     :param data: a string, text-file-like object, or iterable of strings
         representing lines of input
-    :param kwargs: :ref:`scanner options <scan_opts>`
+    :param kwargs: Passed to the `Scanner` constructor
     :rtype: generator of lists of pairs of strings
     :raises ScannerError: if the header section is malformed
     """
-    if isinstance(data, str):
-        data = ascii_splitlines(data)
-    lineiter = iter(data)
-    while True:
-        fields = list(
-            _scan_next_stanza(
-                lineiter,
-                separator_regex=separator_regex,
-                skip_leading_newlines=skip_leading_newlines,
-            )
-        )
-        more_left = fields.pop()[1]
-        if fields or more_left:
-            yield cast(List[Tuple[str, str]], fields)
-        else:
-            break
-        skip_leading_newlines = True
+    return Scanner(
+        data,
+        separator_regex=separator_regex,
+        skip_leading_newlines=skip_leading_newlines,
+    ).scan_stanzas()
 
 
 @deprecated(version="0.5.0", reason="use scan_stanzas() instead")
@@ -280,7 +381,7 @@ def scan_stanzas_string(
 
     :param s: a string which will be broken into lines on CR, LF, and CR LF
         boundaries and passed to `scan_stanzas()`
-    :param kwargs: :ref:`scanner options <scan_opts>`
+    :param kwargs: Passed to the `Scanner` constructor
     :rtype: generator of lists of pairs of strings
     :raises ScannerError: if the header section is malformed
     """

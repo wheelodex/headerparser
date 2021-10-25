@@ -30,6 +30,7 @@ from .errors import (
 from .normdict import NormalizedDict
 from .parser import HeaderParser
 from .scanner import (
+    Scanner,
     scan,
     scan_next_stanza,
     scan_next_stanza_string,
@@ -58,6 +59,7 @@ __all__ = [
     "MissingFieldError",
     "NormalizedDict",
     "ParserError",
+    "Scanner",
     "ScannerError",
     "UnexpectedFoldingError",
     "UnknownFieldError",

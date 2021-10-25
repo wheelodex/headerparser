@@ -10,12 +10,11 @@ the Internet Message (e-mail) Format specified in :rfc:`822`, :rfc:`2822`, and
   :dfn:`message body`.  If there are no blank lines, the entire input is used
   as the header section, and there is no body.
 
-.. note::
+  .. note::
 
     By default, blank lines at the beginning of a document are interpreted as
     the ending of a zero-length stanza.  Such blank lines can instead be
-    ignored by setting the ``skip_leading_newlines`` :ref:`scanner option
-    <scan_opts>` to true.
+    ignored by setting the ``skip_leading_newlines`` `Scanner` option to true.
 
 - A stanza or header section is composed of zero or more :dfn:`header fields`.
   A header field is composed of one or more lines, with all lines after the
@@ -24,14 +23,14 @@ the Internet Message (e-mail) Format specified in :rfc:`822`, :rfc:`2822`, and
   colon is the :dfn:`header field name`, while everything after (including
   subsequent lines) is the :dfn:`header field value`.
 
-.. note::
+  .. note::
 
     Name-value separators other than a colon can be used by setting the
-    ``separator_regex`` :ref:`scanner option <scan_opts>` appropriately.
+    ``separator_regex`` `Scanner` option appropriately.
 
-.. note::
+  .. note::
 
-    This format only recognizes CR, LF, and CR LF sequences as line endings.
+    `headerparser` only recognizes CR, LF, and CR LF sequences as line endings.
 
 An example::
 

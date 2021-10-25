@@ -11,6 +11,12 @@ v0.5.0 (in development)
 - The `HeaderParser` methods `parse()` and `parse_stanzas()` can now parse
   strings directly.  As a result, the `parse_string()` and
   `parse_stanzas_string()` methods are now deprecated.
+- Added a `Scanner` class with methods for scanning a shared input.  As a
+  result, the following are now deprecated:
+    - `scan_next_stanza()`
+    - `scan_next_stanza_string()`
+    - `HeaderParser.parse_next_stanza()`
+    - `HeaderParser.parse_next_stanza_string()`
 
 v0.4.0 (2019-05-29)
 -------------------
