@@ -2,7 +2,7 @@ from io import StringIO
 import pytest
 from headerparser import HeaderParser, MissingBodyError
 
-pytestmark = pytest.mark.filterwarnings("ignore:.*_next_stanza")
+pytestmark = pytest.mark.filterwarnings("ignore:.*_next_stanza:DeprecationWarning")
 
 
 def test_simple() -> None:

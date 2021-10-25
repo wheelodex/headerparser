@@ -124,7 +124,7 @@ def test_scanner_next_stanza(
             assert remainder == trailer
 
 
-@pytest.mark.filterwarnings("ignore:.*scan_next_stanza")
+@pytest.mark.filterwarnings("ignore:.*scan_next_stanza:DeprecationWarning")
 @pytest.mark.parametrize(
     "lines,fields,trailer,skip_leading_newlines",
     [
