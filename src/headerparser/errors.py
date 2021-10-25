@@ -135,3 +135,12 @@ class UnexpectedFoldingError(ScannerError):
 
     def __str__(self) -> str:
         return f"Indented line without preceding header line encountered: {self.line!r}"
+
+
+class ScannerEOFError(Error):
+    """
+    Raised when a `Scanner` method is called after all input has been exhausted
+    """
+
+    def __str__(self) -> str:
+        return "Scanner has reached end of input"

@@ -2,7 +2,7 @@ from io import StringIO
 from typing import Callable, Iterator, List, Tuple, cast
 from _pytest.fixtures import FixtureRequest
 import pytest
-from headerparser import MalformedHeaderError, scan_stanzas
+from headerparser import MalformedHeaderError, Scanner, ScannerEOFError, scan_stanzas
 
 ScannerType = Callable[..., Iterator[List[Tuple[str, str]]]]
 
@@ -247,3 +247,11 @@ def test_invalid_stanza(scanner: ScannerType) -> None:
     assert str(excinfo.value) == (
         'Invalid header line encountered: "Wait, this isn\'t a header."'
     )
+
+
+def test_scan_stanzas_empty() -> None:
+    sc = Scanner("")
+    assert list(sc.scan_stanzas()) == []
+    with pytest.raises(ScannerEOFError) as excinfo:
+        next(sc.scan_stanzas())
+    assert str(excinfo.value) == "Scanner has reached end of input"

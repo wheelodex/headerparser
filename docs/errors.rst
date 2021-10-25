@@ -32,3 +32,5 @@ Scanner Errors
     :show-inheritance:
 .. autoexception:: UnexpectedFoldingError
     :show-inheritance:
+.. autoexception:: ScannerEOFError
+    :show-inheritance:

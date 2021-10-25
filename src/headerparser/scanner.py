@@ -1,8 +1,8 @@
 import re
-from typing import Iterable, Iterator, List, Optional, Pattern, Tuple, Union, cast
+from typing import Iterable, Iterator, List, Optional, Pattern, Tuple, Union
 import attr
 from deprecated import deprecated
-from .errors import MalformedHeaderError, UnexpectedFoldingError
+from .errors import MalformedHeaderError, ScannerEOFError, UnexpectedFoldingError
 from .util import ascii_splitlines
 
 RgxType = Union[str, "Pattern[str]"]
@@ -47,11 +47,11 @@ class Scanner:
 
     :param separator_regex:
         A regex (as a `str` or compiled regex object) defining the name-value
-        separator; defaults to ``r'[ \\t]*:[ \\t]*'``.  When the regex is found
-        in a line, everything before the matched substring becomes the field
-        name, and everything after becomes the first line of the field value.
-        Note that the regex must match any surrounding whitespace in order for
-        it to be trimmed from the key & value.
+        separator; defaults to :regexp:`[ \\t]*:[ \\t]*`.  When the regex is
+        found in a line, everything before the matched substring becomes the
+        field name, and everything after becomes the first line of the field
+        value.  Note that the regex must match any surrounding whitespace in
+        order for it to be trimmed from the key & value.
 
     :param bool skip_leading_newlines:
         If `True`, blank lines at the beginning of the input will be discarded.
@@ -68,6 +68,7 @@ class Scanner:
     skip_leading_newlines: bool = attr.field(
         default=False, kw_only=True, converter=none2false
     )
+    _eof: bool = attr.field(default=False, init=False)
 
     def scan(self) -> Iterator[FieldType]:
         """
@@ -87,12 +88,15 @@ class Scanner:
         header fields.
 
         :raises ScannerError: if the header section is malformed
+        :raises ScannerEOFError: if all of the input has already been consumed
         """
-        for name, value in self._scan():
-            if name is not None:
-                yield (name, value)
-            elif value:
-                yield (None, self.get_unscanned())
+        yield from self.scan_next_stanza()
+        try:
+            body = self.get_unscanned()
+        except ScannerEOFError:
+            pass
+        else:
+            yield (None, body)
 
     def scan_next_stanza(self) -> Iterator[Tuple[str, str]]:
         """
@@ -103,54 +107,14 @@ class Scanner:
         blank line after a non-blank line.)
 
         :raises ScannerError: if the header section is malformed
+        :raises ScannerEOFError: if all of the input has already been consumed
         """
-        for name, value in self._scan():
-            if name is not None:
-                yield (name, value)
-
-    def scan_stanzas(self) -> Iterator[List[Tuple[str, str]]]:
-        """
-        Scan the remaining input for zero or more stanzas of RFC 822-style
-        header fields and return a generator of lists of ``(name, value)``
-        pairs, where each list represents a stanza of header fields in the
-        input.
-
-        The stanzas are terminated by blank lines.  Consecutive blank lines
-        between stanzas are treated as a single blank line.  Blank lines at the
-        end of the input are discarded without creating a new stanza.
-
-        :raises ScannerError: if the header section is malformed
-        """
-        while True:
-            fields = list(self._scan())
-            more_left = fields.pop()[1]
-            if fields or more_left:
-                yield cast(List[Tuple[str, str]], fields)
-            else:
-                break
-            self.skip_leading_newlines = True
-
-    def get_unscanned(self) -> str:
-        """
-        Return all of the input that has not yet been processed.  After calling
-        this method, calling any method again on the same `Scanner` instance
-        will return an empty generator or string, as appropriate.
-        """
-        return "".join(self._data)
-
-    def _scan(self) -> Iterator[FieldType]:
-        """
-        Like `scan_next_stanza()`, except it additionally yields as its last
-        item a ``(None, flag)`` pair where ``flag`` is nonempty iff the stanza
-        was terminated by a blank line (thereby suggesting there is more input
-        left to process), empty iff the stanza was terminated by EOF.
-
-        This is the core function that all other scanners ultimately call.
-        """
+        if self._eof:
+            raise ScannerEOFError()
         name: Optional[str] = None
         value = ""
         begun = False
-        more_left = ""
+        more_left = False
         for line in self._data:
             line = line.rstrip("\r\n")
             if line.startswith((" ", "\t")):
@@ -171,13 +135,54 @@ class Scanner:
                     if self.skip_leading_newlines and not begun:
                         continue
                     else:
-                        more_left = "1"
+                        more_left = True
                         break
                 else:
                     raise MalformedHeaderError(line)
         if name is not None:
             yield (name, value)
-        yield (None, more_left)
+        if not more_left:
+            self._eof = True
+
+    def scan_stanzas(self) -> Iterator[List[Tuple[str, str]]]:
+        """
+        Scan the remaining input for zero or more stanzas of RFC 822-style
+        header fields and return a generator of lists of ``(name, value)``
+        pairs, where each list represents a stanza of header fields in the
+        input.
+
+        The stanzas are terminated by blank lines.  Consecutive blank lines
+        between stanzas are treated as a single blank line.  Blank lines at the
+        end of the input are discarded without creating a new stanza.
+
+        :raises ScannerError: if the header section is malformed
+        :raises ScannerEOFError: if all of the input has already been consumed
+        """
+        if self._eof:
+            raise ScannerEOFError()
+        while True:
+            try:
+                fields = list(self.scan_next_stanza())
+            except ScannerEOFError:
+                break
+            if fields or not self._eof:
+                yield fields
+            else:
+                break
+            self.skip_leading_newlines = True
+
+    def get_unscanned(self) -> str:
+        """
+        Return all of the input that has not yet been processed.  After calling
+        this method, calling any method again on the same `Scanner` instance
+        will raise `ScannerEOFError`.
+
+        :raises ScannerEOFError: if all of the input has already been consumed
+        """
+        if self._eof:
+            raise ScannerEOFError()
+        else:
+            return "".join(self._data)
 
 
 @deprecated(version="0.5.0", reason="use scan() instead")
@@ -317,7 +322,10 @@ def scan_next_stanza_string(
         skip_leading_newlines=skip_leading_newlines,
     )
     fields = list(sc.scan_next_stanza())
-    body = sc.get_unscanned()
+    try:
+        body = sc.get_unscanned()
+    except ScannerEOFError:
+        body = ""
     return (fields, body)
 
 
