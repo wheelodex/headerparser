@@ -47,8 +47,8 @@ class Scanner:
 
     :param separator_regex:
         A regex (as a `str` or compiled regex object) defining the name-value
-        separator; defaults to :regexp:`[ \\t]*:[ \\t]*`.  When the regex is
-        found in a line, everything before the matched substring becomes the
+        separator; defaults to :regexp:`[ \\\\t]*:[ \\\\t]*`.  When the regex
+        is found in a line, everything before the matched substring becomes the
         field name, and everything after becomes the first line of the field
         value.  Note that the regex must match any surrounding whitespace in
         order for it to be trimmed from the key & value.
