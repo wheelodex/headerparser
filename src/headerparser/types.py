@@ -66,7 +66,7 @@ def decode_bool(_: str, value: str) -> bool:
 
 
 def decode_value(func: Callable[[str], T]) -> Callable[[str, str], T]:
-    def decoder(_: str, value: str) -> bool:
+    def decoder(_: str, value: str) -> T:
         return func(value)
 
     return decoder

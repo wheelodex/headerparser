@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
+from functools import partial
 from typing import (
     Any,
     Callable,
@@ -13,6 +14,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    overload,
 )
 import attr
 from .errors import (
@@ -28,6 +30,7 @@ CLS_ATTR_KEY = "__headerparser_spec__"
 METADATA_KEY = "headerparser"
 
 T = TypeVar("T")
+TT = TypeVar("TT", bound=type)
 
 FieldDecoder = Callable[[str, str], Any]
 MultiFieldDecoder = Callable[[str, List[str]], Any]
@@ -226,7 +229,7 @@ def Field(
     alias: Optional[str] = None,
     decoder: Optional[FieldDecoder] = None,
     **kwargs: Any,
-) -> attr.Attribute:
+) -> Any:
     metadata = kwargs.get("metadata")
     if metadata is None:
         metadata = {}
@@ -244,7 +247,7 @@ def MultiField(
     alias: Optional[str] = None,
     decoder: Optional[MultiFieldDecoder] = None,
     **kwargs: Any,
-) -> attr.Attribute:
+) -> Any:
     metadata = kwargs.get("metadata")
     if metadata is None:
         metadata = {}
@@ -257,9 +260,7 @@ def MultiField(
     return attr.field(**kwargs)
 
 
-def ExtraFields(
-    *, decoder: Optional[ExtraFieldsDecoder] = None, **kwargs: Any
-) -> attr.Attribute:
+def ExtraFields(*, decoder: Optional[ExtraFieldsDecoder] = None, **kwargs: Any) -> Any:
     metadata = kwargs.get("metadata")
     if metadata is None:
         metadata = {}
@@ -270,7 +271,7 @@ def ExtraFields(
 
 def MultiExtraFields(
     *, decoder: Optional[ExtraFieldsDecoder] = None, **kwargs: Any
-) -> attr.Attribute:
+) -> Any:
     metadata = kwargs.get("metadata")
     if metadata is None:
         metadata = {}
@@ -279,9 +280,7 @@ def MultiExtraFields(
     return attr.field(**kwargs)
 
 
-def BodyField(
-    *, decoder: Optional[BodyDecoder] = None, **kwargs: Any
-) -> attr.Attribute:
+def BodyField(*, decoder: Optional[BodyDecoder] = None, **kwargs: Any) -> Any:
     metadata = kwargs.get("metadata")
     if metadata is None:
         metadata = {}
@@ -305,14 +304,43 @@ class ParsableSpec:
     fields: Dict[Union[str, InKey], BaseFieldSpec]
 
 
+@overload
 def parsable(
-    cls: Type[T] = None,
+    cls: None = None,
     *,
     name_decoder: Optional[NameDecoder] = None,
     scanner_options: Optional[Mapping[str, Any]] = None,
     **kwargs: Any,
-) -> Type[T]:
-    cls = attr.define(**kwargs)(cls)
+) -> Callable[[TT], TT]:
+    ...
+
+
+@overload
+def parsable(
+    cls: TT,
+    *,
+    name_decoder: Optional[NameDecoder] = None,
+    scanner_options: Optional[Mapping[str, Any]] = None,
+    **kwargs: Any,
+) -> TT:
+    ...
+
+
+def parsable(
+    cls: Optional[TT] = None,
+    *,
+    name_decoder: Optional[NameDecoder] = None,
+    scanner_options: Optional[Mapping[str, Any]] = None,
+    **kwargs: Any,
+) -> Union[TT, Callable[[TT], TT]]:
+    if cls is None:
+        return partial(  # type: ignore[return-value]
+            parsable,
+            name_decoder=name_decoder,
+            scanner_options=scanner_options,
+            **kwargs,
+        )
+    cls = attr.define(cls, **kwargs)
     fields: Dict[Union[str, InKey], BaseFieldSpec] = {}
     for field in attr.fields(cls):
         metadata = (field.metadata or {}).get(METADATA_KEY, {})
@@ -367,7 +395,7 @@ def parse(cls: Type[T], data: Union[str, Iterable[str]]) -> T:
             except KeyError:
                 raise BodyNotAllowedError()
         proc.process(name, value)
-    data: Dict[str, Any] = {}
+    output: Dict[str, Any] = {}
     for proc in processors.values():
-        proc.finalize(data)
-    return cls(**data)
+        proc.finalize(output)
+    return cls(**output)  # type: ignore[call-arg]
