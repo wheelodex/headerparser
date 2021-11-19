@@ -7,7 +7,7 @@ from headerparser import BOOL, HeaderParser, NormalizedDict
 
 @pytest.fixture
 def use_as_body() -> Mock:
-    def _use(nd: NormalizedDict, name: str, value: str) -> None:
+    def _use(nd: NormalizedDict, _name: str, value: str) -> None:
         nd.body = value
 
     return Mock(side_effect=_use)
