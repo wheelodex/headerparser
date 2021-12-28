@@ -168,7 +168,7 @@ class Scanner:
             if fields or not self._eof:
                 yield fields
             else:
-                break
+                break  # type: ignore[unreachable]
             self.skip_leading_newlines = True
 
     def get_unscanned(self) -> str:
