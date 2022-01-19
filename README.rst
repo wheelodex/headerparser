@@ -82,7 +82,7 @@ Parse some headers and inspect the results:
 ... tag: doctest, examples,
 ...   whatever
 ... TAG: README
-... 
+...
 ... Wait, why I am using a body instead of the "Data" field?
 ... ''')
 >>> sorted(msg.keys())
@@ -134,7 +134,7 @@ Just split some headers into names & values and worry about validity later:
 ... Whitespace around colons:optional
 ... Whitespace around colons  :  I already said it's optional.
 ...   That means you have the _option_ to use as much as you want!
-... 
+...
 ... And there's a body, too, I guess.
 ... '''): print(field)
 ('Name', 'Scanner Sample')
