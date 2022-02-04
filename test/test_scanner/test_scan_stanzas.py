@@ -1,6 +1,5 @@
 from io import StringIO
 from typing import Callable, Iterator, List, Tuple, cast
-from _pytest.fixtures import FixtureRequest
 import pytest
 from headerparser import MalformedHeaderError, Scanner, ScannerEOFError, scan_stanzas
 
@@ -32,7 +31,7 @@ def scan_stanzas_string(
         scan_stanzas_string,
     ]
 )
-def scanner(request: FixtureRequest) -> ScannerType:
+def scanner(request: pytest.FixtureRequest) -> ScannerType:
     return cast(ScannerType, request.param)  # type: ignore[attr-defined]
 
 

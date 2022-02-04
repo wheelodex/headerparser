@@ -1,6 +1,5 @@
 from io import StringIO
 from typing import Callable, Iterator, cast
-from _pytest.fixtures import FixtureRequest
 import pytest
 import headerparser
 from headerparser import HeaderParser, NormalizedDict, scan_stanzas
@@ -27,7 +26,7 @@ def parse_stanzas_string_as_stream(p: HeaderParser, s: str) -> Iterator[Normaliz
         parse_stanzas_string_as_stream,
     ]
 )
-def pmethod(request: FixtureRequest) -> PMethod:
+def pmethod(request: pytest.FixtureRequest) -> PMethod:
     return cast(PMethod, request.param)  # type: ignore[attr-defined]
 
 

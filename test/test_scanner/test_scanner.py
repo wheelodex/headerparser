@@ -1,7 +1,6 @@
 from io import StringIO
 import re
 from typing import Any, Callable, Iterator, List, cast
-from _pytest.fixtures import FixtureRequest
 import pytest
 import headerparser
 from headerparser import scan
@@ -23,7 +22,7 @@ def scan_string(s: str, **kwargs: Any) -> Iterator[FieldType]:
 
 
 @pytest.fixture(params=[scan_string_as_file, scan_string_as_list, scan_string])
-def scanner(request: FixtureRequest) -> ScannerType:
+def scanner(request: pytest.FixtureRequest) -> ScannerType:
     return cast(ScannerType, request.param)  # type: ignore[attr-defined]
 
 
