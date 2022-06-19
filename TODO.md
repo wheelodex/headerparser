@@ -29,7 +29,7 @@
     - Contrast handling of multi-occurrence fields with that of the standard
       library
     - Draw attention to the case-insensitivity of field names when parsing and
-      when retriving from the dict
+      when retrieving from the dict
     - Give examples of custom normalization (or at least explain what it is and
       why it's worth having)
     - Add `action` examples
