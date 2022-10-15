@@ -1,7 +1,7 @@
 v0.5.0 (in development)
 -----------------------
 - Support Python 3.8, 3.9, and 3.10
-- Drop support for Python 2.7, 3.4, and 3.5
+- Drop support for Python 2.7, 3.4, 3.5, and 3.6
 - Removed `scan_file()`, `scan_lines()`, `HeaderParser.parse_file()`, and
   `HeaderParser.parse_lines()` (all deprecated in v0.4.0)
 - Type annotations added
