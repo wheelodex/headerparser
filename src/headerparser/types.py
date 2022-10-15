@@ -1,5 +1,7 @@
+from __future__ import annotations
+from collections.abc import Callable, Iterable
 import re
-from typing import Any, Callable, Dict, Iterable, List, Tuple, TypeVar
+from typing import Any, TypeVar
 
 T = TypeVar("T")
 K = TypeVar("K")
@@ -72,8 +74,8 @@ def decode_value(func: Callable[[str], T]) -> Callable[[str, str], T]:
     return decoder
 
 
-def multidict(values: Iterable[Tuple[K, V]]) -> Dict[K, List[V]]:
-    data: Dict[K, List[V]] = {}
+def multidict(values: Iterable[tuple[K, V]]) -> dict[K, list[V]]:
+    data: dict[K, list[V]] = {}
     for k, v in values:
         data.setdefault(k, []).append(v)
     return data

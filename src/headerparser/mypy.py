@@ -1,4 +1,4 @@
-from typing import Type
+from __future__ import annotations
 from mypy.plugin import Plugin
 from mypy.plugins.attrs import attr_attrib_makers, attr_define_makers
 
@@ -15,5 +15,5 @@ class HeaderParserPlugin(Plugin):
     pass
 
 
-def plugin(_version: str) -> Type[Plugin]:
+def plugin(_version: str) -> type[Plugin]:
     return HeaderParserPlugin

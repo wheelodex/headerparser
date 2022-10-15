@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Optional, Tuple, Type
+from __future__ import annotations
+from typing import Any, Optional
 import pytest
 from headerparser import (
     BodyField,
@@ -22,8 +23,8 @@ class Simple:
     simple: str
     optional: Optional[str] = None
     aliased: Optional[str] = Field(alias="alias", default=None)
-    multi: List[str] = MultiField(factory=list)
-    extra: List[Tuple[str, str]] = ExtraFields(factory=list)
+    multi: list[str] = MultiField(factory=list)
+    extra: list[tuple[str, str]] = ExtraFields(factory=list)
     body: Optional[str] = BodyField(default=None)
 
 
@@ -31,7 +32,7 @@ class Simple:
 class MultiExtra:
     foo: int = Field(decoder=decode_value(int))
     bar: bool = Field(decoder=decode_bool)
-    extra: Dict[str, List[str]] = MultiExtraFields(decoder=multidict, factory=dict)
+    extra: dict[str, list[str]] = MultiExtraFields(decoder=multidict, factory=dict)
 
 
 @parsable
@@ -137,7 +138,7 @@ def test_parse(cls: type, data: str, obj: Any) -> None:
     ],
 )
 def test_parse_error(
-    cls: type, data: str, exc_type: Type[Exception], exc_match: str
+    cls: type, data: str, exc_type: type[Exception], exc_match: str
 ) -> None:
     with pytest.raises(exc_type, match=exc_match):
         parse(cls, data)

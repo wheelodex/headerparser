@@ -1,21 +1,10 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
+from collections.abc import Callable, Iterable, Mapping
 from enum import Enum
 from functools import partial
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    Set,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-    overload,
-)
+import typing as ty
+from typing import Any, List, Optional, Tuple, TypeVar, overload
 import attr
 from .errors import (
     BodyNotAllowedError,
@@ -32,11 +21,11 @@ METADATA_KEY = "headerparser"
 T = TypeVar("T")
 TT = TypeVar("TT", bound=type)
 
-FieldDecoder = Callable[[str, str], Any]
-MultiFieldDecoder = Callable[[str, List[str]], Any]
-ExtraFieldsDecoder = Callable[[List[Tuple[str, str]]], Any]
-BodyDecoder = Callable[[str], Any]
-NameDecoder = Callable[[str], str]
+FieldDecoder = ty.Callable[[str, str], Any]
+MultiFieldDecoder = ty.Callable[[str, List[str]], Any]
+ExtraFieldsDecoder = ty.Callable[[List[Tuple[str, str]]], Any]
+BodyDecoder = ty.Callable[[str], Any]
+NameDecoder = ty.Callable[[str], str]
 
 
 class InKey(Enum):
@@ -53,7 +42,7 @@ class BaseFieldProcessor:
         ...
 
     @abstractmethod
-    def finalize(self, data: Dict[str, Any]) -> None:
+    def finalize(self, data: dict[str, Any]) -> None:
         ...
 
 
@@ -70,7 +59,7 @@ class FieldProcessor(BaseFieldProcessor):
         else:
             raise DuplicateFieldError(self.in_key)
 
-    def finalize(self, data: Dict[str, Any]) -> None:
+    def finalize(self, data: dict[str, Any]) -> None:
         if self.state is not None:
             value: Any = self.state
             if self.decoder is not None:
@@ -83,12 +72,12 @@ class MultiFieldProcessor(BaseFieldProcessor):
     name: str
     in_key: str
     decoder: Optional[MultiFieldDecoder]
-    state: List[str] = attr.Factory(list)
+    state: list[str] = attr.Factory(list)
 
     def process(self, _: str, value: str) -> None:
         self.state.append(value)
 
-    def finalize(self, data: Dict[str, Any]) -> None:
+    def finalize(self, data: dict[str, Any]) -> None:
         if self.state:
             value: Any = self.state
             if self.decoder is not None:
@@ -100,8 +89,8 @@ class MultiFieldProcessor(BaseFieldProcessor):
 class ExtraFieldsProcessor(BaseFieldProcessor):
     name: str
     decoder: Optional[ExtraFieldsDecoder]
-    state: List[Tuple[str, str]] = attr.Factory(list)
-    seen: Set[str] = attr.Factory(set)
+    state: list[tuple[str, str]] = attr.Factory(list)
+    seen: set[str] = attr.Factory(set)
 
     def process(self, name: str, value: str) -> None:
         if name in self.seen:
@@ -109,7 +98,7 @@ class ExtraFieldsProcessor(BaseFieldProcessor):
         self.state.append((name, value))
         self.seen.add(name)
 
-    def finalize(self, data: Dict[str, Any]) -> None:
+    def finalize(self, data: dict[str, Any]) -> None:
         if self.state:
             value: Any = self.state
             if self.decoder is not None:
@@ -121,12 +110,12 @@ class ExtraFieldsProcessor(BaseFieldProcessor):
 class MultiExtraFieldsProcessor(BaseFieldProcessor):
     name: str
     decoder: Optional[ExtraFieldsDecoder]
-    state: List[Tuple[str, str]] = attr.Factory(list)
+    state: list[tuple[str, str]] = attr.Factory(list)
 
     def process(self, name: str, value: str) -> None:
         self.state.append((name, value))
 
-    def finalize(self, data: Dict[str, Any]) -> None:
+    def finalize(self, data: dict[str, Any]) -> None:
         if self.state:
             value: Any = self.state
             if self.decoder is not None:
@@ -145,7 +134,7 @@ class BodyProcessor(BaseFieldProcessor):
             raise DuplicateBodyError()
         self.state = value
 
-    def finalize(self, data: Dict[str, Any]) -> None:
+    def finalize(self, data: dict[str, Any]) -> None:
         if self.state is not None:
             value: Any = self.state
             if self.decoder is not None:
@@ -159,7 +148,7 @@ class BaseFieldSpec(ABC):
 
     @property
     @abstractmethod
-    def in_key(self) -> Union[str, InKey]:
+    def in_key(self) -> str | InKey:
         ...
 
     @abstractmethod
@@ -293,15 +282,15 @@ def convert_name_decoder(decoder: Optional[NameDecoder]) -> NameDecoder:
     return decoder if decoder is not None else decode_name
 
 
-def convert_scanner_opts(opts: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
+def convert_scanner_opts(opts: Optional[Mapping[str, Any]]) -> dict[str, Any]:
     return dict(opts) if opts is not None else {}
 
 
 @attr.define
 class ParsableSpec:
     name_decoder: NameDecoder = attr.field(converter=convert_name_decoder)
-    scanner_options: Dict[str, Any] = attr.field(converter=convert_scanner_opts)
-    fields: Dict[Union[str, InKey], BaseFieldSpec]
+    scanner_options: dict[str, Any] = attr.field(converter=convert_scanner_opts)
+    fields: dict[str | InKey, BaseFieldSpec]
 
 
 @overload
@@ -332,7 +321,7 @@ def parsable(
     name_decoder: Optional[NameDecoder] = None,
     scanner_options: Optional[Mapping[str, Any]] = None,
     **kwargs: Any,
-) -> Union[TT, Callable[[TT], TT]]:
+) -> TT | Callable[[TT], TT]:
     if cls is None:
         return partial(  # type: ignore[return-value]
             parsable,
@@ -341,7 +330,7 @@ def parsable(
             **kwargs,
         )
     cls = attr.define(cls, **kwargs)
-    fields: Dict[Union[str, InKey], BaseFieldSpec] = {}
+    fields: dict[str | InKey, BaseFieldSpec] = {}
     for field in attr.fields(cls):
         metadata = (field.metadata or {}).get(METADATA_KEY, {})
         assert isinstance(metadata, dict)
@@ -372,7 +361,7 @@ def parsable(
     return cls
 
 
-def parse(cls: Type[T], data: Union[str, Iterable[str]]) -> T:
+def parse(cls: type[T], data: str | Iterable[str]) -> T:
     p = getattr(cls, CLS_ATTR_KEY, None)
     if not isinstance(p, ParsableSpec):
         raise TypeError(f"{type(p).__name__} is not a parsable class")
@@ -395,7 +384,7 @@ def parse(cls: Type[T], data: Union[str, Iterable[str]]) -> T:
             except KeyError:
                 raise BodyNotAllowedError()
         proc.process(name, value)
-    output: Dict[str, Any] = {}
+    output: dict[str, Any] = {}
     for proc in processors.values():
         proc.finalize(output)
     return cls(**output)  # type: ignore[call-arg]
