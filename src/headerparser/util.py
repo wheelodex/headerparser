@@ -1,8 +1,8 @@
+from __future__ import annotations
 import re
-from typing import List
 
 
-def ascii_splitlines(s: str) -> List[str]:
+def ascii_splitlines(s: str) -> list[str]:
     lines = []
     lastend = 0
     for m in re.finditer(r"\r\n?|\n", s):

@@ -1,24 +1,26 @@
+from __future__ import annotations
+from collections.abc import Iterable, Iterator
 import re
-from typing import Iterable, Iterator, List, Optional, Pattern, Tuple, Union
+from typing import Optional, Tuple, Union
 import attr
 from deprecated import deprecated
 from .errors import MalformedHeaderError, ScannerEOFError, UnexpectedFoldingError
 from .util import ascii_splitlines
 
-RgxType = Union[str, "Pattern[str]"]
+RgxType = Union[str, "re.Pattern[str]"]
 
 FieldType = Tuple[Optional[str], str]
 
 DEFAULT_SEPARATOR_REGEX = re.compile(r"[ \t]*:[ \t]*")
 
 
-def data2iter(data: Union[str, Iterable[str]]) -> Iterator[str]:
+def data2iter(data: str | Iterable[str]) -> Iterator[str]:
     if isinstance(data, str):
         data = ascii_splitlines(data)
     return iter(data)
 
 
-def convert_sep(v: Optional[RgxType]) -> "Pattern[str]":
+def convert_sep(v: Optional[RgxType]) -> re.Pattern[str]:
     if v is None:
         return DEFAULT_SEPARATOR_REGEX
     else:
@@ -60,7 +62,7 @@ class Scanner:
     """
 
     _data: Iterator[str] = attr.field(converter=data2iter)
-    separator_regex: "Pattern[str]" = attr.field(
+    separator_regex: re.Pattern[str] = attr.field(
         default=DEFAULT_SEPARATOR_REGEX,
         converter=convert_sep,
         kw_only=True,
@@ -98,7 +100,7 @@ class Scanner:
         else:
             yield (None, body)
 
-    def scan_next_stanza(self) -> Iterator[Tuple[str, str]]:
+    def scan_next_stanza(self) -> Iterator[tuple[str, str]]:
         """
         Scan the remaining input for RFC 822-style header fields and return a
         generator of ``(name, value)`` pairs for each header field in the
@@ -144,7 +146,7 @@ class Scanner:
         if not more_left:
             self._eof = True
 
-    def scan_stanzas(self) -> Iterator[List[Tuple[str, str]]]:
+    def scan_stanzas(self) -> Iterator[list[tuple[str, str]]]:
         """
         Scan the remaining input for zero or more stanzas of RFC 822-style
         header fields and return a generator of lists of ``(name, value)``
@@ -216,7 +218,7 @@ def scan_string(
 
 
 def scan(
-    data: Union[str, Iterable[str]],
+    data: str | Iterable[str],
     *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
@@ -263,7 +265,7 @@ def scan_next_stanza(
     *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
-) -> Iterator[Tuple[str, str]]:
+) -> Iterator[tuple[str, str]]:
     """
     .. versionadded:: 0.4.0
 
@@ -296,7 +298,7 @@ def scan_next_stanza_string(
     *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
-) -> Tuple[List[Tuple[str, str]], str]:
+) -> tuple[list[tuple[str, str]], str]:
     """
     .. versionadded:: 0.4.0
 
@@ -330,11 +332,11 @@ def scan_next_stanza_string(
 
 
 def scan_stanzas(
-    data: Union[str, Iterable[str]],
+    data: str | Iterable[str],
     *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
-) -> Iterator[List[Tuple[str, str]]]:
+) -> Iterator[list[tuple[str, str]]]:
     """
     .. versionadded:: 0.4.0
 
@@ -372,7 +374,7 @@ def scan_stanzas_string(
     *,
     separator_regex: Optional[RgxType] = None,
     skip_leading_newlines: bool = False,
-) -> Iterator[List[Tuple[str, str]]]:
+) -> Iterator[list[tuple[str, str]]]:
     """
     .. versionadded:: 0.4.0
 

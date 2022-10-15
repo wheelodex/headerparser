@@ -1,4 +1,6 @@
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Set, Tuple, Union
+from __future__ import annotations
+from collections.abc import Callable, Iterable, Iterator
+from typing import Any, Optional
 from deprecated import deprecated
 from . import errors, scanner
 from .normdict import NormalizedDict
@@ -42,7 +44,7 @@ class HeaderParser:
         #: Scanner options
         self._scan_opts = kwargs
         #: A mapping from normalized field names to `NamedField` instances
-        self._fielddefs: Dict[Any, NamedField] = {}
+        self._fielddefs: dict[Any, NamedField] = {}
         #: The set of all normalized ``dest`` values for all named fields
         #: defined so far
         self._dests: set = set()
@@ -227,7 +229,7 @@ class HeaderParser:
             self._additional = None
 
     def parse_stream(
-        self, fields: Iterable[Tuple[Optional[str], str]]
+        self, fields: Iterable[tuple[Optional[str], str]]
     ) -> NormalizedDict:
         """
         Process a sequence of ``(name, value)`` pairs as returned by `scan()`
@@ -243,7 +245,7 @@ class HeaderParser:
         :raises ValueError: if the input contains more than one body pair
         """
         data: NormalizedDict = NormalizedDict(normalizer=self._normalizer)
-        fields_seen: Set[str] = set()
+        fields_seen: set[str] = set()
         body_seen = False
         for k, v in fields:
             if k is None:
@@ -275,7 +277,7 @@ class HeaderParser:
             raise errors.MissingBodyError()
         return data
 
-    def parse(self, data: Union[str, Iterable[str]]) -> NormalizedDict:
+    def parse(self, data: str | Iterable[str]) -> NormalizedDict:
         """
         .. versionadded:: 0.4.0
 
@@ -316,9 +318,7 @@ class HeaderParser:
         """
         return self.parse_stream(scanner.scan(s, **self._scan_opts))  # pragma: no cover
 
-    def parse_stanzas(
-        self, data: Union[str, Iterable[str]]
-    ) -> Iterator[NormalizedDict]:
+    def parse_stanzas(self, data: str | Iterable[str]) -> Iterator[NormalizedDict]:
         """
         .. versionadded:: 0.4.0
 
@@ -368,7 +368,7 @@ class HeaderParser:
         )
 
     def parse_stanzas_stream(
-        self, fields: Iterable[Iterable[Tuple[str, str]]]
+        self, fields: Iterable[Iterable[tuple[str, str]]]
     ) -> Iterator[NormalizedDict]:
         """
         .. versionadded:: 0.4.0
@@ -411,7 +411,7 @@ class HeaderParser:
         return self.parse_stream(scan_next_stanza(iterator, **self._scan_opts))
 
     @deprecated(version="0.5.0")
-    def parse_next_stanza_string(self, s: str) -> Tuple[NormalizedDict, str]:
+    def parse_next_stanza_string(self, s: str) -> tuple[NormalizedDict, str]:
         """
         .. versionadded:: 0.4.0
 

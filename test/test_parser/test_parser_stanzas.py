@@ -1,3 +1,5 @@
+from __future__ import annotations
+from collections.abc import Iterator as IteratorABC
 from io import StringIO
 from typing import Callable, Iterator, cast
 import pytest
@@ -7,15 +9,19 @@ from headerparser import HeaderParser, NormalizedDict, scan_stanzas
 PMethod = Callable[[HeaderParser, str], Iterator[NormalizedDict]]
 
 
-def parse_stanzas_string(p: HeaderParser, s: str) -> Iterator[NormalizedDict]:
+def parse_stanzas_string(p: HeaderParser, s: str) -> IteratorABC[NormalizedDict]:
     return p.parse_stanzas(s)
 
 
-def parse_stanzas_string_as_file(p: HeaderParser, s: str) -> Iterator[NormalizedDict]:
+def parse_stanzas_string_as_file(
+    p: HeaderParser, s: str
+) -> IteratorABC[NormalizedDict]:
     return p.parse_stanzas(StringIO(s))
 
 
-def parse_stanzas_string_as_stream(p: HeaderParser, s: str) -> Iterator[NormalizedDict]:
+def parse_stanzas_string_as_stream(
+    p: HeaderParser, s: str
+) -> IteratorABC[NormalizedDict]:
     return p.parse_stanzas_stream(scan_stanzas(s))
 
 

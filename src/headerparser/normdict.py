@@ -1,5 +1,6 @@
-from collections.abc import Mapping, MutableMapping
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, Tuple, Union
+from __future__ import annotations
+from collections.abc import Callable, Iterable, Iterator, Mapping, MutableMapping
+from typing import Any, Optional
 from .types import lower
 
 
@@ -35,11 +36,11 @@ class NormalizedDict(MutableMapping):
 
     def __init__(
         self,
-        data: Union[None, Mapping, Iterable[Tuple[Any, Any]]] = None,
+        data: None | Mapping | Iterable[tuple[Any, Any]] = None,
         normalizer: Optional[Callable[[Any], Any]] = None,
         body: Optional[str] = None,
     ) -> None:
-        self._data: Dict[Any, Tuple[Any, Any]] = {}
+        self._data: dict[Any, tuple[Any, Any]] = {}
         self.normalizer: Callable[[Any], Any] = (
             normalizer if normalizer is not None else lower
         )
@@ -85,7 +86,7 @@ class NormalizedDict(MutableMapping):
             )
         )
 
-    def normalized(self) -> "NormalizedDict":
+    def normalized(self) -> NormalizedDict:
         """
         Return a copy of the instance such that iterating over it will return
         normalized keys instead of the keys passed to `~object.__setitem__`
@@ -115,7 +116,7 @@ class NormalizedDict(MutableMapping):
         """
         return {key: value for key, (_, value) in self._data.items()}
 
-    def copy(self) -> "NormalizedDict":
+    def copy(self) -> NormalizedDict:
         """Create a shallow copy of the mapping"""
         dup = type(self)()
         dup._data = self._data.copy()

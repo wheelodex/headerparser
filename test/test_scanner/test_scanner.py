@@ -1,6 +1,8 @@
+from __future__ import annotations
+from collections.abc import Iterator as IteratorABC
 from io import StringIO
 import re
-from typing import Any, Callable, Iterator, List, cast
+from typing import Any, Callable, Iterator, cast
 import pytest
 import headerparser
 from headerparser import scan
@@ -9,15 +11,15 @@ from headerparser.scanner import FieldType
 ScannerType = Callable[..., Iterator[FieldType]]
 
 
-def scan_string_as_file(s: str, **kwargs: Any) -> Iterator[FieldType]:
+def scan_string_as_file(s: str, **kwargs: Any) -> IteratorABC[FieldType]:
     return scan(StringIO(s), **kwargs)
 
 
-def scan_string_as_list(s: str, **kwargs: Any) -> Iterator[FieldType]:
+def scan_string_as_list(s: str, **kwargs: Any) -> IteratorABC[FieldType]:
     return scan(s.splitlines(True), **kwargs)
 
 
-def scan_string(s: str, **kwargs: Any) -> Iterator[FieldType]:
+def scan_string(s: str, **kwargs: Any) -> IteratorABC[FieldType]:
     return scan(s, **kwargs)
 
 
@@ -143,7 +145,7 @@ def scanner(request: pytest.FixtureRequest) -> ScannerType:
 @pytest.mark.parametrize("skip_leading_newlines", [True, False])
 def test_scan(
     lines: str,
-    fields: List[FieldType],
+    fields: list[FieldType],
     skip_leading_newlines: bool,
     scanner: ScannerType,
 ) -> None:
@@ -171,7 +173,7 @@ def test_scan(
 )
 def test_scan_skip(
     lines: str,
-    fields: List[FieldType],
+    fields: list[FieldType],
     skip_leading_newlines: bool,
     scanner: ScannerType,
 ) -> None:
@@ -214,7 +216,7 @@ def test_scan_skip(
     ],
 )
 def test_scan_separator_regex(
-    lines: str, fields: List[FieldType], separator_regex: bool, scanner: ScannerType
+    lines: str, fields: list[FieldType], separator_regex: bool, scanner: ScannerType
 ) -> None:
     assert list(scanner(lines, separator_regex=separator_regex)) == fields
 
@@ -247,7 +249,7 @@ def test_scan_separator_regex(
 )
 @pytest.mark.parametrize("skip_leading_newlines", [True, False])
 def test_scan_string(
-    lines: str, fields: List[FieldType], skip_leading_newlines: bool
+    lines: str, fields: list[FieldType], skip_leading_newlines: bool
 ) -> None:
     assert list(scan(lines, skip_leading_newlines=skip_leading_newlines)) == fields
 

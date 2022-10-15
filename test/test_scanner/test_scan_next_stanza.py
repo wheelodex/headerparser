@@ -1,4 +1,5 @@
-from typing import List, Optional, Tuple
+from __future__ import annotations
+from typing import Optional
 import pytest
 from headerparser import (
     Scanner,
@@ -108,8 +109,8 @@ from headerparser import (
     ],
 )
 def test_scanner_next_stanza(
-    lines: List[str],
-    fields: List[Tuple[str, str]],
+    lines: list[str],
+    fields: list[tuple[str, str]],
     trailer: Optional[str],
     skip_leading_newlines: bool,
 ) -> None:
@@ -232,9 +233,9 @@ def test_scanner_next_stanza(
     ],
 )
 def test_scan_next_stanza(
-    lines: List[str],
-    fields: List[Tuple[str, str]],
-    trailer: List[str],
+    lines: list[str],
+    fields: list[tuple[str, str]],
+    trailer: list[str],
     skip_leading_newlines: bool,
 ) -> None:
     liter = iter(lines)
