@@ -2,7 +2,7 @@ from headerparser import __version__
 
 project = "headerparser"
 author = "John T. Wodder II"
-copyright = "2017-2019 John T. Wodder II"
+copyright = "2017-2019 John T. Wodder II"  # noqa: A001
 
 extensions = [
     "sphinx.ext.autodoc",
