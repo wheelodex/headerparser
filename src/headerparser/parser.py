@@ -4,7 +4,7 @@ from typing import Any, Optional
 from deprecated import deprecated
 from . import errors, scanner
 from .normdict import NormalizedDict
-from .scanner import scan_next_stanza, scan_next_stanza_string, scan_stanzas
+from .scanner import Scanner, scan_stanzas
 from .types import lower, unfold
 
 
@@ -408,7 +408,8 @@ class HeaderParser:
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if a header section is malformed
         """
-        return self.parse_stream(scan_next_stanza(iterator, **self._scan_opts))
+        sc = Scanner(iterator, **self._scan_opts)
+        return self.parse_stream(sc.scan_next_stanza())
 
     @deprecated(version="0.5.0")
     def parse_next_stanza_string(self, s: str) -> tuple[NormalizedDict, str]:
@@ -429,7 +430,12 @@ class HeaderParser:
             definitions declared with `add_field` and `add_additional`
         :raises ScannerError: if a header section is malformed
         """
-        fields, extra = scan_next_stanza_string(s, **self._scan_opts)
+        sc = Scanner(s, **self._scan_opts)
+        fields = list(sc.scan_next_stanza())
+        try:
+            extra = sc.get_unscanned()
+        except errors.ScannerEOFError:
+            extra = ""
         return (self.parse_stream(fields), extra)
 
 

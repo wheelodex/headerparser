@@ -325,10 +325,10 @@ def scan_next_stanza_string(
     )
     fields = list(sc.scan_next_stanza())
     try:
-        body = sc.get_unscanned()
+        extra = sc.get_unscanned()
     except ScannerEOFError:
-        body = ""
-    return (fields, body)
+        extra = ""
+    return (fields, extra)
 
 
 def scan_stanzas(
