@@ -3,6 +3,11 @@
 Changelog
 =========
 
+v0.5.1 (in development)
+-----------------------
+- Include :file:`py.typed` file in distribution
+
+
 v0.5.0 (2023-10-04)
 -------------------
 - Support Python 3.8 through 3.12
