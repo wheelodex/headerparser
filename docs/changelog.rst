@@ -3,8 +3,8 @@
 Changelog
 =========
 
-v0.5.1 (in development)
------------------------
+v0.5.1 (2023-10-04)
+-------------------
 - Include :file:`py.typed` file in distribution
 
 
