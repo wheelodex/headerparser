@@ -3,8 +3,8 @@
 Changelog
 =========
 
-v0.5.0 (in development)
------------------------
+v0.5.0 (2023-10-04)
+-------------------
 - Support Python 3.8 through 3.12
 - Drop support for Python 2.7, 3.4, 3.5, and 3.6
 - Removed ``scan_file()``, ``scan_lines()``, ``HeaderParser.parse_file()``, and
@@ -25,6 +25,7 @@ v0.5.0 (in development)
   - `HeaderParser.parse_next_stanza()`
   - `HeaderParser.parse_next_stanza_string()`
 
+
 v0.4.0 (2019-05-29)
 -------------------
 - Added a `scan()` function combining the behavior of ``scan_file()`` and
@@ -41,6 +42,7 @@ v0.4.0 (2019-05-29)
 - Gave `HeaderParser` `parse_stanzas()` and `parse_stanzas_string()` methods
   for parsing input composed entirely of multiple stanzas/header sections
 
+
 v0.3.0 (2018-10-12)
 -------------------
 - Drop support for Python 3.3
@@ -52,6 +54,7 @@ v0.3.0 (2018-10-12)
 
 - Fixed a `DeprecationWarning` in Python 3.7
 
+
 v0.2.0 (2018-02-14)
 -------------------
 - `NormalizedDict`'s default normalizer (exposed as the `lower()` function) now
@@ -61,6 +64,7 @@ v0.2.0 (2018-02-14)
   optional ``action`` argument for customizing the parser's behavior when a
   field is encountered
 - Made the `unfold()` function public
+
 
 v0.1.0 (2017-03-17)
 -------------------
