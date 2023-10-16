@@ -4,10 +4,10 @@
 headerparser — argparse for mail-style headers
 ==============================================
 
-`GitHub <https://github.com/jwodder/headerparser>`_
+`GitHub <https://github.com/wheelodex/headerparser>`_
 | `PyPI <https://pypi.org/project/headerparser>`_
 | `Documentation <https://headerparser.readthedocs.io>`_
-| `Issues <https://github.com/jwodder/headerparser/issues>`_
+| `Issues <https://github.com/wheelodex/headerparser/issues>`_
 | :doc:`Changelog <changelog>`
 
 .. toctree::

@@ -3,25 +3,25 @@
     :alt: Project Status: Active — The project has reached a stable, usable
           state and is being actively developed.
 
-.. image:: https://github.com/jwodder/headerparser/workflows/Test/badge.svg?branch=master
-    :target: https://github.com/jwodder/headerparser/actions?workflow=Test
+.. image:: https://github.com/wheelodex/headerparser/workflows/Test/badge.svg?branch=master
+    :target: https://github.com/wheelodex/headerparser/actions?workflow=Test
     :alt: CI Status
 
-.. image:: https://codecov.io/gh/jwodder/headerparser/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/jwodder/headerparser
+.. image:: https://codecov.io/gh/wheelodex/headerparser/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/wheelodex/headerparser
 
 .. image:: https://img.shields.io/pypi/pyversions/headerparser.svg
     :target: https://pypi.org/project/headerparser
 
-.. image:: https://img.shields.io/github/license/jwodder/headerparser.svg
+.. image:: https://img.shields.io/github/license/wheelodex/headerparser.svg
     :target: https://opensource.org/licenses/MIT
     :alt: MIT License
 
-`GitHub <https://github.com/jwodder/headerparser>`_
+`GitHub <https://github.com/wheelodex/headerparser>`_
 | `PyPI <https://pypi.org/project/headerparser>`_
 | `Documentation <https://headerparser.readthedocs.io>`_
-| `Issues <https://github.com/jwodder/headerparser/issues>`_
-| `Changelog <https://github.com/jwodder/headerparser/blob/master/CHANGELOG.md>`_
+| `Issues <https://github.com/wheelodex/headerparser/issues>`_
+| `Changelog <https://github.com/wheelodex/headerparser/blob/master/CHANGELOG.md>`_
 
 ``headerparser`` parses key-value pairs in the style of RFC 822 (e-mail)
 headers and converts them into case-insensitive dictionaries with the trailing

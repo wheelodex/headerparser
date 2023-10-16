@@ -1,3 +1,7 @@
+v0.6.0 (in development)
+-----------------------
+- Moved to wheelodex organization
+
 v0.5.1 (2023-10-04)
 -------------------
 - Include `py.typed` file in distribution

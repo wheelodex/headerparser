@@ -9,7 +9,7 @@ required, or given default values using an API based on the standard library's
 for just scanning header fields (breaking them into sequences of key-value
 pairs without any further processing) are also included.
 
-Visit <https://github.com/jwodder/headerparser> or
+Visit <https://github.com/wheelodex/headerparser> or
 <http://headerparser.rtfd.io> for more information.
 """
 
@@ -41,11 +41,11 @@ from .scanner import (
 )
 from .types import BOOL, lower, unfold
 
-__version__ = "0.5.1"
+__version__ = "0.6.0.dev1"
 __author__ = "John Thorvald Wodder II"
 __author_email__ = "headerparser@varonathe.org"
 __license__ = "MIT"
-__url__ = "https://github.com/jwodder/headerparser"
+__url__ = "https://github.com/wheelodex/headerparser"
 
 __all__ = [
     "BOOL",
