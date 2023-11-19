@@ -1,6 +1,7 @@
 v0.6.0 (in development)
 -----------------------
 - Moved to wheelodex organization
+- Migrated from setuptools to hatch
 
 v0.5.1 (2023-10-04)
 -------------------
