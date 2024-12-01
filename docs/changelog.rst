@@ -3,8 +3,8 @@
 Changelog
 =========
 
-v0.6.0 (in development)
------------------------
+v0.5.2 (2024-12-01)
+-------------------
 - Moved to wheelodex organization
 - Migrated from setuptools to hatch
 - Drop support for Python 3.7
