@@ -21,6 +21,7 @@ class MissingFieldError(ParserError):
     def __init__(self, name: str) -> None:
         #: The name of the missing header field
         self.name: str = name
+        super().__init__(name)
 
     def __str__(self) -> str:
         return f"Required header field {self.name!r} is not present"
@@ -35,6 +36,7 @@ class UnknownFieldError(ParserError):
     def __init__(self, name: str) -> None:
         #: The name of the unknown header field
         self.name: str = name
+        super().__init__(name)
 
     def __str__(self) -> str:
         return f"Unknown header field {self.name!r}"
@@ -49,6 +51,7 @@ class DuplicateFieldError(ParserError):
     def __init__(self, name: str) -> None:
         #: The name of the duplicated header field
         self.name: str = name
+        super().__init__(name)
 
     def __str__(self) -> str:
         return f"Header field {self.name!r} occurs more than once"
@@ -65,6 +68,7 @@ class FieldTypeError(ParserError):
         self.value: str = value
         #: The exception raised by the ``type`` callable
         self.exc_value: BaseException = exc_value
+        super().__init__(name, value, exc_value)
 
     def __str__(self) -> str:
         return (
@@ -84,6 +88,7 @@ class InvalidChoiceError(ParserError):
         self.name: str = name
         #: The invalid value
         self.value: Any = value
+        super().__init__(name, value)
 
     def __str__(self) -> str:
         return f"{self.value!r} is not a valid choice for {self.name!r}"
@@ -118,6 +123,7 @@ class MalformedHeaderError(ScannerError):
     def __init__(self, line: str) -> None:
         #: The invalid header line
         self.line: str = line
+        super().__init__(line)
 
     def __str__(self) -> str:
         return f"Invalid header line encountered: {self.line!r}"
@@ -132,6 +138,7 @@ class UnexpectedFoldingError(ScannerError):
     def __init__(self, line: str) -> None:
         #: The line containing the unexpected folding (indentation)
         self.line: str = line
+        super().__init__(line)
 
     def __str__(self) -> str:
         return f"Indented line without preceding header line encountered: {self.line!r}"
