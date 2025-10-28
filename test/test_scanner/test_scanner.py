@@ -1,8 +1,8 @@
 from __future__ import annotations
-from collections.abc import Iterator as IteratorABC
+from collections.abc import Callable, Iterator
 from io import StringIO
 import re
-from typing import Any, Callable, Iterator, cast
+from typing import Any, cast
 import pytest
 import headerparser
 from headerparser import scan
@@ -11,15 +11,15 @@ from headerparser.scanner import FieldType
 ScannerType = Callable[..., Iterator[FieldType]]
 
 
-def scan_string_as_file(s: str, **kwargs: Any) -> IteratorABC[FieldType]:
+def scan_string_as_file(s: str, **kwargs: Any) -> Iterator[FieldType]:
     return scan(StringIO(s), **kwargs)
 
 
-def scan_string_as_list(s: str, **kwargs: Any) -> IteratorABC[FieldType]:
+def scan_string_as_list(s: str, **kwargs: Any) -> Iterator[FieldType]:
     return scan(s.splitlines(True), **kwargs)
 
 
-def scan_string(s: str, **kwargs: Any) -> IteratorABC[FieldType]:
+def scan_string(s: str, **kwargs: Any) -> Iterator[FieldType]:
     return scan(s, **kwargs)
 
 

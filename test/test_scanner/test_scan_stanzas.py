@@ -1,28 +1,28 @@
 from __future__ import annotations
-from collections.abc import Iterator as IteratorABC
+from collections.abc import Callable, Iterator
 from io import StringIO
-from typing import Callable, Iterator, List, Tuple, cast
+from typing import cast
 import pytest
 from headerparser import MalformedHeaderError, Scanner, ScannerEOFError, scan_stanzas
 
-ScannerType = Callable[..., Iterator[List[Tuple[str, str]]]]
+ScannerType = Callable[..., Iterator[list[tuple[str, str]]]]
 
 
 def scan_stanzas_string_as_file(
     s: str, skip_leading_newlines: bool = False
-) -> IteratorABC[list[tuple[str, str]]]:
+) -> Iterator[list[tuple[str, str]]]:
     return scan_stanzas(StringIO(s), skip_leading_newlines=skip_leading_newlines)
 
 
 def scan_stanzas_string_as_list(
     s: str, skip_leading_newlines: bool = False
-) -> IteratorABC[list[tuple[str, str]]]:
+) -> Iterator[list[tuple[str, str]]]:
     return scan_stanzas(s.splitlines(True), skip_leading_newlines=skip_leading_newlines)
 
 
 def scan_stanzas_string(
     s: str, skip_leading_newlines: bool = False
-) -> IteratorABC[list[tuple[str, str]]]:
+) -> Iterator[list[tuple[str, str]]]:
     return scan_stanzas(s, skip_leading_newlines=skip_leading_newlines)
 
 

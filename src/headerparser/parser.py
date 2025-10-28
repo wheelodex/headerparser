@@ -1,6 +1,6 @@
 from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator
-from typing import Any, Optional
+from typing import Any
 from deprecated import deprecated
 from . import errors, scanner
 from .normdict import NormalizedDict
@@ -32,8 +32,8 @@ class HeaderParser:
 
     def __init__(
         self,
-        normalizer: Optional[Callable[[str], Any]] = None,
-        body: Optional[bool] = None,
+        normalizer: Callable[[str], Any] | None = None,
+        body: bool | None = None,
         **kwargs: Any,
     ) -> None:
         #: The ``normalizer`` argument passed to the constructor, or `lower` if
@@ -50,7 +50,7 @@ class HeaderParser:
         self._dests: set = set()
         #: If additional fields are enabled, this is the `FieldDef` instance
         #: used to process them; otherwise, it is `None`.
-        self._additional: Optional[FieldDef] = None
+        self._additional: FieldDef | None = None
         #: Whether any fields with custom ``dest`` values have been defined,
         #: thereby precluding `add_additional()`
         self._custom_dests: bool = False
@@ -228,9 +228,7 @@ class HeaderParser:
         else:
             self._additional = None
 
-    def parse_stream(
-        self, fields: Iterable[tuple[Optional[str], str]]
-    ) -> NormalizedDict:
+    def parse_stream(self, fields: Iterable[tuple[str | None, str]]) -> NormalizedDict:
         """
         Process a sequence of ``(name, value)`` pairs as returned by `scan()`
         and return a dictionary of header fields (possibly with body attached).
@@ -442,11 +440,11 @@ class HeaderParser:
 class FieldDef:
     def __init__(
         self,
-        type_: Optional[Callable[[str], Any]] = None,
+        type_: Callable[[str], Any] | None = None,
         multiple: bool = False,
         unfold: bool = False,
-        choices: Optional[Iterable] = None,
-        action: Optional[Callable[[NormalizedDict, str, Any], Any]] = None,
+        choices: Iterable | None = None,
+        action: Callable[[NormalizedDict, str, Any], Any] | None = None,
     ):
         self.type_ = type_
         self.multiple = multiple
@@ -455,7 +453,7 @@ class FieldDef:
             choices = list(choices)
             if not choices:
                 raise ValueError("empty list supplied for choices")
-        self.choices: Optional[list] = choices
+        self.choices: list | None = choices
         self.action = action
 
     def __eq__(self, other: Any) -> bool:
@@ -502,7 +500,7 @@ class NamedField(FieldDef):
             if self.required:
                 raise ValueError("required and default are mutually exclusive")
             self.default = kwargs.pop("default")
-        super(NamedField, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def process(self, data: NormalizedDict, _: str, value: str) -> None:
         self._process(data, self.name, self.dest, value)

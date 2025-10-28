@@ -1,7 +1,6 @@
 from __future__ import annotations
 from collections.abc import Callable
 import re
-from typing import Optional
 import pytest
 from headerparser import NormalizedDict, lower
 
@@ -225,8 +224,8 @@ def identity(s: str) -> str:
 @pytest.mark.parametrize("body", [None, "Glarch."])
 def test_repr(
     data: dict[str, str],
-    normalizer: Optional[Callable[[str], str]],
-    body: Optional[str],
+    normalizer: Callable[[str], str] | None,
+    body: str | None,
 ) -> None:
     nd = NormalizedDict(data, body=body, normalizer=normalizer)
     if normalizer is None:
