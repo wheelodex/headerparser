@@ -1,3 +1,7 @@
+v0.6.0 (in development)
+-----------------------
+- Support Python 3.14
+
 v0.5.2 (2024-12-01)
 -------------------
 - Moved to wheelodex organization
