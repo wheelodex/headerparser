@@ -56,7 +56,7 @@ including but not limited to:
 
 Installation
 ============
-``headerparser`` requires Python 3.8 or higher.  Just use `pip
+``headerparser`` requires Python 3.10 or higher.  Just use `pip
 <https://pip.pypa.io>`_ for Python 3 (You have pip, right?) to install
 ``headerparser``::
 

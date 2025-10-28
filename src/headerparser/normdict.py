@@ -1,6 +1,6 @@
 from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator, Mapping, MutableMapping
-from typing import Any, Optional
+from typing import Any
 from .types import lower
 
 
@@ -37,8 +37,8 @@ class NormalizedDict(MutableMapping):
     def __init__(
         self,
         data: None | Mapping | Iterable[tuple[Any, Any]] = None,
-        normalizer: Optional[Callable[[Any], Any]] = None,
-        body: Optional[str] = None,
+        normalizer: Callable[[Any], Any] | None = None,
+        body: str | None = None,
     ) -> None:
         self._data: dict[Any, tuple[Any, Any]] = {}
         self.normalizer: Callable[[Any], Any] = (
@@ -46,7 +46,7 @@ class NormalizedDict(MutableMapping):
         )
         #: This is where `HeaderParser` stores the message body (if any)
         #: accompanying the header section represented by the mapping
-        self.body: Optional[str] = body
+        self.body: str | None = body
         if data is not None:
             # Don't call `update` until after `normalizer` is set.
             self.update(data)
@@ -76,7 +76,7 @@ class NormalizedDict(MutableMapping):
             other = NormalizedDict(other, normalizer=self.normalizer)
         else:
             return NotImplemented
-        return self.normalized_dict() == other.normalized_dict()
+        return bool(self.normalized_dict() == other.normalized_dict())
 
     def __repr__(self) -> str:
         return (

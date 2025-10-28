@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 import pytest
 from headerparser import (
     Scanner,
@@ -111,7 +110,7 @@ from headerparser import (
 def test_scanner_next_stanza(
     lines: list[str],
     fields: list[tuple[str, str]],
-    trailer: Optional[str],
+    trailer: str | None,
     skip_leading_newlines: bool,
 ) -> None:
     for data in (lines, "".join(lines)):
