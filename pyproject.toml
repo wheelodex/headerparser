@@ -45,7 +45,7 @@ classifiers = [
 
 dependencies = [
     "attrs      >= 20.1.0",
-    "Deprecated ~= 1.2",
+    "Deprecated ~=3.0",
 ]
 
 [project.urls]
